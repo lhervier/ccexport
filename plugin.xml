@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <!--
+       Notre Builder
+   -->
+   <extension id="fr.asi.test.builder" point="org.eclipse.core.resources.builders">
+      <builder>
+         <run class="fr.asi.xsp.ccexport.CcExportBuilder"/>
+      </builder>
+   </extension>
+   
+   <!-- 
+       Une propriété pour savoir si on est sur un projet de type Domino 
+   -->
+   <extension point="org.eclipse.core.expressions.propertyTesters">
+       <propertyTester
+             class="fr.asi.xsp.ccexport.DominoProjectPropertyTester"
+             id="fr.asi.test.DominoProjectPropertyTester"
+             namespace="fr.asi.test"
+             properties="isDominoProjet"
+             type="org.eclipse.jface.viewers.ISelection"/>
+   </extension>
+   
+   <!--
+       La commande pour ajouter le builder
+   -->
+   <extension point="org.eclipse.ui.commands">
+       <command
+             id="fr.asi.test.addBuilder"
+             name="Ajouter le builder"/>
+   </extension>
+   
+   <!--
+       Un handler pour ajouter le builder sur un projet
+       Il n'est actif que sur les projets de type Domino
+   -->
+   <extension point="org.eclipse.ui.handlers">
+       <handler
+             class="fr.asi.xsp.ccexport.AddBuilderHandler"
+             commandId="fr.asi.test.addBuilder">
+          <!--
+          <activeWhen>
+             <with variable="selection">
+                <test property="fr.asi.test.isDominoProject"/>
+             </with>
+          </activeWhen>
+          -->
+       </handler>
+    </extension>
+	
+	<!--
+	    Notre entrée dans le menu contextuel du package explorer
+    -->
+    <extension point="org.eclipse.ui.menus">
+       <menuContribution locationURI="popup:org.eclipse.jdt.ui.PackageExplorer?after=additions">
+         <command
+               commandId="fr.asi.test.addBuilder"
+               label="Ajouter le builder"
+               mode="FORCE_TEXT"
+               style="push"/>
+       </menuContribution>
+    </extension> 
+    
+	
+</plugin>
