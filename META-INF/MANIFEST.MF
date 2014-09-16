@@ -4,11 +4,11 @@ Bundle-Name: Test Plug-in
 Bundle-SymbolicName: fr.asi.xsp.ccexport;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: fr.asi.xsp.ccexport.Activator
-Require-Bundle: org.eclipse.ui,
- org.eclipse.core.runtime,
+Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.resources,
  org.eclipse.core.expressions;bundle-version="3.4.1",
  com.ibm.designer.domino.ide.resources;bundle-version="9.0.1",
- org.eclipse.jdt.core;bundle-version="3.4.4"
+ org.eclipse.jdt.core;bundle-version="3.4.4",
+ org.eclipse.ui;bundle-version="3.4.2"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
