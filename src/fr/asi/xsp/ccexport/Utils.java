@@ -1,5 +1,7 @@
 package fr.asi.xsp.ccexport;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -95,5 +97,19 @@ public class Utils {
 		if( pos == -1 )
 			return fileName;
 		return fileName.substring(0, pos);
+	}
+	
+	/**
+	 * Pour fermer une stream
+	 * @param o l'objet à fermer
+	 */
+	public static void closeQuietly(Closeable o) {
+		if( o == null )
+			return;
+		try {
+			o.close();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 }
