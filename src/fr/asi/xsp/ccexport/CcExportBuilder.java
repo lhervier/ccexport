@@ -1,30 +1,39 @@
 package fr.asi.xsp.ccexport;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 
 public class CcExportBuilder extends IncrementalProjectBuilder {
 
+	/**
+	 * Le chemin vers les custom controls
+	 */
+	private final static IPath CC_FOLDER_PATH = new Path("CustomControls");
+	
+	/**
+	 * Le chemin vers les custom controls
+	 */
+	private final static IPath XSP_FOLDER_PATH = new Path("Local/xsp");
+	
 	/**
 	 * Le nom du projet vers lequel exporter
 	 */
@@ -33,20 +42,26 @@ public class CcExportBuilder extends IncrementalProjectBuilder {
 	/**
 	 * Le répertoire source dans lequel exporter
 	 */
-	private String srcFolder;
+	private IPath srcFolderPath;
 	
 	/**
 	 * Le package dans lequel exporter les classes
 	 */
-	private String pckg;
+	private String classesPkg;
+	
+	/**
+	 * Le package dans lequel exporter les xsp-config
+	 */
+	private String xspConfigPkg;
 	
 	/**
 	 * Constructeur
 	 */
 	public CcExportBuilder() {
 		this.destProjectName = "test-export";
-		this.srcFolder = "src";
-		this.pckg = "fr.asi.xsp.composants.xsp";
+		this.srcFolderPath = new Path("src");
+		this.classesPkg = "fr.asi.xsp.composants.xsp";
+		this.xspConfigPkg = "fr.asi.xsp.composants.config";
 	}
 	
 	/**
@@ -54,49 +69,38 @@ public class CcExportBuilder extends IncrementalProjectBuilder {
 	 */
 	@Override
 	protected IProject[] build(int kind, Map args, final IProgressMonitor monitor) throws CoreException {
-		// Récupère le projet de destination
+		// Récupère le projet de destination sous la forme d'un projet Java
 		IProject destProject = Utils.getProjectFromName(this.destProjectName);
 		if( !destProject.exists() )
+			return null;
+		if( !Utils.isOfNature(destProject, JavaCore.NATURE_ID) )
 			return null;
 		if( !destProject.isOpen() )
 			destProject.open(new NullProgressMonitor());
 		final IJavaProject javaDestProject = JavaCore.create(destProject);
 		
-		// Récupère le répertoire source dans lequel on va copier les classes
-		// On vérifie que le chemin vers lequel on exporte est bien le chemin d'un rep contenant des sources
-		List<IPath> srcs = Utils.getSourceFolders(destProject);
-		IFolder srcFolder = destProject.getFolder(this.srcFolder);
-		IPath srcPath = srcFolder.getFullPath();
-		if( !srcs.contains(srcPath) )
+		// Créé les deux packages
+		final IPackageFragment javaPkg = Utils.createPackage(javaDestProject, this.srcFolderPath, this.classesPkg, new NullProgressMonitor());
+		if( javaPkg == null )
+			return null;
+		final IPackageFragment xspConfigPkg = Utils.createPackage(javaDestProject, this.srcFolderPath, this.xspConfigPkg, new NullProgressMonitor());
+		if( xspConfigPkg == null )
 			return null;
 		
-		// Vérifie que le package existe bien. On le créé si nécessaire.
-		// On récupère au passage le répertoire dans lequel on va copier les classes.
-		String[] pkgPath = this.pckg.split("\\.");
-		IFolder root = srcFolder;
-		for( int i=0; i<pkgPath.length; i++ ) {
-			IFolder currFolder = root.getFolder(pkgPath[i]);
-			if( !currFolder.exists() )
-				currFolder.create(true, true, new NullProgressMonitor());
-			root = currFolder;
-		}
-		
-		// Récupère le projet courant
-		final IProject currProject = this.getProject();
-		final IJavaProject javaCurrProject = JavaCore.create(currProject);
-		IFolder ccFolder = currProject.getFolder("CustomControls");
-		final IPath ccFolderPath = ccFolder.getProjectRelativePath();
+		// Récupère le projet courant sous la forme d'un projet Java
+		final IJavaProject javaCurrProject = JavaCore.create(this.getProject());
 		
 		// Une Set qui contient les noms des CC déjà traités
-		final Set<String> processed = new HashSet<String>();
+		final Set<String> processedXspConfig = new HashSet<String>();
+		final Set<String> processedCc = new HashSet<String>();
 		
 		// Parcours le delta
-		IResourceDelta delta = this.getDelta(currProject);
+		IResourceDelta delta = this.getDelta(this.getProject());
 		if( delta == null )
 			return null;
 		delta.accept(new IResourceDeltaVisitor() {
 			public boolean visit(IResourceDelta delta) {
-				// On n'accepte que les ajout/modif et suppr
+				// On n'accepte que les ajout/modif/suppression
 				int kind = delta.getKind();
 				if( kind != IResourceDelta.ADDED && kind != IResourceDelta.CHANGED && kind != IResourceDelta.REMOVED )
 					return true;
@@ -106,63 +110,103 @@ public class CcExportBuilder extends IncrementalProjectBuilder {
 				if (currResource.getType() != IResource.FILE)
 					return true;
 				
-				// Récupère la ressource a construire
+				// Récupère la ressource a builder
 				IFile file = (IFile) currResource;
 				IPath location = file.getProjectRelativePath();
 				
-				// On ne s'intéresse qu'aux custom controls
-				if( !ccFolderPath.isPrefixOf(location) )
-					return true;
-				
-				// On ne s'intéresse qu'aux custom controls qu'on a pas déjà traités dans ce delta
-				String cc = file.getName();
-				int pos = cc.lastIndexOf('.');
-				if( pos != -1 ) {
-					cc = cc.substring(0, pos);
-				}
-				cc = cc.substring(0, 1).toUpperCase() + cc.substring(1);
-				if( processed.contains(cc) )
-					return true;
-				processed.add(cc);
-				
-				if( kind == IResourceDelta.ADDED )
-					System.out.print("CC Ajout ");
-				else if( kind == IResourceDelta.CHANGED )
-					System.out.print("CC Modification ");
-				else if( kind == IResourceDelta.REMOVED )
-					System.out.print("CC Suppression ");
-				System.out.println(cc);
-				
-				// On copie sa classe
-				IPath javaPath = new Path("xsp/" + cc + ".java");
-				IPath packagePath = new Path(CcExportBuilder.this.pckg.replace('.', '/'));
-				try {
-					IJavaElement java = javaCurrProject.findElement(javaPath);
-					IJavaElement pkg = javaDestProject.findElement(packagePath);
+				// ======================================================================================================
+				// Exporte le xsp-config: 
+				// Comme on reporte le contenu du xsp dans le xsp-config, on réagit au changement de l'un ou de l'autre
+				// ======================================================================================================
+				if( CcExportBuilder.CC_FOLDER_PATH.isPrefixOf(location) ) {
 					
-					IJavaModel model = javaCurrProject.getJavaModel();
-					model.copy(
-							new IJavaElement[] {java}, 
-							new IJavaElement[] {pkg}, 
-							null, 
-							null, 
-							true, 
-							new NullProgressMonitor()
-					);
-				} catch (JavaModelException e) {
-					throw new RuntimeException(e);
+					String xspConfig = Utils.getFileNameWithoutExtension(location.lastSegment()) + ".xsp-config";
+					if( processedXspConfig.contains(xspConfig) )
+						return true;
+					processedXspConfig.add(xspConfig);
+					
+					IPath xspConfigDest = xspConfigPkg.getResource().getProjectRelativePath().append(xspConfig);
+					
+					// Ajout ou modification
+					if( kind == IResourceDelta.ADDED || kind == IResourceDelta.CHANGED ) {
+						// On copie le xsp-config
+						try {
+							IFile xspConfigSrc = javaCurrProject.getProject().getFile("CustomControls/" + xspConfig);
+							IFile dest = javaDestProject.getProject().getFile(xspConfigDest);
+							if( dest.exists() )
+								dest.delete(true, new NullProgressMonitor());
+							
+							xspConfigSrc.copy(
+									dest.getFullPath(), 
+									true, 
+									new NullProgressMonitor()
+							);
+						} catch (CoreException e) {
+							throw new RuntimeException(e);
+						}
+					
+					// Suppression
+					} else if( kind == IResourceDelta.REMOVED ) {
+						try {
+							IFile dest = javaDestProject.getProject().getFile(xspConfigDest);
+							if( dest.exists() )
+								dest.delete(true, new NullProgressMonitor());
+						} catch (CoreException e) {
+							throw new RuntimeException(e);
+						}
+					}
+				
+				// Exporte une classe Java:
+				// On ne réagit surtout pas à la modif du XSP car le fichier java peut ne pas exister
+				// ===================================================================================
+				} else if( CcExportBuilder.XSP_FOLDER_PATH.isPrefixOf(location) ) {
+					
+					String cc = Utils.getFileNameWithoutExtension(location.lastSegment()) + ".xsp";
+					if( processedCc.contains(cc) )
+						return true;
+					processedCc.add(cc);
+					
+					// Suppression
+					if( kind == IResourceDelta.REMOVED ) {
+						try {
+							IJavaElement java = javaDestProject.findElement(javaPkg.getPath().append(location.lastSegment()));
+							javaDestProject.getJavaModel().delete(new IJavaElement[] {java}, true, new NullProgressMonitor());
+						} catch (JavaModelException e) {
+							throw new RuntimeException(e);
+						}
+						
+					// Ajout ou modification
+					} else if( kind == IResourceDelta.ADDED || kind == IResourceDelta.CHANGED ) {
+						
+						// Vérifie qu'il correspond à un custom control (et pas à une XPage)
+						IFile min = javaCurrProject.getProject().getFile("CustomControls/" + cc.substring(0, 1).toLowerCase() + cc.substring(1));
+						IFile maj = javaCurrProject.getProject().getFile("CustomControls/" + cc.substring(0, 1).toUpperCase() + cc.substring(1));
+						if( !min.exists() && maj.exists() )
+							return true;
+						
+						// Copie la classe
+						try {
+							IPath javaPath = new Path("xsp").append(location.lastSegment());
+							IJavaElement java = javaCurrProject.findElement(javaPath);
+							javaCurrProject.getJavaModel().copy(
+									new IJavaElement[] {java}, 
+									new IJavaElement[] {javaPkg}, 
+									null, 
+									null, 
+									true, 
+									new NullProgressMonitor()
+							);
+						} catch (JavaModelException e) {
+							throw new RuntimeException(e);
+						}
+					}
 				}
-				
-				
-				
-				// On copie son xsp-config
-				
-				
 				return true;
 			}
 		});
 		
-		
+		// Sauver le workspace déclenche la re-compile des classes qu'on a ajouté/modifié/supprimées 
+		ResourcesPlugin.getWorkspace().save(false, new NullProgressMonitor());
 		return null;
 	}
 

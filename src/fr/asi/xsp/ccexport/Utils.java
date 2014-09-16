@@ -3,14 +3,16 @@ package fr.asi.xsp.ccexport;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.IPackageFragment;
 
 public class Utils {
 
@@ -43,18 +45,13 @@ public class Utils {
 	/**
 	 * Retourne les répertoires source d'un
 	 * projet de type Java
-	 * @param project le projet
+	 * @param javaProject le projet
 	 * @throws CoreException 
 	 */
-	public static List<IPath> getSourceFolders(IProject project) throws CoreException {
+	public static List<IPath> getSourceFolders(IJavaProject javaProject) throws CoreException {
 		List<IPath> ret = new ArrayList<IPath>();
 		
-		if( !isOfNature(project, JavaCore.NATURE_ID) )
-			return ret;
-		
-		IJavaProject javaProject = JavaCore.create(project);
 		IClasspathEntry[] entries = javaProject.getRawClasspath();
-		
 		for( int i=0; i<entries.length; i++ ) {
 			IClasspathEntry entry = entries[i];
 			int kind = entry.getEntryKind();
@@ -65,5 +62,38 @@ public class Utils {
 		}
 		
 		return ret;
+	}
+	
+	/**
+	 * Vérifie qu'un package existe bien dans un projet Java, et le créé si nécessaire.
+	 * @param javaProject le projet (java) dans lequel le créer
+	 * @param srcFolder le répertoire source dans lequel créer les packages
+	 * @param pkg le nom du package à créer
+	 * @param monitor le moniteur
+	 * @return le package
+	 * @throws CoreException en cas de problème
+	 */
+	public static IPackageFragment createPackage(IJavaProject javaProject, IPath srcFolderPath, String pkg, IProgressMonitor monitor) throws CoreException {
+		// Récupère le dossier qui doit contenir les sources
+		IProject project = javaProject.getProject();
+		IFolder root = project.getFolder(srcFolderPath);
+		
+		// Vérifie que le dossier soit bien un dossier qui contient du code source
+		if( !Utils.getSourceFolders(javaProject).contains(root.getFullPath()) )
+			return null;
+		
+		return javaProject.getPackageFragmentRoot(root).createPackageFragment(pkg, true, monitor);
+	}
+	
+	/**
+	 * Retourne un nom de fichier sans son extension
+	 * @param fileName
+	 * @return le nom du fichier sans son extension
+	 */
+	public static String getFileNameWithoutExtension(String fileName) {
+		int pos = fileName.lastIndexOf('.');
+		if( pos == -1 )
+			return fileName;
+		return fileName.substring(0, pos);
 	}
 }
