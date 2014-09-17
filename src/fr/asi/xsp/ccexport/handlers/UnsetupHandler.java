@@ -1,4 +1,4 @@
-package fr.asi.xsp.ccexport;
+package fr.asi.xsp.ccexport.handlers;
 
 import java.util.List;
 
@@ -13,15 +13,20 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.PlatformUI;
 
 import com.ibm.designer.domino.ide.resources.DominoResourcesPlugin;
-import com.ibm.designer.domino.ide.resources.util.NsfUtil;
 
-public class AddBuilderHandler extends AbstractHandler {
+import fr.asi.xsp.ccexport.Utils;
+
+/**
+ * Handler pour désassocier le NSF à un projet de library
+ * @author Lionel HERVIER
+ */
+public class UnsetupHandler extends AbstractHandler {
 
 	/**
 	 * @see org.eclipse.core.commands.AbstractHandler#execute(org.eclipse.core.commands.ExecutionEvent)
 	 */
 	@Override
-	public Object execute(ExecutionEvent arg0) throws ExecutionException {
+	public Object execute(ExecutionEvent event) throws ExecutionException {
 		ISelection se = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService().getSelection();
 		if (!(se instanceof StructuredSelection))
 			return null;
@@ -41,10 +46,18 @@ public class AddBuilderHandler extends AbstractHandler {
 			return null;
 		
 		try {
-			NsfUtil.addBuilderToProject(prj, "fr.asi.xsp.ccexport.builder");
+			// Supprime les propriétés
+			prj.setPersistentProperty(Utils.PROP_PROJECT_NAME, null);
+			prj.setPersistentProperty(Utils.PROP_SOURCE_FOLDER, null);
+			prj.setPersistentProperty(Utils.PROP_CLASSES_PACKAGE, null);
+			prj.setPersistentProperty(Utils.PROP_XSPCONFIG_PACKAGE, null);
+			
+			// Ajoute le builder au projet
+			Utils.removeBuilderFromProject(prj, "fr.asi.xsp.ccexport.builder");
 		} catch (CoreException e) {
 			throw new RuntimeException(e);
 		}
+		
 		return null;
 	}
 

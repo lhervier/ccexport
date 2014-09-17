@@ -1,4 +1,4 @@
-package fr.asi.xsp.ccexport;
+package fr.asi.xsp.ccexport.actions;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -20,6 +20,8 @@ import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 
+import fr.asi.xsp.ccexport.Utils;
+
 /**
  * Action pour exporter un custom control.
  * FIXME: Il ne sait pas gérer la traduction telle que gérée par les XPages avec les fichiers .properties.
@@ -30,18 +32,10 @@ public class ExportCcAction extends AbstractAction {
 	/**
 	 * Constructeur
 	 * @param srcProject le projet Java source (celui de la base NSF)
-	 * @param destProject le projet Java de destination (la Library)
-	 * @param sourcesFolder le nom dossier contenant le code source dans le projet de destination 
-	 * @param javaPkg le nom du package dans lequel exporter la classe Java
-	 * @param xspConfigPkg le nom du package dans lequel exporter les fichiers xsp-config
+	 * @throws CoreException en cas de pb
 	 */
-	public ExportCcAction(
-			IProject srcProject, 
-			IProject destProject, 
-			String sourcesFolder, 
-			String javaPkg, 
-			String xspConfigPkg) {
-		super(srcProject, destProject, sourcesFolder, javaPkg, xspConfigPkg);
+	public ExportCcAction(IProject srcProject) throws CoreException {
+		super(srcProject);
 	}
 	
 	/**
@@ -167,7 +161,7 @@ public class ExportCcAction extends AbstractAction {
 	}
 
 	/**
-	 * @see fr.asi.xsp.ccexport.AbstractAction#execute(String, IProgressMonitor)
+	 * @see fr.asi.xsp.ccexport.actions.AbstractAction#execute(String, IProgressMonitor)
 	 */
 	@Override
 	public void execute(String cc, IProgressMonitor monitor) {

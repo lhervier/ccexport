@@ -5,15 +5,19 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
@@ -29,6 +33,26 @@ public class Utils {
 	 * Le chemin vers les custom controls
 	 */
 	public final static IPath JAVA_FOLDER_PATH = new Path("Local");
+	
+	/**
+	 * Nom de la propriété qui contient le nom du projet dans lequel exporter
+	 */
+	public static final QualifiedName PROP_PROJECT_NAME = new QualifiedName("fr.asi.xsp.ccexport", "ProjectName");
+	
+	/**
+	 * Nom de la propriété qui contient le nom du répertoire source dans lequel exporter
+	 */
+	public static final QualifiedName PROP_SOURCE_FOLDER = new QualifiedName("fr.asi.xsp.ccexport", "SourceFolder");
+	
+	/**
+	 * Nom de la propriété qui contient le nom du package dans lequel exporter les classes java
+	 */
+	public static final QualifiedName PROP_CLASSES_PACKAGE = new QualifiedName("fr.asi.xsp.ccexport", "ClassesPackage");
+	
+	/**
+	 * Nom de la propriété qui contient le nom du package dans lequel exporter les xsp-config
+	 */
+	public static final QualifiedName PROP_XSPCONFIG_PACKAGE = new QualifiedName("fr.asi.xsp.ccexport", "XspConfigPackage");
 	
 	/**
 	 * Retourne un projet à partir de son nom
@@ -135,5 +159,32 @@ public class Utils {
 		IPath ccPath = CC_FOLDER_PATH.append(cc + ".xsp-config");
 		IFile ccFile = project.getFile(ccPath);
 		return ccFile.exists();
+	}
+	
+	/**
+	 * Enlève un builder d'un projet
+	 * @param project le projet
+	 * @param builderId l'id du builder
+	 * @throws CoreException en cas de pb
+	 */
+	public static void removeBuilderFromProject(IProject project, String builderId) throws CoreException {
+		if ((project == null) || (!project.exists()))
+			return;
+		
+		IProjectDescription desc = project.getDescription();
+		ICommand[] commands = desc.getBuildSpec();
+		ArrayList<ICommand> newCommands = new ArrayList<ICommand>();
+		boolean bFound = false;
+		for( int i = 0; i < commands.length; i++ ) {
+			if( builderId.equals(commands[i].getBuilderName()) )
+				bFound = true;
+			else
+				newCommands.add(commands[i]);
+		}
+		if( !bFound )
+			return;
+		ICommand[] newCommandArray = (ICommand[]) newCommands.toArray(new ICommand[0]);
+		desc.setBuildSpec(newCommandArray);
+		project.setDescription(desc, new NullProgressMonitor());
 	}
 }

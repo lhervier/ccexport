@@ -1,9 +1,13 @@
-package fr.asi.xsp.ccexport;
+package fr.asi.xsp.ccexport.actions;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
+
+import fr.asi.xsp.ccexport.Utils;
 
 public abstract class AbstractAction {
 
@@ -47,22 +51,16 @@ public abstract class AbstractAction {
 	/**
 	 * Constructeur
 	 * @param srcProject le projet Java source (celui de la base NSF)
-	 * @param destProject le projet Java de destination (la Library)
-	 * @param sourcesFolder le nom dossier contenant le code source dans le projet de destination 
-	 * @param javaPkg le nom du package dans lequel exporter la classe Java
-	 * @param xspConfigPkg le nom du package dans lequel exporter les fichiers xsp-config
+	 * @throws CoreException en cas de pb
 	 */
-	public AbstractAction(
-			IProject srcProject, 
-			IProject destProject, 
-			String sourcesFolder, 
-			String javaPkg, 
-			String xspConfigPkg) {
+	public AbstractAction(IProject srcProject) throws CoreException {
 		this.srcProject = srcProject;
-		this.destProject = destProject;
-		this.sourcesFolder = sourcesFolder;
-		this.javaPkg = javaPkg;
-		this.xspConfigPkg = xspConfigPkg;
+		this.destProject = ResourcesPlugin.getWorkspace().getRoot().getProject(
+				srcProject.getPersistentProperty(Utils.PROP_PROJECT_NAME)
+		); 
+		this.sourcesFolder = srcProject.getPersistentProperty(Utils.PROP_SOURCE_FOLDER);
+		this.javaPkg = srcProject.getPersistentProperty(Utils.PROP_CLASSES_PACKAGE);
+		this.xspConfigPkg = srcProject.getPersistentProperty(Utils.PROP_XSPCONFIG_PACKAGE);
 	}
 	
 	/**

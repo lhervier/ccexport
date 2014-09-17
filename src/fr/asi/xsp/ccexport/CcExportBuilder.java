@@ -20,6 +20,10 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.JavaCore;
 
+import fr.asi.xsp.ccexport.actions.AbstractAction;
+import fr.asi.xsp.ccexport.actions.ExportCcAction;
+import fr.asi.xsp.ccexport.actions.RemoveCcAction;
+
 /**
  * Une Builder capable d'exporter un Custom Control dans un
  * projet de type Library
@@ -29,44 +33,14 @@ import org.eclipse.jdt.core.JavaCore;
 public class CcExportBuilder extends IncrementalProjectBuilder {
 
 	/**
-	 * Le nom du projet vers lequel exporter
-	 */
-	private String destProjectName;
-	
-	/**
-	 * Le répertoire source dans lequel exporter
-	 */
-	private String srcFolder;
-	
-	/**
-	 * Le package dans lequel exporter les classes
-	 */
-	private String javaPkgName;
-	
-	/**
-	 * Le package dans lequel exporter les xsp-config
-	 */
-	private String xspConfigPkgName;
-	
-	// =======================================================================
-	
-	/**
-	 * Constructeur
-	 */
-	public CcExportBuilder() {
-		this.destProjectName = "fr.asi.xsp.test.library";
-		this.srcFolder = "src";
-		this.javaPkgName = "fr.asi.xsp.test.composants.xsp";
-		this.xspConfigPkgName = "fr.asi.xsp.test.composants.config";
-	}
-	
-	/**
 	 * Initialisation du builder
 	 * @param monitor le moniteur
 	 * @throws CoreException 
 	 */
 	public boolean initialize(IProgressMonitor monitor) throws CoreException {
-		IProject project = Utils.getProjectFromName(this.destProjectName);
+		IProject nsfProject = this.getProject();
+		
+		IProject project = Utils.getProjectFromName(nsfProject.getPersistentProperty(Utils.PROP_PROJECT_NAME));
 		
 		// Vérifie que le projet existe et est de nature java
 		if( !project.exists() )
@@ -80,10 +54,20 @@ public class CcExportBuilder extends IncrementalProjectBuilder {
 		
 		// Créé les deux packages
 		IJavaProject javaProject = JavaCore.create(project);
-		IPackageFragment javaPkg = Utils.createPackage(javaProject, new Path(this.srcFolder), this.javaPkgName, new NullProgressMonitor());
+		IPackageFragment javaPkg = Utils.createPackage(
+				javaProject, 
+				new Path(nsfProject.getPersistentProperty(Utils.PROP_SOURCE_FOLDER)), 
+				nsfProject.getPersistentProperty(Utils.PROP_CLASSES_PACKAGE), 
+				new NullProgressMonitor()
+		);
 		if( javaPkg == null )
 			return false;
-		IPackageFragment xspConfigPkg = Utils.createPackage(javaProject, new Path(this.srcFolder), this.xspConfigPkgName, new NullProgressMonitor());
+		IPackageFragment xspConfigPkg = Utils.createPackage(
+				javaProject, 
+				new Path(nsfProject.getPersistentProperty(Utils.PROP_SOURCE_FOLDER)), 
+				nsfProject.getPersistentProperty(Utils.PROP_XSPCONFIG_PACKAGE), 
+				new NullProgressMonitor()
+		);
 		if( xspConfigPkg == null )
 			return false;
 		
@@ -100,20 +84,9 @@ public class CcExportBuilder extends IncrementalProjectBuilder {
 			return null;
 		
 		// Les deux actions
-		final AbstractAction exportAction = new ExportCcAction(
-				this.getProject(),
-				ResourcesPlugin.getWorkspace().getRoot().getProject(this.destProjectName),
-				this.srcFolder,
-				this.javaPkgName,
-				this.xspConfigPkgName
-		);
-		final AbstractAction removeAction = new RemoveCcAction(
-				this.getProject(),
-				ResourcesPlugin.getWorkspace().getRoot().getProject(this.destProjectName),
-				this.srcFolder,
-				this.javaPkgName,
-				this.xspConfigPkgName
-		);
+		final IProject prj = this.getProject();
+		final AbstractAction exportAction = new ExportCcAction(prj);
+		final AbstractAction removeAction = new RemoveCcAction(prj);
 		
 		// Une Set qui contient les noms des CC déjà traités dans le build
 		final Set<String> processedCc = new HashSet<String>();
@@ -171,8 +144,16 @@ public class CcExportBuilder extends IncrementalProjectBuilder {
 					
 					// Cas où on supprime => On regarde si on trouve le .xsp-config dans le projet dest (qu'on n'a pas encore pu supprimer à ce niveau)
 					} else {
-						IPath xspConfigPath = new Path(CcExportBuilder.this.srcFolder).append(CcExportBuilder.this.xspConfigPkgName.replace('.', '/')).append(cc + ".xsp-config");
-						IFile xspConfigFile = ResourcesPlugin.getWorkspace().getRoot().getProject(CcExportBuilder.this.destProjectName).getFile(xspConfigPath);
+						String src;
+						String xspConfigPkg;
+						try {
+							src = prj.getPersistentProperty(Utils.PROP_SOURCE_FOLDER);
+							xspConfigPkg = prj.getPersistentProperty(Utils.PROP_XSPCONFIG_PACKAGE);
+						} catch(CoreException e) {
+							throw new RuntimeException(e);
+						}
+						IPath xspConfigPath = new Path(src).append(xspConfigPkg.replace('.', '/')).append(cc + ".xsp-config");
+						IFile xspConfigFile = removeAction.getDestProject().getFile(xspConfigPath);
 						if( !xspConfigFile.exists() )
 							cc = cc.substring(0, 1).toUpperCase() + cc.substring(1);		// Si on supprime une XPage, on ne trouvera ni sa classe, ni son xsp-config dans le projet de dest.
 					}

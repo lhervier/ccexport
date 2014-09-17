@@ -4,7 +4,7 @@
    <!--
        Notre Builder
    -->
-   <extension id="fr.asi.test.builder" point="org.eclipse.core.resources.builders">
+   <extension id="fr.asi.xsp.ccexport.builder" point="org.eclipse.core.resources.builders">
       <builder>
          <run class="fr.asi.xsp.ccexport.CcExportBuilder"/>
       </builder>
@@ -23,12 +23,15 @@
    </extension>
    
    <!--
-       La commande pour ajouter le builder
+       Les commandes utilisées par les menus et les handlers
    -->
    <extension point="org.eclipse.ui.commands">
        <command
-             id="fr.asi.test.addBuilder"
-             name="Ajouter le builder"/>
+             id="fr.asi.xsp.ccexport.command.setup"
+             name="Configure Synchro"/>
+       <command
+             id="fr.asi.xsp.ccexport.command.unsetup"
+             name="Deconfigure Synchro"/>
    </extension>
    
    <!--
@@ -37,8 +40,19 @@
    -->
    <extension point="org.eclipse.ui.handlers">
        <handler
-             class="fr.asi.xsp.ccexport.AddBuilderHandler"
-             commandId="fr.asi.test.addBuilder">
+             class="fr.asi.xsp.ccexport.handlers.SetupHandler"
+             commandId="fr.asi.xsp.ccexport.command.setup">
+          <!--
+          <activeWhen>
+             <with variable="selection">
+                <test property="fr.asi.test.isDominoProject"/>
+             </with>
+          </activeWhen>
+          -->
+       </handler>
+       <handler
+             class="fr.asi.xsp.ccexport.handlers.UnSetupHandler"
+             commandId="fr.asi.xsp.ccexport.command.unsetup">
           <!--
           <activeWhen>
              <with variable="selection">
@@ -55,12 +69,15 @@
     <extension point="org.eclipse.ui.menus">
        <menuContribution locationURI="popup:org.eclipse.jdt.ui.PackageExplorer?after=additions">
          <command
-               commandId="fr.asi.test.addBuilder"
-               label="Ajouter le builder"
+               commandId="fr.asi.xsp.ccexport.command.setup"
+               label="Configure Synchro"
+               mode="FORCE_TEXT"
+               style="push"/>
+         <command
+               commandId="fr.asi.xsp.ccexport.command.unsetup"
+               label="Deconfigure synchro"
                mode="FORCE_TEXT"
                style="push"/>
        </menuContribution>
-    </extension> 
-    
-	
+    </extension>
 </plugin>

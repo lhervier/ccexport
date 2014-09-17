@@ -1,4 +1,4 @@
-package fr.asi.xsp.ccexport;
+package fr.asi.xsp.ccexport.actions;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -8,23 +8,16 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 
+
 public class RemoveCcAction extends AbstractAction {
 
 	/**
 	 * Constructeur
 	 * @param srcProject
-	 * @param destProject
-	 * @param sourcesFolder
-	 * @param javaPkg
-	 * @param xspConfigPkg
+	 * @throws CoreException en cas de pb
 	 */
-	public RemoveCcAction(
-			IProject srcProject, 
-			IProject destProject,
-			String sourcesFolder, 
-			String javaPkg, 
-			String xspConfigPkg) {
-		super(srcProject, destProject, sourcesFolder, javaPkg, xspConfigPkg);
+	public RemoveCcAction(IProject srcProject) throws CoreException {
+		super(srcProject);
 	}
 
 	/**
@@ -60,7 +53,7 @@ public class RemoveCcAction extends AbstractAction {
 	}
 	
 	/**
-	 * @see fr.asi.xsp.ccexport.AbstractAction#execute(String, IProgressMonitor)
+	 * @see fr.asi.xsp.ccexport.actions.AbstractAction#execute(String, IProgressMonitor)
 	 */
 	@Override
 	public void execute(String cc, IProgressMonitor monitor) {
