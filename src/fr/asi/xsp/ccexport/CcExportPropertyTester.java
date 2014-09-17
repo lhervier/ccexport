@@ -24,33 +24,58 @@ public class CcExportPropertyTester extends PropertyTester {
 	 */
 	public final static String PROP_ISSETUP = "isSetup";
 	
+	/**
+	 * Pour savoir si la synchro n'est PAS en place
+	 */
+	public final static String PROP_ISUNSETUP = "isUnSetup";
+	
+	/**
+	 * @see org.eclipse.core.expressions.IPropertyTester#test(java.lang.Object, java.lang.String, java.lang.Object[], java.lang.Object)
+	 */
 	@Override
 	public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
-		if (property == null)
+		if (property == null) {
 			return false;
-		if( !(receiver instanceof IStructuredSelection) )
+		}
+		if( !(receiver instanceof IStructuredSelection) ) {
 			return false;
+		}
 		
 		IStructuredSelection selection = (IStructuredSelection) receiver;
-		if (selection.isEmpty())
+		if( selection.size() != 1 ) {
 			return false;
+		}
 		
 		Object obj = selection.getFirstElement();
-		if ( !(obj instanceof IAdaptable))
+		if ( !(obj instanceof IAdaptable)) {
 			return false;
+		}
 		IAdaptable adaptable = (IAdaptable) obj;
 		
 		IProject prj = (IProject) adaptable.getAdapter(IProject.class);
+		if( prj == null || !prj.isOpen() ) {
+			return false;
+		}
 		
 		if( PROP_ISDOMINOPROJECT.equals(property) ) {
-			return DominoResourcesPlugin.isDominoDesignerProject(prj);
+			boolean ret = DominoResourcesPlugin.isDominoDesignerProject(prj);
+			return ret;
 		} else if( PROP_ISSETUP.equals(property) ) {
 			try {
-				return null != prj.getPersistentProperty(Utils.PROP_PROJECT_NAME);
+				boolean ret = null != prj.getPersistentProperty(Utils.PROP_PROJECT_NAME);
+				return ret;
 			} catch (CoreException e) {
 				return false;
 			}
-		} else
+		} else if( PROP_ISUNSETUP.equals(property) ) {
+			try {
+				boolean ret = null == prj.getPersistentProperty(Utils.PROP_PROJECT_NAME);
+				return ret;
+			} catch (CoreException e) {
+				return false;
+			}
+		} else {
 			return false;
+		}
 	}
 }

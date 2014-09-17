@@ -1,5 +1,6 @@
 package fr.asi.xsp.ccexport.handlers;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import org.eclipse.core.commands.AbstractHandler;
@@ -8,10 +9,12 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectNature;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 import com.ibm.designer.domino.ide.resources.DominoResourcesPlugin;
 import com.ibm.designer.domino.ide.resources.util.NsfUtil;
@@ -48,23 +51,38 @@ public class SetupHandler extends AbstractHandler {
 		if (!DominoResourcesPlugin.isDominoDesignerProject(prj))
 			return null;
 		
+		final IProject project = prj;
+		WorkspaceModifyOperation operation = new WorkspaceModifyOperation() {
+
+			/**
+			 * @see org.eclipse.ui.actions.WorkspaceModifyOperation#execute(org.eclipse.core.runtime.IProgressMonitor)
+			 */
+			@Override
+			protected void execute(IProgressMonitor arg0) throws CoreException, InvocationTargetException, InterruptedException {
+				// Défini les propriétés
+				project.setPersistentProperty(Utils.PROP_PROJECT_NAME, "fr.asi.xsp.test.library");
+				project.setPersistentProperty(Utils.PROP_SOURCE_FOLDER, "src");
+				project.setPersistentProperty(Utils.PROP_CLASSES_PACKAGE, "fr.asi.xsp.test.composants.xsp");
+				project.setPersistentProperty(Utils.PROP_XSPCONFIG_PACKAGE, "fr.asi.xsp.test.composants.config");
+				
+				// Ajoute le builder au projet
+				NsfUtil.addBuilderToProject(project, "fr.asi.xsp.ccexport.builder");
+				
+				// Force une synchro
+				SyncAction action = new SyncAction(project);
+				action.execute(new NullProgressMonitor());
+				
+				// Rafraîchit le projet
+				project.refreshLocal(IProject.DEPTH_INFINITE, new NullProgressMonitor());
+			}
+		};
 		try {
-			// Défini les propriétés
-			prj.setPersistentProperty(Utils.PROP_PROJECT_NAME, "fr.asi.xsp.test.library");
-			prj.setPersistentProperty(Utils.PROP_SOURCE_FOLDER, "src");
-			prj.setPersistentProperty(Utils.PROP_CLASSES_PACKAGE, "fr.asi.xsp.test.composants.xsp");
-			prj.setPersistentProperty(Utils.PROP_XSPCONFIG_PACKAGE, "fr.asi.xsp.test.composants.config");
-			
-			// Ajoute le builder au projet
-			NsfUtil.addBuilderToProject(prj, "fr.asi.xsp.ccexport.builder");
-			
-			// Force une synchro
-			SyncAction action = new SyncAction(prj);
-			action.execute(new NullProgressMonitor());
-		} catch (CoreException e) {
+			PlatformUI.getWorkbench().getProgressService().run(true, false, operation);
+		} catch (InvocationTargetException e) {
+			throw new RuntimeException(e);
+		} catch (InterruptedException e) {
 			throw new RuntimeException(e);
 		}
-		
 		return null;
 	}
 }

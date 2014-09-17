@@ -18,7 +18,7 @@
              class="fr.asi.xsp.ccexport.CcExportPropertyTester"
              id="fr.asi.xsp.ccexport.CcExportPropertyTester"
              namespace="fr.asi.xsp.ccexport"
-             properties="isDominoProject,isSetup"
+             properties="isDominoProject,isSetup,isUnSetup"
              type="org.eclipse.jface.viewers.ISelection"/>
    </extension>
    
@@ -44,13 +44,31 @@
    <extension point="org.eclipse.ui.handlers">
        <handler
              class="fr.asi.xsp.ccexport.handlers.SetupHandler"
-             commandId="fr.asi.xsp.ccexport.command.setup"/>
+             commandId="fr.asi.xsp.ccexport.command.setup">
+          <activeWhen>
+             <with variable="selection">
+                <test property="fr.asi.xsp.ccexport.isUnSetup"/>
+             </with>
+          </activeWhen>
+       </handler>
        <handler
              class="fr.asi.xsp.ccexport.handlers.UnsetupHandler"
-             commandId="fr.asi.xsp.ccexport.command.unsetup"/>
+             commandId="fr.asi.xsp.ccexport.command.unsetup">
+          <activeWhen>
+             <with variable="selection">
+                <test property="fr.asi.xsp.ccexport.isSetup"/>
+             </with>
+          </activeWhen>
+       </handler>
        <handler
              class="fr.asi.xsp.ccexport.handlers.SyncHandler"
-             commandId="fr.asi.xsp.ccexport.command.sync"/>
+             commandId="fr.asi.xsp.ccexport.command.sync">
+          <activeWhen>
+             <with variable="selection">
+                <test property="fr.asi.xsp.ccexport.isSetup"/>
+             </with>
+          </activeWhen>
+       </handler>
     </extension>
 	
 	<!--
