@@ -27,7 +27,7 @@ import fr.asi.xsp.ccexport.Utils;
  * FIXME: Il ne sait pas gérer la traduction telle que gérée par les XPages avec les fichiers .properties.
  * @author Lionel HERVIER
  */
-public class ExportCcAction extends AbstractAction {
+public class ExportCcAction extends BaseCcAction {
 
 	/**
 	 * Constructeur
@@ -161,7 +161,7 @@ public class ExportCcAction extends AbstractAction {
 	}
 
 	/**
-	 * @see fr.asi.xsp.ccexport.actions.AbstractAction#execute(String, IProgressMonitor)
+	 * @see fr.asi.xsp.ccexport.actions.BaseCcAction#execute(String, IProgressMonitor)
 	 */
 	@Override
 	public void execute(String cc, IProgressMonitor monitor) {

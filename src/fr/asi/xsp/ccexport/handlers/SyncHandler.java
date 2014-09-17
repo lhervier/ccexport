@@ -13,17 +13,13 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.PlatformUI;
 
-import com.ibm.designer.domino.ide.resources.DominoResourcesPlugin;
-import com.ibm.designer.domino.ide.resources.util.NsfUtil;
-
-import fr.asi.xsp.ccexport.Utils;
 import fr.asi.xsp.ccexport.actions.SyncAction;
 
 /**
- * Handler pour associer le NSF à un projet de library
+ * Handler chargé de tout synchroniser 
  * @author Lionel HERVIER
  */
-public class SetupHandler extends AbstractHandler {
+public class SyncHandler extends AbstractHandler {
 
 	/**
 	 * @see org.eclipse.core.commands.AbstractHandler#execute(org.eclipse.core.commands.ExecutionEvent)
@@ -45,26 +41,15 @@ public class SetupHandler extends AbstractHandler {
 				break;
 			}
 		}
-		if (!DominoResourcesPlugin.isDominoDesignerProject(prj))
-			return null;
 		
 		try {
-			// Défini les propriétés
-			prj.setPersistentProperty(Utils.PROP_PROJECT_NAME, "fr.asi.xsp.test.library");
-			prj.setPersistentProperty(Utils.PROP_SOURCE_FOLDER, "src");
-			prj.setPersistentProperty(Utils.PROP_CLASSES_PACKAGE, "fr.asi.xsp.test.composants.xsp");
-			prj.setPersistentProperty(Utils.PROP_XSPCONFIG_PACKAGE, "fr.asi.xsp.test.composants.config");
-			
-			// Ajoute le builder au projet
-			NsfUtil.addBuilderToProject(prj, "fr.asi.xsp.ccexport.builder");
-			
-			// Force une synchro
 			SyncAction action = new SyncAction(prj);
 			action.execute(new NullProgressMonitor());
-		} catch (CoreException e) {
+		} catch(CoreException e) {
 			throw new RuntimeException(e);
 		}
 		
 		return null;
 	}
+
 }

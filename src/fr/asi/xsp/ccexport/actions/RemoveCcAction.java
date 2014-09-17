@@ -9,7 +9,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 
 
-public class RemoveCcAction extends AbstractAction {
+public class RemoveCcAction extends BaseCcAction {
 
 	/**
 	 * Constructeur
@@ -53,7 +53,7 @@ public class RemoveCcAction extends AbstractAction {
 	}
 	
 	/**
-	 * @see fr.asi.xsp.ccexport.actions.AbstractAction#execute(String, IProgressMonitor)
+	 * @see fr.asi.xsp.ccexport.actions.BaseCcAction#execute(String, IProgressMonitor)
 	 */
 	@Override
 	public void execute(String cc, IProgressMonitor monitor) {

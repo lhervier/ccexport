@@ -9,7 +9,7 @@ import org.eclipse.core.runtime.Path;
 
 import fr.asi.xsp.ccexport.Utils;
 
-public abstract class AbstractAction {
+public abstract class BaseCcAction {
 
 	/**
 	 * Le chemin vers les custom controls
@@ -53,7 +53,7 @@ public abstract class AbstractAction {
 	 * @param srcProject le projet Java source (celui de la base NSF)
 	 * @throws CoreException en cas de pb
 	 */
-	public AbstractAction(IProject srcProject) throws CoreException {
+	public BaseCcAction(IProject srcProject) throws CoreException {
 		this.srcProject = srcProject;
 		this.destProject = ResourcesPlugin.getWorkspace().getRoot().getProject(
 				srcProject.getPersistentProperty(Utils.PROP_PROJECT_NAME)

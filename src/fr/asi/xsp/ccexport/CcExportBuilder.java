@@ -16,13 +16,11 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.IPackageFragment;
-import org.eclipse.jdt.core.JavaCore;
 
-import fr.asi.xsp.ccexport.actions.AbstractAction;
+import fr.asi.xsp.ccexport.actions.BaseCcAction;
 import fr.asi.xsp.ccexport.actions.ExportCcAction;
 import fr.asi.xsp.ccexport.actions.RemoveCcAction;
+import fr.asi.xsp.ccexport.actions.SyncAction;
 
 /**
  * Une Builder capable d'exporter un Custom Control dans un
@@ -33,60 +31,40 @@ import fr.asi.xsp.ccexport.actions.RemoveCcAction;
 public class CcExportBuilder extends IncrementalProjectBuilder {
 
 	/**
-	 * Initialisation du builder
-	 * @param monitor le moniteur
-	 * @throws CoreException 
+	 * @see org.eclipse.core.resources.IncrementalProjectBuilder#startupOnInitialize()
 	 */
-	public boolean initialize(IProgressMonitor monitor) throws CoreException {
-		IProject nsfProject = this.getProject();
-		
-		IProject project = Utils.getProjectFromName(nsfProject.getPersistentProperty(Utils.PROP_PROJECT_NAME));
-		
-		// Vérifie que le projet existe et est de nature java
-		if( !project.exists() )
-			return false;
-		if( !Utils.isOfNature(project, JavaCore.NATURE_ID) )
-			return false;
-		
-		// Ouvre le projet si nécessaire
-		if( !project.isOpen() )
-			project.open(new NullProgressMonitor());
-		
-		// Créé les deux packages
-		IJavaProject javaProject = JavaCore.create(project);
-		IPackageFragment javaPkg = Utils.createPackage(
-				javaProject, 
-				new Path(nsfProject.getPersistentProperty(Utils.PROP_SOURCE_FOLDER)), 
-				nsfProject.getPersistentProperty(Utils.PROP_CLASSES_PACKAGE), 
-				new NullProgressMonitor()
-		);
-		if( javaPkg == null )
-			return false;
-		IPackageFragment xspConfigPkg = Utils.createPackage(
-				javaProject, 
-				new Path(nsfProject.getPersistentProperty(Utils.PROP_SOURCE_FOLDER)), 
-				nsfProject.getPersistentProperty(Utils.PROP_XSPCONFIG_PACKAGE), 
-				new NullProgressMonitor()
-		);
-		if( xspConfigPkg == null )
-			return false;
-		
-		return true;
+	@Override
+	protected void startupOnInitialize() {
+		try {
+			// Initialise l'objet
+			if( !Utils.initialize(this.getProject(), new NullProgressMonitor()) )
+				return;
+			
+			// Lance une synchro
+			SyncAction action = new SyncAction(this.getProject());
+			action.execute(new NullProgressMonitor());
+		} catch (CoreException e) {
+			throw new RuntimeException(e);
+		}
 	}
-	
+
 	/**
 	 * @see org.eclipse.core.resources.IncrementalProjectBuilder#build(int, java.util.Map, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
-	protected IProject[] build(int kind, Map args, final IProgressMonitor monitor) throws CoreException {
+	protected IProject[] build(
+			int kind, 
+			@SuppressWarnings("unchecked")
+			Map args, 
+			final IProgressMonitor monitor) throws CoreException {
 		// Initialise l'objet
-		if( !this.initialize(new NullProgressMonitor()) )
+		if( !Utils.initialize(this.getProject(), new NullProgressMonitor()) )
 			return null;
 		
 		// Les deux actions
 		final IProject prj = this.getProject();
-		final AbstractAction exportAction = new ExportCcAction(prj);
-		final AbstractAction removeAction = new RemoveCcAction(prj);
+		final BaseCcAction exportAction = new ExportCcAction(prj);
+		final BaseCcAction removeAction = new RemoveCcAction(prj);
 		
 		// Une Set qui contient les noms des CC déjà traités dans le build
 		final Set<String> processedCc = new HashSet<String>();

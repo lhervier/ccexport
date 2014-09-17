@@ -32,6 +32,9 @@
        <command
              id="fr.asi.xsp.ccexport.command.unsetup"
              name="Deconfigure Synchro"/>
+       <command
+             id="fr.asi.xsp.ccexport.command.sync"
+             name="Forcer la Synchro"/>
    </extension>
    
    <!--
@@ -51,8 +54,19 @@
           -->
        </handler>
        <handler
-             class="fr.asi.xsp.ccexport.handlers.UnSetupHandler"
+             class="fr.asi.xsp.ccexport.handlers.UnsetupHandler"
              commandId="fr.asi.xsp.ccexport.command.unsetup">
+          <!--
+          <activeWhen>
+             <with variable="selection">
+                <test property="fr.asi.test.isDominoProject"/>
+             </with>
+          </activeWhen>
+          -->
+       </handler>
+       <handler
+             class="fr.asi.xsp.ccexport.handlers.SyncHandler"
+             commandId="fr.asi.xsp.ccexport.command.sync">
           <!--
           <activeWhen>
              <with variable="selection">
@@ -76,6 +90,11 @@
          <command
                commandId="fr.asi.xsp.ccexport.command.unsetup"
                label="Deconfigure synchro"
+               mode="FORCE_TEXT"
+               style="push"/>
+         <command
+               commandId="fr.asi.xsp.ccexport.command.sync"
+               label="Forcer la Synchro"
                mode="FORCE_TEXT"
                style="push"/>
        </menuContribution>

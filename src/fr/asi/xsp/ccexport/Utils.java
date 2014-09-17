@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
+import org.eclipse.jdt.core.JavaCore;
 
 public class Utils {
 
@@ -187,4 +188,50 @@ public class Utils {
 		desc.setBuildSpec(newCommandArray);
 		project.setDescription(desc, new NullProgressMonitor());
 	}
+	
+	/**
+	 * Initialise le projet de destination
+	 * @param prj le projet source
+	 * @return true si c'est ok. False sinon.
+	 */
+	/**
+	 * Initialisation du builder
+	 * @param monitor le moniteur
+	 * @throws CoreException 
+	 */
+	public static boolean initialize(IProject nsfProject, IProgressMonitor monitor) throws CoreException {
+		IProject project = Utils.getProjectFromName(nsfProject.getPersistentProperty(Utils.PROP_PROJECT_NAME));
+		
+		// Vérifie que le projet existe et est de nature java
+		if( !project.exists() )
+			return false;
+		if( !Utils.isOfNature(project, JavaCore.NATURE_ID) )
+			return false;
+		
+		// Ouvre le projet si nécessaire
+		if( !project.isOpen() )
+			project.open(new NullProgressMonitor());
+		
+		// Créé les deux packages
+		IJavaProject javaProject = JavaCore.create(project);
+		IPackageFragment javaPkg = Utils.createPackage(
+				javaProject, 
+				new Path(nsfProject.getPersistentProperty(Utils.PROP_SOURCE_FOLDER)), 
+				nsfProject.getPersistentProperty(Utils.PROP_CLASSES_PACKAGE), 
+				new NullProgressMonitor()
+		);
+		if( javaPkg == null )
+			return false;
+		IPackageFragment xspConfigPkg = Utils.createPackage(
+				javaProject, 
+				new Path(nsfProject.getPersistentProperty(Utils.PROP_SOURCE_FOLDER)), 
+				nsfProject.getPersistentProperty(Utils.PROP_XSPCONFIG_PACKAGE), 
+				new NullProgressMonitor()
+		);
+		if( xspConfigPkg == null )
+			return false;
+		
+		return true;
+	}
+	
 }
