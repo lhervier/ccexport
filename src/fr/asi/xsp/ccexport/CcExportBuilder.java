@@ -26,7 +26,6 @@ import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
 
 public class CcExportBuilder extends IncrementalProjectBuilder {
 
@@ -306,12 +305,14 @@ public class CcExportBuilder extends IncrementalProjectBuilder {
 					// Suppression
 					} else if( kind == IResourceDelta.REMOVED ) {
 						try {
-							IJavaElement java = CcExportBuilder.this.destProject.findElement(CcExportBuilder.this.javaPkg.getPath().append(location.lastSegment()));
-							CcExportBuilder.this.destProject.getJavaModel().delete(new IJavaElement[] {java}, true, new NullProgressMonitor());
-						} catch (JavaModelException e) {
+							IPath javaPath = CcExportBuilder.this.srcFolderPath.append(CcExportBuilder.this.javaPkgName.replace('.', '/')).append(location.lastSegment());
+							IFile javaFile = CcExportBuilder.this.destProject.getProject().getFile(javaPath);
+							if( !javaFile.exists() )
+								return true;
+							javaFile.delete(true, new NullProgressMonitor());
+						} catch (CoreException e) {
 							throw new RuntimeException(e);
 						}
-						
 					}
 				}
 				return true;
