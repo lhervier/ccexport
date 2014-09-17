@@ -1,11 +1,5 @@
 package fr.asi.xsp.ccexport;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.UnsupportedEncodingException;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -22,25 +16,18 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.JavaCore;
 
+/**
+ * Une Builder capable d'exporter un Custom Control dans un
+ * projet de type Library
+ * FIXME: En l'état, ne changer que les propriétés d'un CC l'exporte 2 fois.
+ * @author Lionel HERVIER
+ */
 public class CcExportBuilder extends IncrementalProjectBuilder {
 
-	/**
-	 * Le chemin vers les custom controls
-	 */
-	private final static IPath CC_FOLDER_PATH = new Path("CustomControls");
-	
-	/**
-	 * Le chemin vers les custom controls
-	 */
-	private final static IPath XSP_FOLDER_PATH = new Path("Local/xsp");
-	
-	// ======================================================================
-	
 	/**
 	 * Le nom du projet vers lequel exporter
 	 */
@@ -49,7 +36,7 @@ public class CcExportBuilder extends IncrementalProjectBuilder {
 	/**
 	 * Le répertoire source dans lequel exporter
 	 */
-	private IPath srcFolderPath;
+	private String srcFolder;
 	
 	/**
 	 * Le package dans lequel exporter les classes
@@ -64,74 +51,41 @@ public class CcExportBuilder extends IncrementalProjectBuilder {
 	// =======================================================================
 	
 	/**
-	 * Le projet Java source
-	 */
-	private IJavaProject srcProject;
-	
-	/**
-	 * Le projet Java de destination
-	 */
-	private IJavaProject destProject;
-	
-	/**
-	 * Le package dans lequel exporter les classes Java
-	 */
-	private IPackageFragment javaPkg;
-	
-	/**
-	 * Le package dans lequel exporter les xsp-config
-	 */
-	private IPackageFragment xspConfigPkg;
-	
-	/**
-	 * La liste des noms de xsp-config qui ont déjà été traités
-	 */
-	private Set<String> processedXspConfig;
-	
-	/**
-	 * La liste des noms de custom controls qui ont déjà été traitées
-	 */
-	private Set<String> processedCc;
-	
-	/**
 	 * Constructeur
 	 */
 	public CcExportBuilder() {
 		this.destProjectName = "fr.asi.xsp.test.library";
-		this.srcFolderPath = new Path("src");
+		this.srcFolder = "src";
 		this.javaPkgName = "fr.asi.xsp.test.composants.xsp";
 		this.xspConfigPkgName = "fr.asi.xsp.test.composants.config";
 	}
 	
 	/**
 	 * Initialisation du builder
+	 * @param monitor le moniteur
 	 * @throws CoreException 
 	 */
-	public boolean initialize() throws CoreException {
-		// Récupère le projet de destination sous la forme d'un projet Java
-		IProject _destProject = Utils.getProjectFromName(this.destProjectName);
-		if( !_destProject.exists() )
+	public boolean initialize(IProgressMonitor monitor) throws CoreException {
+		IProject project = Utils.getProjectFromName(this.destProjectName);
+		
+		// Vérifie que le projet existe et est de nature java
+		if( !project.exists() )
 			return false;
-		if( !Utils.isOfNature(_destProject, JavaCore.NATURE_ID) )
+		if( !Utils.isOfNature(project, JavaCore.NATURE_ID) )
 			return false;
-		if( !_destProject.isOpen() )
-			_destProject.open(new NullProgressMonitor());
-		this.destProject = JavaCore.create(_destProject);
+		
+		// Ouvre le projet si nécessaire
+		if( !project.isOpen() )
+			project.open(new NullProgressMonitor());
 		
 		// Créé les deux packages
-		this.javaPkg = Utils.createPackage(destProject, this.srcFolderPath, this.javaPkgName, new NullProgressMonitor());
-		if( this.javaPkg == null )
+		IJavaProject javaProject = JavaCore.create(project);
+		IPackageFragment javaPkg = Utils.createPackage(javaProject, new Path(this.srcFolder), this.javaPkgName, new NullProgressMonitor());
+		if( javaPkg == null )
 			return false;
-		this.xspConfigPkg = Utils.createPackage(destProject, this.srcFolderPath, this.xspConfigPkgName, new NullProgressMonitor());
-		if( this.xspConfigPkg == null )
+		IPackageFragment xspConfigPkg = Utils.createPackage(javaProject, new Path(this.srcFolder), this.xspConfigPkgName, new NullProgressMonitor());
+		if( xspConfigPkg == null )
 			return false;
-		
-		// Récupère le projet courant sous la forme d'un projet Java
-		this.srcProject = JavaCore.create(this.getProject());
-		
-		// Une Set qui contient les noms des CC déjà traités
-		this.processedXspConfig = new HashSet<String>();
-		this.processedCc = new HashSet<String>();
 		
 		return true;
 	}
@@ -142,8 +96,27 @@ public class CcExportBuilder extends IncrementalProjectBuilder {
 	@Override
 	protected IProject[] build(int kind, Map args, final IProgressMonitor monitor) throws CoreException {
 		// Initialise l'objet
-		if( !this.initialize() )
+		if( !this.initialize(new NullProgressMonitor()) )
 			return null;
+		
+		// Les deux actions
+		final AbstractAction exportAction = new ExportCcAction(
+				this.getProject(),
+				ResourcesPlugin.getWorkspace().getRoot().getProject(this.destProjectName),
+				this.srcFolder,
+				this.javaPkgName,
+				this.xspConfigPkgName
+		);
+		final AbstractAction removeAction = new RemoveCcAction(
+				this.getProject(),
+				ResourcesPlugin.getWorkspace().getRoot().getProject(this.destProjectName),
+				this.srcFolder,
+				this.javaPkgName,
+				this.xspConfigPkgName
+		);
+		
+		// Une Set qui contient les noms des CC déjà traités dans le build
+		final Set<String> processedCc = new HashSet<String>();
 		
 		// Parcours le delta
 		IResourceDelta delta = this.getDelta(this.getProject());
@@ -161,160 +134,61 @@ public class CcExportBuilder extends IncrementalProjectBuilder {
 				if (currResource.getType() != IResource.FILE)
 					return true;
 				
+				// Est ce qu'on exporte ? Et est ce qu'on supprime ?
+				boolean exporting = kind == IResourceDelta.ADDED || kind == IResourceDelta.CHANGED;
+				
 				// Récupère la ressource a builder
 				IFile file = (IFile) currResource;
 				IPath location = file.getProjectRelativePath();
 				
-				// ======================================================================================================
-				// Exporte le xsp-config: 
-				// Comme on reporte le contenu du xsp dans le xsp-config, on réagit au changement de l'un ou de l'autre
-				// ======================================================================================================
-				if( CcExportBuilder.CC_FOLDER_PATH.isPrefixOf(location) ) {
-					
-					String xspConfig = Utils.getFileNameWithoutExtension(location.lastSegment()) + ".xsp-config";
-					if( CcExportBuilder.this.processedXspConfig.contains(xspConfig) )
-						return true;
-					CcExportBuilder.this.processedXspConfig.add(xspConfig);
-					
-					IPath xspConfigDest = CcExportBuilder.this.xspConfigPkg.getResource().getProjectRelativePath().append(xspConfig);
-					
-					// Ajout ou modification
-					if( kind == IResourceDelta.ADDED || kind == IResourceDelta.CHANGED ) {
-						InputStream in = null;
-						Reader reader = null;
-						
-						// On copie le xsp-config
-						try {
-							IFile xspConfigSrc = CcExportBuilder.this.srcProject.getProject().getFile(CC_FOLDER_PATH.append(xspConfig));
-							IFile dest = CcExportBuilder.this.destProject.getProject().getFile(xspConfigDest);
-							if( dest.exists() )
-								dest.delete(true, new NullProgressMonitor());
-							
-							// Copie le xsp-config
-							xspConfigSrc.copy(
-									dest.getFullPath(), 
-									true, 
-									new NullProgressMonitor()
-							);
-							
-							// Et on l'adapte
-							in = dest.getContents();
-							reader = new InputStreamReader(in, dest.getCharset());
-							char[] buffer = new char[4 * 1024];
-							StringBuffer sb = new StringBuffer();
-							int read = reader.read(buffer);
-							while( read != -1 ) {
-								sb.append(buffer, 0, read);
-								read = reader.read(buffer);
-							}
-							String s = sb.toString();
-							
-							s = s.replaceAll(
-									"<composite-file>/(.*).xsp</composite-file>", 
-									"<composite-file>/" + CcExportBuilder.this.javaPkgName.replace('.', '/') + "/$1</composite-file>"
-							);
-							InputStream updatedIn = new ByteArrayInputStream(s.getBytes(dest.getCharset()));
-							dest.setContents(updatedIn, true, false, new NullProgressMonitor());
-							
-						} catch (CoreException e) {
-							throw new RuntimeException(e);
-						} catch (UnsupportedEncodingException e) {
-							throw new RuntimeException(e);
-						} catch (IOException e) {
-							throw new RuntimeException(e);
-						} finally {
-							Utils.closeQuietly(reader);
-							Utils.closeQuietly(in);
-						}
-					
-					// Suppression
-					} else if( kind == IResourceDelta.REMOVED ) {
-						try {
-							IFile dest = CcExportBuilder.this.destProject.getProject().getFile(xspConfigDest);
-							if( dest.exists() )
-								dest.delete(true, new NullProgressMonitor());
-						} catch (CoreException e) {
-							throw new RuntimeException(e);
-						}
-					}
+				// On ne s'intéresse qu'aux ressources qui sont dans le rep "CustomControls", ou dans le package "xsp" du rep source "Local"
+				if( !Utils.CC_FOLDER_PATH.isPrefixOf(location) && !Utils.JAVA_FOLDER_PATH.append("xsp").isPrefixOf(location) )
+					return true;
 				
-				// Exporte une classe Java:
-				// On ne réagit surtout pas à la modif du XSP car le fichier java peut ne pas exister
-				// ===================================================================================
-				} else if( CcExportBuilder.XSP_FOLDER_PATH.isPrefixOf(location) ) {
+				// On ne s'intéresse qu'aux fichiers java et xsp-config
+				String ext = location.getFileExtension();
+				if( !"xsp-config".equals(ext) && !"java".equals(ext) )
+					return true;
+				
+				// Le nom du Custom Control qu'on exporte : On peut le déduire à partir du fichier (que ce soit un .java, .xsp-config ou .xsp)
+				String cc = Utils.getFileNameWithoutExtension(location.lastSegment());
+				if( "java".equals(location.getFileExtension()) ) {
+					// Sanity check
+					String first = cc.substring(0, 1);
+					if( !first.equals(first.toUpperCase()) )
+						throw new RuntimeException("La classe: " + location + " vient d'être modifiée. Or, son nom ne commence pas par une Majuscule !!");
 					
-					String cc = Utils.getFileNameWithoutExtension(location.lastSegment()) + ".xsp";
-					if( CcExportBuilder.this.processedCc.contains(cc) )
-						return true;
-					CcExportBuilder.this.processedCc.add(cc);
+					// Habituellement, les noms de cc commencent par une minuscule. Alors on tente en premier...
+					cc = cc.substring(0, 1).toLowerCase() + cc.substring(1);
 					
-					// Ajout ou modification
-					if( kind == IResourceDelta.ADDED || kind == IResourceDelta.CHANGED ) {
-						
-						// Vérifie qu'il correspond à un custom control (et pas à une XPage)
-						IFile min = CcExportBuilder.this.srcProject.getProject().getFile(CC_FOLDER_PATH.append(cc.substring(0, 1).toLowerCase() + cc.substring(1)));
-						IFile maj = CcExportBuilder.this.srcProject.getProject().getFile(CC_FOLDER_PATH.append(cc.substring(0, 1).toUpperCase() + cc.substring(1)));
-						if( !min.exists() && maj.exists() )
-							return true;
-						
-						InputStream in = null;
-						Reader reader = null;
-						try {
-							// Copie la classe
-							IPath javaSrcPath = new Path("xsp").append(location.lastSegment());
-							IJavaElement javaSrc = CcExportBuilder.this.srcProject.findElement(javaSrcPath);
-							CcExportBuilder.this.srcProject.getJavaModel().copy(
-									new IJavaElement[] {javaSrc}, 
-									new IJavaElement[] {CcExportBuilder.this.javaPkg}, 
-									null, 
-									null, 
-									true, 
-									new NullProgressMonitor()
-							);
-							
-							// Adapte la classe
-							IPath javaDestPath = CcExportBuilder.this.javaPkg.getResource().getProjectRelativePath().append(location.lastSegment());
-							IFile javaDest = CcExportBuilder.this.destProject.getProject().getFile(javaDestPath);
-							
-							in = javaDest.getContents();
-							reader = new InputStreamReader(in, javaDest.getCharset());
-							char[] buffer = new char[4 * 1024];
-							StringBuffer sb = new StringBuffer();
-							int read = reader.read(buffer);
-							while( read != -1 ) {
-								sb.append(buffer, 0, read);
-								read = reader.read(buffer);
-							}
-							String s = sb.toString();
-							s = s.replaceAll("\"/(.*).xsp\"", "\"/" + CcExportBuilder.this.javaPkgName.replace('.', '/') + "/$1\"");
-							
-							InputStream updatedIn = new ByteArrayInputStream(s.getBytes(javaDest.getCharset()));
-							javaDest.setContents(updatedIn, true, false, new NullProgressMonitor());
-							
-						} catch (CoreException e) {
-							throw new RuntimeException(e);
-						} catch (UnsupportedEncodingException e) {
-							throw new RuntimeException(e);
-						} catch (IOException e) {
-							throw new RuntimeException(e);
-						} finally {
-							Utils.closeQuietly(reader);
-							Utils.closeQuietly(in);
+					// Cas où on exporte => On regarde si on trouve le .xsp dans le projet source
+					if( exporting ) {
+						if( !Utils.ccExists(CcExportBuilder.this.getProject(), cc) ) {
+							cc = cc.substring(0, 1).toUpperCase() + cc.substring(1);	// Sinon, on tente avec une majuscule
+							if( !Utils.ccExists(CcExportBuilder.this.getProject(), cc) )
+								return true;											// On doit être face au .java d'une XPage
 						}
 					
-					// Suppression
-					} else if( kind == IResourceDelta.REMOVED ) {
-						try {
-							IPath javaPath = CcExportBuilder.this.srcFolderPath.append(CcExportBuilder.this.javaPkgName.replace('.', '/')).append(location.lastSegment());
-							IFile javaFile = CcExportBuilder.this.destProject.getProject().getFile(javaPath);
-							if( !javaFile.exists() )
-								return true;
-							javaFile.delete(true, new NullProgressMonitor());
-						} catch (CoreException e) {
-							throw new RuntimeException(e);
-						}
+					// Cas où on supprime => On regarde si on trouve le .xsp-config dans le projet dest (qu'on n'a pas encore pu supprimer à ce niveau)
+					} else {
+						IPath xspConfigPath = new Path(CcExportBuilder.this.srcFolder).append(CcExportBuilder.this.xspConfigPkgName.replace('.', '/')).append(cc + ".xsp-config");
+						IFile xspConfigFile = ResourcesPlugin.getWorkspace().getRoot().getProject(CcExportBuilder.this.destProjectName).getFile(xspConfigPath);
+						if( !xspConfigFile.exists() )
+							cc = cc.substring(0, 1).toUpperCase() + cc.substring(1);		// Si on supprime une XPage, on ne trouvera ni sa classe, ni son xsp-config dans le projet de dest.
 					}
 				}
+				
+				// On l'a peut être déjà traité pendant ce build
+				if( processedCc.contains(cc) )
+					return true;
+				processedCc.add(cc);
+				
+				// Exécute l'action
+				if( exporting )
+					exportAction.execute(cc, new NullProgressMonitor());
+				else
+					removeAction.execute(cc, new NullProgressMonitor());
+				
 				return true;
 			}
 		});
