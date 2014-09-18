@@ -66,7 +66,7 @@ public class UnsetupHandler extends AbstractHandler {
 				project.setPersistentProperty(Constants.PROP_XSPCONFIG_FILE, null);
 				
 				// Ajoute le builder au projet
-				IProjectUtils.removeBuilderFromProject(project, "fr.asi.xsp.ccexport.builder");
+				IProjectUtils.removeBuilderFromProject(project, Constants.BUILDER_ID);
 				
 				// Rafraîchit le projet
 				project.refreshLocal(IProject.DEPTH_INFINITE, new NullProgressMonitor());

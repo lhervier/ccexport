@@ -68,7 +68,7 @@ public class SetupHandler extends AbstractHandler {
 				project.setPersistentProperty(Constants.PROP_XSPCONFIG_FILE, "xsp-config.list");
 				
 				// Ajoute le builder au projet
-				IProjectUtils.addBuilderToProject(project, "fr.asi.xsp.ccexport.builder", new NullProgressMonitor());
+				IProjectUtils.addBuilderToProject(project, Constants.BUILDER_ID, new NullProgressMonitor());
 				
 				// Initialise le projet de destination
 				if( !Utils.initializeLink(project, new NullProgressMonitor()) )

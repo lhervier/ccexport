@@ -9,6 +9,13 @@ import org.eclipse.core.runtime.QualifiedName;
 public class Constants {
 
 	/**
+	 * L'id de notre builder
+	 */
+	public final static String BUILDER_ID = "fr.asi.xsp.ccexport.builder";
+	
+	// ==========================================================
+	
+	/**
 	 * Le chemin vers les custom controls
 	 */
 	public final static IPath CC_FOLDER_PATH = new Path("CustomControls");
