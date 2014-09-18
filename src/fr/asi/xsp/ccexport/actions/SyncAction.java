@@ -69,7 +69,7 @@ public class SyncAction {
 		// Supprime ceux qui n'existent plus
 		final BaseCcAction removeAction = new RemoveCcAction(this.project);
 		IPath xspConfigPath = Constants.getProp_sourceFolder(this.project)
-				.append(Constants.getProp_xspConfigPackage(this.project).replace('.', '/'));
+				.append(Constants.getProp_xspConfigPath(this.project));
 		IFolder xspConfigFolder = removeAction.getDestProject().getFolder(xspConfigPath);
 		xspConfigFolder.accept(new IResourceVisitor() {
 			@Override

@@ -29,7 +29,7 @@ public class RemoveCcAction extends BaseCcAction {
 	public void removeXspConfig(String xspConfig, IProgressMonitor monitor) throws CoreException {
 		// Le chemin vers le .xsp-config dans le projet de destination
 		IPath xspConfigDest = Constants.getProp_sourceFolder(this.getSrcProject())
-				.append(Constants.getProp_xspConfigPackage(this.getSrcProject()).replace('.', '/'))
+				.append(Constants.getProp_xspConfigPath(this.getSrcProject()))
 				.append(xspConfig);
 		IFile xspConfigFile = this.getDestProject().getFile(xspConfigDest);
 		
@@ -49,7 +49,7 @@ public class RemoveCcAction extends BaseCcAction {
 	public void removeJava(String classFile, IProgressMonitor monitor) throws CoreException {
 		// Le chemin vers le fichier .java
 		IPath javaPath = Constants.getProp_sourceFolder(this.getSrcProject())
-				.append(Constants.getProp_classesPackage(this.getSrcProject()).replace('.', '/'))
+				.append(Constants.getProp_classesPath(this.getSrcProject()))
 				.append(classFile);
 		IFile java = this.getDestProject().getFile(javaPath);
 		if( java.exists() )

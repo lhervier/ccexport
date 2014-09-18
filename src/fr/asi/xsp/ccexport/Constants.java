@@ -94,6 +94,19 @@ public class Constants {
 	}
 	
 	/**
+	 * Retourne le chemin vers le package dans lequel exporter les fichiers java
+	 * @param prj le projet
+	 * @return le chemin vers le package
+	 */
+	public static IPath getProp_classesPath(IProject project) {
+		try {
+			return new Path(project.getPersistentProperty(Constants.PROP_CLASSES_PACKAGE).replace('.', '/'));
+		} catch (CoreException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	/**
 	 * Retourne le nom du package dans lequel exporter les xsp-config
 	 * @param prj le projet
 	 * @return le nom du projet dans lequel exporter
@@ -101,6 +114,19 @@ public class Constants {
 	public static String getProp_xspConfigPackage(IProject project) {
 		try {
 			return project.getPersistentProperty(Constants.PROP_XSPCONFIG_PACKAGE);
+		} catch (CoreException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	/**
+	 * Retourne le chemin du package dans lequel exporter les xsp-config
+	 * @param prj le projet
+	 * @return le nom du projet dans lequel exporter
+	 */
+	public static IPath getProp_xspConfigPath(IProject project) {
+		try {
+			return new Path(project.getPersistentProperty(Constants.PROP_XSPCONFIG_PACKAGE).replace('.', '/'));
 		} catch (CoreException e) {
 			throw new RuntimeException(e);
 		}

@@ -122,9 +122,9 @@ public class CcExportBuilder extends IncrementalProjectBuilder {
 					
 					// Cas où on supprime => On regarde si on trouve le .xsp-config dans le projet dest (qu'on n'a pas encore pu supprimer à ce niveau)
 					} else {
-						IPath src = Constants.getProp_sourceFolder(prj);
-						String xspConfigPkg = Constants.getProp_xspConfigPackage(prj);
-						IPath xspConfigPath = src.append(xspConfigPkg.replace('.', '/')).append(cc + ".xsp-config");
+						IPath xspConfigPath = Constants.getProp_sourceFolder(prj)
+								.append(Constants.getProp_xspConfigPath(prj))
+								.append(cc + ".xsp-config");
 						IFile xspConfigFile = removeAction.getDestProject().getFile(xspConfigPath);
 						if( !xspConfigFile.exists() )
 							cc = cc.substring(0, 1).toUpperCase() + cc.substring(1);		// Si on supprime une XPage, on ne trouvera ni sa classe, ni son xsp-config dans le projet de dest.

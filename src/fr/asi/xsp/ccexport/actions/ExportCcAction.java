@@ -54,7 +54,7 @@ public class ExportCcAction extends BaseCcAction {
 			
 			// Le xsp-config de destination
 			IPath destXspConfigPath = Constants.getProp_sourceFolder(this.getSrcProject())
-					.append(Constants.getProp_xspConfigPackage(this.getSrcProject()).replace('.', '/'))
+					.append(Constants.getProp_xspConfigPath(this.getSrcProject()))
 					.append(xspConfig);
 			IFile destXspConfig = this.getDestProject().getFile(destXspConfigPath);
 			
@@ -83,7 +83,7 @@ public class ExportCcAction extends BaseCcAction {
 			
 			s = s.replaceAll(
 					"<composite-file>/(.*).xsp</composite-file>", 
-					"<composite-file>/" + Constants.getProp_classesPackage(this.getSrcProject()).replace('.', '/') + "/$1</composite-file>"
+					"<composite-file>/" + Constants.getProp_classesPath(this.getSrcProject()) + "/$1</composite-file>"
 			);
 			InputStream updatedIn = new ByteArrayInputStream(s.getBytes(destXspConfig.getCharset()));
 			destXspConfig.setContents(updatedIn, true, false, new NullProgressMonitor());
