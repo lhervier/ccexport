@@ -38,7 +38,7 @@ public class CcExportBuilder extends IncrementalProjectBuilder {
 	protected void startupOnInitialize() {
 		try {
 			// Initialise l'objet
-			if( !Utils.initialize(this.getProject(), new NullProgressMonitor()) )
+			if( !Utils.initializeLink(this.getProject(), new NullProgressMonitor()) )
 				return;
 			
 			// Lance une synchro
@@ -59,7 +59,7 @@ public class CcExportBuilder extends IncrementalProjectBuilder {
 			Map args, 
 			final IProgressMonitor monitor) throws CoreException {
 		// Initialise l'objet
-		if( !Utils.initialize(this.getProject(), new NullProgressMonitor()) )
+		if( !Utils.initializeLink(this.getProject(), new NullProgressMonitor()) )
 			return null;
 		
 		// Les deux actions

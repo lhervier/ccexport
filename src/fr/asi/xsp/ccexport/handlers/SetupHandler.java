@@ -71,7 +71,7 @@ public class SetupHandler extends AbstractHandler {
 				IProjectUtils.addBuilderToProject(project, "fr.asi.xsp.ccexport.builder", new NullProgressMonitor());
 				
 				// Initialise le projet de destination
-				if( !Utils.initialize(project, new NullProgressMonitor()) )
+				if( !Utils.initializeLink(project, new NullProgressMonitor()) )
 					return;
 				
 				// Force une synchro

@@ -61,7 +61,7 @@ public class Utils {
 	 * @param prj le projet source
 	 * @return true si c'est ok. False sinon.
 	 */
-	public static boolean initialize(IProject nsfProject, IProgressMonitor monitor) throws CoreException {
+	public static boolean initializeLink(IProject nsfProject, IProgressMonitor monitor) throws CoreException {
 		IProject project = IProjectUtils.getProjectFromName(Constants.getProp_projectName(nsfProject));
 		
 		// Vérifie que le projet existe et est de nature java
