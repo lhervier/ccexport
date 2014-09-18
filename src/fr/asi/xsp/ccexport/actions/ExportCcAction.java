@@ -54,7 +54,9 @@ public class ExportCcAction extends BaseCcAction {
 			IFile srcXspConfig = this.getSrcProject().getFile(srcXspConfigPath);
 			
 			// Le xsp-config de destination
-			IPath destXspConfigPath = new Path(this.getSourcesFolder()).append(this.getXspConfigPkg().replace('.', '/')).append(xspConfig);
+			IPath destXspConfigPath = new Path(Utils.getSourceFolder(this.getSrcProject()))
+					.append(Utils.getXspConfigPackage(this.getSrcProject()).replace('.', '/'))
+					.append(xspConfig);
 			IFile destXspConfig = this.getDestProject().getFile(destXspConfigPath);
 			
 			// Supprime fichier s'il existe dans la destination
@@ -82,7 +84,7 @@ public class ExportCcAction extends BaseCcAction {
 			
 			s = s.replaceAll(
 					"<composite-file>/(.*).xsp</composite-file>", 
-					"<composite-file>/" + this.getJavaPkg().replace('.', '/') + "/$1</composite-file>"
+					"<composite-file>/" + Utils.getClassesPackage(this.getSrcProject()).replace('.', '/') + "/$1</composite-file>"
 			);
 			InputStream updatedIn = new ByteArrayInputStream(s.getBytes(destXspConfig.getCharset()));
 			destXspConfig.setContents(updatedIn, true, false, new NullProgressMonitor());
@@ -114,10 +116,10 @@ public class ExportCcAction extends BaseCcAction {
 			IJavaElement javaSrc = src.findElement(javaSrcPath);
 			
 			// Le package de destination (sous la forme d'un vrai package, pas d'un IFolder)
-			IPath sourcesFolderPath = new Path(this.getSourcesFolder());
+			IPath sourcesFolderPath = new Path(Utils.getSourceFolder(this.getSrcProject()));
 			IFolder sourcesFolder = this.getDestProject().getFolder(sourcesFolderPath);
 			IPackageFragmentRoot packageRoot = dest.getPackageFragmentRoot(sourcesFolder);
-			IPackageFragment destPackage = packageRoot.getPackageFragment(this.getJavaPkg());
+			IPackageFragment destPackage = packageRoot.getPackageFragment(Utils.getClassesPackage(this.getSrcProject()));
 			
 			// Copie la classe
 			// Passer par un IJavaElement permet d'adapter le package déclaré dans la classe
@@ -145,7 +147,7 @@ public class ExportCcAction extends BaseCcAction {
 				read = reader.read(buffer);
 			}
 			String s = sb.toString();
-			s = s.replaceAll("\"/(.*).xsp\"", "\"/" + this.getJavaPkg().replace('.', '/') + "/$1\"");
+			s = s.replaceAll("\"/(.*).xsp\"", "\"/" + Utils.getClassesPackage(this.getSrcProject()).replace('.', '/') + "/$1\"");
 			
 			InputStream updatedIn = new ByteArrayInputStream(s.getBytes(javaDest.getCharset()));
 			javaDest.setContents(updatedIn, true, false, new NullProgressMonitor());

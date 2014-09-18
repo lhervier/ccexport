@@ -8,6 +8,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 
+import fr.asi.xsp.ccexport.Utils;
+
 
 public class RemoveCcAction extends BaseCcAction {
 
@@ -28,7 +30,9 @@ public class RemoveCcAction extends BaseCcAction {
 	 */
 	public void removeXspConfig(String xspConfig, IProgressMonitor monitor) throws CoreException {
 		// Le chemin vers le .xsp-config dans le projet de destination
-		IPath xspConfigDest = new Path(this.getSourcesFolder()).append(this.getXspConfigPkg().replace('.', '/')).append(xspConfig);
+		IPath xspConfigDest = new Path(Utils.getSourceFolder(this.getSrcProject()))
+				.append(Utils.getXspConfigPackage(this.getSrcProject()).replace('.', '/'))
+				.append(xspConfig);
 		IFile xspConfigFile = this.getDestProject().getFile(xspConfigDest);
 		
 		// Supprime fichier
@@ -46,7 +50,9 @@ public class RemoveCcAction extends BaseCcAction {
 	 */
 	public void removeJava(String classFile, IProgressMonitor monitor) throws CoreException {
 		// Le chemin vers le fichier .java
-		IPath javaPath = new Path(this.getSourcesFolder()).append(this.getJavaPkg().replace('.', '/')).append(classFile);
+		IPath javaPath = new Path(Utils.getSourceFolder(this.getSrcProject()))
+				.append(Utils.getClassesPackage(this.getSrcProject()).replace('.', '/'))
+				.append(classFile);
 		IFile java = this.getDestProject().getFile(javaPath);
 		if( java.exists() )
 			java.delete(true, new NullProgressMonitor());
