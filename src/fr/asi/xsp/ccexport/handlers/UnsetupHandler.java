@@ -18,6 +18,7 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 import com.ibm.designer.domino.ide.resources.DominoResourcesPlugin;
 
+import fr.asi.xsp.ccexport.Constants;
 import fr.asi.xsp.ccexport.Utils;
 
 /**
@@ -58,11 +59,11 @@ public class UnsetupHandler extends AbstractHandler {
 			@Override
 			protected void execute(IProgressMonitor arg0) throws CoreException, InvocationTargetException, InterruptedException {
 				// Supprime les propriétés
-				project.setPersistentProperty(Utils.PROP_PROJECT_NAME, null);
-				project.setPersistentProperty(Utils.PROP_SOURCE_FOLDER, null);
-				project.setPersistentProperty(Utils.PROP_CLASSES_PACKAGE, null);
-				project.setPersistentProperty(Utils.PROP_XSPCONFIG_PACKAGE, null);
-				project.setPersistentProperty(Utils.PROP_XSPCONFIG_FILE, null);
+				project.setPersistentProperty(Constants.PROP_PROJECT_NAME, null);
+				project.setPersistentProperty(Constants.PROP_SOURCE_FOLDER, null);
+				project.setPersistentProperty(Constants.PROP_CLASSES_PACKAGE, null);
+				project.setPersistentProperty(Constants.PROP_XSPCONFIG_PACKAGE, null);
+				project.setPersistentProperty(Constants.PROP_XSPCONFIG_FILE, null);
 				
 				// Ajoute le builder au projet
 				Utils.removeBuilderFromProject(project, "fr.asi.xsp.ccexport.builder");

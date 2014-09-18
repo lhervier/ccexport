@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 
+import fr.asi.xsp.ccexport.Constants;
 import fr.asi.xsp.ccexport.Utils;
 
 /**
@@ -52,7 +53,7 @@ public class SyncAction {
 			
 			// Exporte les Custom Control qui existent
 			final BaseCcAction exportAction = new ExportCcAction(this.project);
-			IFolder ccFolder = this.project.getFolder(Utils.CC_FOLDER_PATH);
+			IFolder ccFolder = this.project.getFolder(Constants.CC_FOLDER_PATH);
 			ccFolder.accept(new IResourceVisitor() {
 				@Override
 				public boolean visit(IResource resource) throws CoreException {
@@ -73,8 +74,8 @@ public class SyncAction {
 			
 			// Supprime ceux qui n'existent plus
 			final BaseCcAction removeAction = new RemoveCcAction(this.project);
-			IPath xspConfigPath = new Path(Utils.getSourceFolder(this.project))
-					.append(Utils.getXspConfigPackage(this.project).replace('.', '/'));
+			IPath xspConfigPath = new Path(Constants.getProp_sourceFolder(this.project))
+					.append(Constants.getProp_xspConfigPackage(this.project).replace('.', '/'));
 			IFolder xspConfigFolder = removeAction.getDestProject().getFolder(xspConfigPath);
 			xspConfigFolder.accept(new IResourceVisitor() {
 				@Override

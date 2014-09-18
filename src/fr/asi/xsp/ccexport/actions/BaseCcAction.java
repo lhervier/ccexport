@@ -7,7 +7,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 
-import fr.asi.xsp.ccexport.Utils;
+import fr.asi.xsp.ccexport.Constants;
 
 public abstract class BaseCcAction {
 
@@ -41,7 +41,7 @@ public abstract class BaseCcAction {
 	public BaseCcAction(IProject srcProject) throws CoreException {
 		this.srcProject = srcProject;
 		this.destProject = ResourcesPlugin.getWorkspace().getRoot().getProject(
-				Utils.getProjectName(srcProject)
+				Constants.getProp_projectName(srcProject)
 		);
 	}
 	

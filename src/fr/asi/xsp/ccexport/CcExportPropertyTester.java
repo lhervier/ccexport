@@ -62,14 +62,14 @@ public class CcExportPropertyTester extends PropertyTester {
 			return ret;
 		} else if( PROP_ISSETUP.equals(property) ) {
 			try {
-				boolean ret = null != Utils.getProjectName(prj);
+				boolean ret = null != Constants.getProp_projectName(prj);
 				return ret;
 			} catch (CoreException e) {
 				return false;
 			}
 		} else if( PROP_ISUNSETUP.equals(property) ) {
 			try {
-				boolean ret = null == Utils.getProjectName(prj);
+				boolean ret = null == Constants.getProp_projectName(prj);
 				return ret;
 			} catch (CoreException e) {
 				return false;

@@ -93,7 +93,7 @@ public class CcExportBuilder extends IncrementalProjectBuilder {
 				IPath location = file.getProjectRelativePath();
 				
 				// On ne s'intéresse qu'aux ressources qui sont dans le rep "CustomControls", ou dans le package "xsp" du rep source "Local"
-				if( !Utils.CC_FOLDER_PATH.isPrefixOf(location) && !Utils.JAVA_FOLDER_PATH.append("xsp").isPrefixOf(location) )
+				if( !Constants.CC_FOLDER_PATH.isPrefixOf(location) && !Constants.JAVA_FOLDER_PATH.append("xsp").isPrefixOf(location) )
 					return true;
 				
 				// On ne s'intéresse qu'aux fichiers java et xsp-config
@@ -125,8 +125,8 @@ public class CcExportBuilder extends IncrementalProjectBuilder {
 						String src;
 						String xspConfigPkg;
 						try {
-							src = prj.getPersistentProperty(Utils.PROP_SOURCE_FOLDER);
-							xspConfigPkg = Utils.getXspConfigPackage(prj);
+							src = prj.getPersistentProperty(Constants.PROP_SOURCE_FOLDER);
+							xspConfigPkg = Constants.getProp_xspConfigPackage(prj);
 						} catch(CoreException e) {
 							throw new RuntimeException(e);
 						}

@@ -20,6 +20,7 @@ import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 
+import fr.asi.xsp.ccexport.Constants;
 import fr.asi.xsp.ccexport.Utils;
 
 /**
@@ -54,8 +55,8 @@ public class ExportCcAction extends BaseCcAction {
 			IFile srcXspConfig = this.getSrcProject().getFile(srcXspConfigPath);
 			
 			// Le xsp-config de destination
-			IPath destXspConfigPath = new Path(Utils.getSourceFolder(this.getSrcProject()))
-					.append(Utils.getXspConfigPackage(this.getSrcProject()).replace('.', '/'))
+			IPath destXspConfigPath = new Path(Constants.getProp_sourceFolder(this.getSrcProject()))
+					.append(Constants.getProp_xspConfigPackage(this.getSrcProject()).replace('.', '/'))
 					.append(xspConfig);
 			IFile destXspConfig = this.getDestProject().getFile(destXspConfigPath);
 			
@@ -84,7 +85,7 @@ public class ExportCcAction extends BaseCcAction {
 			
 			s = s.replaceAll(
 					"<composite-file>/(.*).xsp</composite-file>", 
-					"<composite-file>/" + Utils.getClassesPackage(this.getSrcProject()).replace('.', '/') + "/$1</composite-file>"
+					"<composite-file>/" + Constants.getProp_classesPackage(this.getSrcProject()).replace('.', '/') + "/$1</composite-file>"
 			);
 			InputStream updatedIn = new ByteArrayInputStream(s.getBytes(destXspConfig.getCharset()));
 			destXspConfig.setContents(updatedIn, true, false, new NullProgressMonitor());
@@ -116,10 +117,10 @@ public class ExportCcAction extends BaseCcAction {
 			IJavaElement javaSrc = src.findElement(javaSrcPath);
 			
 			// Le package de destination (sous la forme d'un vrai package, pas d'un IFolder)
-			IPath sourcesFolderPath = new Path(Utils.getSourceFolder(this.getSrcProject()));
+			IPath sourcesFolderPath = new Path(Constants.getProp_sourceFolder(this.getSrcProject()));
 			IFolder sourcesFolder = this.getDestProject().getFolder(sourcesFolderPath);
 			IPackageFragmentRoot packageRoot = dest.getPackageFragmentRoot(sourcesFolder);
-			IPackageFragment destPackage = packageRoot.getPackageFragment(Utils.getClassesPackage(this.getSrcProject()));
+			IPackageFragment destPackage = packageRoot.getPackageFragment(Constants.getProp_classesPackage(this.getSrcProject()));
 			
 			// Copie la classe
 			// Passer par un IJavaElement permet d'adapter le package déclaré dans la classe
@@ -147,7 +148,7 @@ public class ExportCcAction extends BaseCcAction {
 				read = reader.read(buffer);
 			}
 			String s = sb.toString();
-			s = s.replaceAll("\"/(.*).xsp\"", "\"/" + Utils.getClassesPackage(this.getSrcProject()).replace('.', '/') + "/$1\"");
+			s = s.replaceAll("\"/(.*).xsp\"", "\"/" + Constants.getProp_classesPackage(this.getSrcProject()).replace('.', '/') + "/$1\"");
 			
 			InputStream updatedIn = new ByteArrayInputStream(s.getBytes(javaDest.getCharset()));
 			javaDest.setContents(updatedIn, true, false, new NullProgressMonitor());

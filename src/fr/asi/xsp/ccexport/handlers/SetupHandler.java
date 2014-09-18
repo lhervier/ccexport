@@ -19,7 +19,7 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import com.ibm.designer.domino.ide.resources.DominoResourcesPlugin;
 import com.ibm.designer.domino.ide.resources.util.NsfUtil;
 
-import fr.asi.xsp.ccexport.Utils;
+import fr.asi.xsp.ccexport.Constants;
 import fr.asi.xsp.ccexport.actions.SyncAction;
 
 /**
@@ -60,11 +60,11 @@ public class SetupHandler extends AbstractHandler {
 			@Override
 			protected void execute(IProgressMonitor arg0) throws CoreException, InvocationTargetException, InterruptedException {
 				// Défini les propriétés
-				project.setPersistentProperty(Utils.PROP_PROJECT_NAME, "fr.asi.xsp.test.library");
-				project.setPersistentProperty(Utils.PROP_SOURCE_FOLDER, "src");
-				project.setPersistentProperty(Utils.PROP_CLASSES_PACKAGE, "fr.asi.xsp.test.composants.xsp");
-				project.setPersistentProperty(Utils.PROP_XSPCONFIG_PACKAGE, "fr.asi.xsp.test.composants.config");
-				project.setPersistentProperty(Utils.PROP_XSPCONFIG_FILE, "xsp-config.list");
+				project.setPersistentProperty(Constants.PROP_PROJECT_NAME, "fr.asi.xsp.test.library");
+				project.setPersistentProperty(Constants.PROP_SOURCE_FOLDER, "src");
+				project.setPersistentProperty(Constants.PROP_CLASSES_PACKAGE, "fr.asi.xsp.test.composants.xsp");
+				project.setPersistentProperty(Constants.PROP_XSPCONFIG_PACKAGE, "fr.asi.xsp.test.composants.config");
+				project.setPersistentProperty(Constants.PROP_XSPCONFIG_FILE, "xsp-config.list");
 				
 				// Ajoute le builder au projet
 				NsfUtil.addBuilderToProject(project, "fr.asi.xsp.ccexport.builder");

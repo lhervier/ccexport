@@ -17,7 +17,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
@@ -25,41 +24,6 @@ import org.eclipse.jdt.core.JavaCore;
 
 public class Utils {
 
-	/**
-	 * Le chemin vers les custom controls
-	 */
-	public final static IPath CC_FOLDER_PATH = new Path("CustomControls");
-	
-	/**
-	 * Le chemin vers les custom controls
-	 */
-	public final static IPath JAVA_FOLDER_PATH = new Path("Local");
-	
-	/**
-	 * Nom de la propriété qui contient le nom du projet dans lequel exporter
-	 */
-	public static final QualifiedName PROP_PROJECT_NAME = new QualifiedName("fr.asi.xsp.ccexport", "ProjectName");
-	
-	/**
-	 * Nom de la propriété qui contient le nom du répertoire source dans lequel exporter
-	 */
-	public static final QualifiedName PROP_SOURCE_FOLDER = new QualifiedName("fr.asi.xsp.ccexport", "SourceFolder");
-	
-	/**
-	 * Nom de la propriété qui contient le nom du package dans lequel exporter les classes java
-	 */
-	public static final QualifiedName PROP_CLASSES_PACKAGE = new QualifiedName("fr.asi.xsp.ccexport", "ClassesPackage");
-	
-	/**
-	 * Nom de la propriété qui contient le nom du package dans lequel exporter les xsp-config
-	 */
-	public static final QualifiedName PROP_XSPCONFIG_PACKAGE = new QualifiedName("fr.asi.xsp.ccexport", "XspConfigPackage");
-	
-	/**
-	 * Nom de la propriété qui contient le nom du fichier dans lequel exporter les noms des xsp-config
-	 */
-	public static final QualifiedName PROP_XSPCONFIG_FILE = new QualifiedName("fr.asi.xsp.ccexport", "XspConfigFile");
-	
 	/**
 	 * Retourne un projet à partir de son nom
 	 * @param name le nom du projet
@@ -162,7 +126,7 @@ public class Utils {
 	 * @return true s'il existe. False sinon.
 	 */
 	public static boolean ccExists(IProject project, String cc) {
-		IPath ccPath = CC_FOLDER_PATH.append(cc + ".xsp-config");
+		IPath ccPath = Constants.CC_FOLDER_PATH.append(cc + ".xsp-config");
 		IFile ccFile = project.getFile(ccPath);
 		return ccFile.exists();
 	}
@@ -205,7 +169,7 @@ public class Utils {
 	 * @throws CoreException 
 	 */
 	public static boolean initialize(IProject nsfProject, IProgressMonitor monitor) throws CoreException {
-		IProject project = Utils.getProjectFromName(Utils.getProjectName(nsfProject));
+		IProject project = Utils.getProjectFromName(Constants.getProp_projectName(nsfProject));
 		
 		// Vérifie que le projet existe et est de nature java
 		if( !project.exists() )
@@ -221,71 +185,21 @@ public class Utils {
 		IJavaProject javaProject = JavaCore.create(project);
 		IPackageFragment javaPkg = Utils.createPackage(
 				javaProject, 
-				new Path(Utils.getSourceFolder(nsfProject)), 
-				Utils.getClassesPackage(nsfProject), 
+				new Path(Constants.getProp_sourceFolder(nsfProject)), 
+				Constants.getProp_classesPackage(nsfProject), 
 				new NullProgressMonitor()
 		);
 		if( javaPkg == null )
 			return false;
 		IPackageFragment xspConfigPkg = Utils.createPackage(
 				javaProject, 
-				new Path(Utils.getSourceFolder(nsfProject)), 
-				Utils.getXspConfigPackage(nsfProject), 
+				new Path(Constants.getProp_sourceFolder(nsfProject)), 
+				Constants.getProp_xspConfigPackage(nsfProject), 
 				new NullProgressMonitor()
 		);
 		if( xspConfigPkg == null )
 			return false;
 		
 		return true;
-	}
-	
-	/**
-	 * Retourne le nom du projet dans lequel exporter
-	 * @param prj le projet
-	 * @return le nom du projet dans lequel exporter
-	 * @throws CoreException en cas de problème
-	 */
-	public static String getProjectName(IProject project) throws CoreException {
-		return project.getPersistentProperty(PROP_PROJECT_NAME);
-	}
-	
-	/**
-	 * Retourne le nom du rep source dans lequel exporter
-	 * @param prj le projet
-	 * @return le nom du rep source
-	 * @throws CoreException en cas de problème
-	 */
-	public static String getSourceFolder(IProject project) throws CoreException {
-		return project.getPersistentProperty(PROP_SOURCE_FOLDER);
-	}
-	
-	/**
-	 * Retourne le nom du package dans lequel exporter les fichiers java
-	 * @param prj le projet
-	 * @return le nom du package
-	 * @throws CoreException en cas de problème
-	 */
-	public static String getClassesPackage(IProject project) throws CoreException {
-		return project.getPersistentProperty(PROP_CLASSES_PACKAGE);
-	}
-	
-	/**
-	 * Retourne le nom du package dans lequel exporter les xsp-config
-	 * @param prj le projet
-	 * @return le nom du projet dans lequel exporter
-	 * @throws CoreException en cas de problème
-	 */
-	public static String getXspConfigPackage(IProject project) throws CoreException {
-		return project.getPersistentProperty(PROP_XSPCONFIG_PACKAGE);
-	}
-	
-	/**
-	 * Retourne le nom du fichier dans lequel exporter les noms des xsp-config
-	 * @param prj le projet
-	 * @return le nom du fichier dans lequel exporter
-	 * @throws CoreException en cas de problème
-	 */
-	public static String getXspConfigFile(IProject project) throws CoreException {
-		return project.getPersistentProperty(PROP_XSPCONFIG_FILE);
 	}
 }
