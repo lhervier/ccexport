@@ -19,7 +19,7 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import com.ibm.designer.domino.ide.resources.DominoResourcesPlugin;
 
 import fr.asi.xsp.ccexport.Constants;
-import fr.asi.xsp.ccexport.Utils;
+import fr.asi.xsp.ccexport.util.Utils;
 
 /**
  * Handler pour désassocier le NSF à un projet de library

@@ -1,4 +1,4 @@
-package fr.asi.xsp.ccexport;
+package fr.asi.xsp.ccexport.util;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -21,6 +21,8 @@ import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.JavaCore;
+
+import fr.asi.xsp.ccexport.Constants;
 
 public class Utils {
 

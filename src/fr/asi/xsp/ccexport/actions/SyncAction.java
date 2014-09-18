@@ -15,7 +15,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 
 import fr.asi.xsp.ccexport.Constants;
-import fr.asi.xsp.ccexport.Utils;
+import fr.asi.xsp.ccexport.util.Utils;
 
 /**
  * Action pour tout synchroniser

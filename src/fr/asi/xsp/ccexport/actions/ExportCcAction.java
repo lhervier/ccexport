@@ -21,7 +21,7 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 
 import fr.asi.xsp.ccexport.Constants;
-import fr.asi.xsp.ccexport.Utils;
+import fr.asi.xsp.ccexport.util.Utils;
 
 /**
  * Action pour exporter un custom control.
