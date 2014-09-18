@@ -72,9 +72,9 @@ public class Constants {
 	 * @param prj le projet
 	 * @return le nom du rep source
 	 */
-	public static String getProp_sourceFolder(IProject project) {
+	public static IPath getProp_sourceFolder(IProject project) {
 		try {
-			return project.getPersistentProperty(Constants.PROP_SOURCE_FOLDER);
+			return new Path(project.getPersistentProperty(Constants.PROP_SOURCE_FOLDER));
 		} catch (CoreException e) {
 			throw new RuntimeException(e);
 		}

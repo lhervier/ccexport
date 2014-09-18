@@ -13,7 +13,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
@@ -54,7 +53,7 @@ public class ExportCcAction extends BaseCcAction {
 			IFile srcXspConfig = this.getSrcProject().getFile(srcXspConfigPath);
 			
 			// Le xsp-config de destination
-			IPath destXspConfigPath = new Path(Constants.getProp_sourceFolder(this.getSrcProject()))
+			IPath destXspConfigPath = Constants.getProp_sourceFolder(this.getSrcProject())
 					.append(Constants.getProp_xspConfigPackage(this.getSrcProject()).replace('.', '/'))
 					.append(xspConfig);
 			IFile destXspConfig = this.getDestProject().getFile(destXspConfigPath);
@@ -118,7 +117,7 @@ public class ExportCcAction extends BaseCcAction {
 			IJavaElement javaSrc = src.findElement(javaSrcPath);
 			
 			// Le package de destination (sous la forme d'un vrai package, pas d'un IFolder)
-			IPath sourcesFolderPath = new Path(Constants.getProp_sourceFolder(this.getSrcProject()));
+			IPath sourcesFolderPath = Constants.getProp_sourceFolder(this.getSrcProject());
 			IFolder sourcesFolder = this.getDestProject().getFolder(sourcesFolderPath);
 			IPackageFragmentRoot packageRoot = dest.getPackageFragmentRoot(sourcesFolder);
 			IPackageFragment destPackage = packageRoot.getPackageFragment(Constants.getProp_classesPackage(this.getSrcProject()));

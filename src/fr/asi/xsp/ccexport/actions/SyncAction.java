@@ -12,7 +12,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
 
 import fr.asi.xsp.ccexport.Constants;
 import fr.asi.xsp.ccexport.util.Utils;
@@ -69,7 +68,7 @@ public class SyncAction {
 		
 		// Supprime ceux qui n'existent plus
 		final BaseCcAction removeAction = new RemoveCcAction(this.project);
-		IPath xspConfigPath = new Path(Constants.getProp_sourceFolder(this.project))
+		IPath xspConfigPath = Constants.getProp_sourceFolder(this.project)
 				.append(Constants.getProp_xspConfigPackage(this.project).replace('.', '/'));
 		IFolder xspConfigFolder = removeAction.getDestProject().getFolder(xspConfigPath);
 		xspConfigFolder.accept(new IResourceVisitor() {

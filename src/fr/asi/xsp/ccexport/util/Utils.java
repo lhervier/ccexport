@@ -9,7 +9,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.JavaCore;
@@ -100,7 +99,7 @@ public class Utils {
 		IJavaProject javaProject = JavaCore.create(project);
 		IPackageFragment javaPkg = IJavaProjectUtils.createPackage(
 				javaProject, 
-				new Path(Constants.getProp_sourceFolder(nsfProject)), 
+				Constants.getProp_sourceFolder(nsfProject), 
 				Constants.getProp_classesPackage(nsfProject), 
 				new NullProgressMonitor()
 		);
@@ -108,7 +107,7 @@ public class Utils {
 			return false;
 		IPackageFragment xspConfigPkg = IJavaProjectUtils.createPackage(
 				javaProject, 
-				new Path(Constants.getProp_sourceFolder(nsfProject)), 
+				Constants.getProp_sourceFolder(nsfProject), 
 				Constants.getProp_xspConfigPackage(nsfProject), 
 				new NullProgressMonitor()
 		);

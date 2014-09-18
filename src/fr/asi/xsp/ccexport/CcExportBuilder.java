@@ -15,7 +15,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
 
 import fr.asi.xsp.ccexport.actions.BaseCcAction;
 import fr.asi.xsp.ccexport.actions.ExportCcAction;
@@ -123,9 +122,9 @@ public class CcExportBuilder extends IncrementalProjectBuilder {
 					
 					// Cas où on supprime => On regarde si on trouve le .xsp-config dans le projet dest (qu'on n'a pas encore pu supprimer à ce niveau)
 					} else {
-						String src = Constants.getProp_sourceFolder(prj);
+						IPath src = Constants.getProp_sourceFolder(prj);
 						String xspConfigPkg = Constants.getProp_xspConfigPackage(prj);
-						IPath xspConfigPath = new Path(src).append(xspConfigPkg.replace('.', '/')).append(cc + ".xsp-config");
+						IPath xspConfigPath = src.append(xspConfigPkg.replace('.', '/')).append(cc + ".xsp-config");
 						IFile xspConfigFile = removeAction.getDestProject().getFile(xspConfigPath);
 						if( !xspConfigFile.exists() )
 							cc = cc.substring(0, 1).toUpperCase() + cc.substring(1);		// Si on supprime une XPage, on ne trouvera ni sa classe, ni son xsp-config dans le projet de dest.
