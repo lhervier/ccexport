@@ -126,7 +126,7 @@ public class CcExportBuilder extends IncrementalProjectBuilder {
 						String xspConfigPkg;
 						try {
 							src = prj.getPersistentProperty(Utils.PROP_SOURCE_FOLDER);
-							xspConfigPkg = prj.getPersistentProperty(Utils.PROP_XSPCONFIG_PACKAGE);
+							xspConfigPkg = Utils.getXspConfigPackage(prj);
 						} catch(CoreException e) {
 							throw new RuntimeException(e);
 						}

@@ -64,6 +64,7 @@ public class SetupHandler extends AbstractHandler {
 				project.setPersistentProperty(Utils.PROP_SOURCE_FOLDER, "src");
 				project.setPersistentProperty(Utils.PROP_CLASSES_PACKAGE, "fr.asi.xsp.test.composants.xsp");
 				project.setPersistentProperty(Utils.PROP_XSPCONFIG_PACKAGE, "fr.asi.xsp.test.composants.config");
+				project.setPersistentProperty(Utils.PROP_XSPCONFIG_FILE, "xsp-config.list");
 				
 				// Ajoute le builder au projet
 				NsfUtil.addBuilderToProject(project, "fr.asi.xsp.ccexport.builder");

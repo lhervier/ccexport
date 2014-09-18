@@ -87,7 +87,7 @@ public class ExportCcAction extends BaseCcAction {
 			InputStream updatedIn = new ByteArrayInputStream(s.getBytes(destXspConfig.getCharset()));
 			destXspConfig.setContents(updatedIn, true, false, new NullProgressMonitor());
 			
-			// TODO: Adapte le fichier xsp-config pour y inclure le contenu du .xsp en design definition
+			// TODO: Adapte le fichier .xsp-config pour y inclure le contenu du .xsp en design definition
 			
 			// TODO: Adapte le fichier xsp-config.list à la racine du projet
 			

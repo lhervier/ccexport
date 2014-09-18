@@ -56,11 +56,11 @@ public abstract class BaseCcAction {
 	public BaseCcAction(IProject srcProject) throws CoreException {
 		this.srcProject = srcProject;
 		this.destProject = ResourcesPlugin.getWorkspace().getRoot().getProject(
-				srcProject.getPersistentProperty(Utils.PROP_PROJECT_NAME)
+				Utils.getProjectName(srcProject)
 		); 
-		this.sourcesFolder = srcProject.getPersistentProperty(Utils.PROP_SOURCE_FOLDER);
-		this.javaPkg = srcProject.getPersistentProperty(Utils.PROP_CLASSES_PACKAGE);
-		this.xspConfigPkg = srcProject.getPersistentProperty(Utils.PROP_XSPCONFIG_PACKAGE);
+		this.sourcesFolder = Utils.getSourceFolder(srcProject);
+		this.javaPkg = Utils.getClassesPackage(srcProject);
+		this.xspConfigPkg = Utils.getXspConfigPackage(srcProject);
 	}
 	
 	/**
