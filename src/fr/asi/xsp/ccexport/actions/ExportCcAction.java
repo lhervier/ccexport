@@ -33,9 +33,8 @@ public class ExportCcAction extends BaseCcAction {
 	/**
 	 * Constructeur
 	 * @param srcProject le projet Java source (celui de la base NSF)
-	 * @throws CoreException en cas de pb
 	 */
-	public ExportCcAction(IProject srcProject) throws CoreException {
+	public ExportCcAction(IProject srcProject) {
 		super(srcProject);
 	}
 	
@@ -104,8 +103,10 @@ public class ExportCcAction extends BaseCcAction {
 	 * Exporte une classe Java
 	 * @param classeFile le nom de la classe Java
 	 * @param monitor le moniteur
+	 * @throws CoreException en cas de problème
+	 * @throws IOException en cas de problème
 	 */
-	public void exportJava(String classFile, IProgressMonitor monitor) {
+	public void exportJava(String classFile, IProgressMonitor monitor) throws CoreException, IOException {
 		InputStream in = null;
 		Reader reader = null;
 		try {
@@ -153,10 +154,6 @@ public class ExportCcAction extends BaseCcAction {
 			InputStream updatedIn = new ByteArrayInputStream(s.getBytes(javaDest.getCharset()));
 			javaDest.setContents(updatedIn, true, false, new NullProgressMonitor());
 			
-		} catch (CoreException e) {
-			throw new RuntimeException(e);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
 		} finally {
 			Utils.closeQuietly(reader);
 			Utils.closeQuietly(in);

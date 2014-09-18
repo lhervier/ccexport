@@ -2,7 +2,6 @@ package fr.asi.xsp.ccexport.actions;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
@@ -36,9 +35,8 @@ public abstract class BaseCcAction {
 	/**
 	 * Constructeur
 	 * @param srcProject le projet Java source (celui de la base NSF)
-	 * @throws CoreException en cas de pb
 	 */
-	public BaseCcAction(IProject srcProject) throws CoreException {
+	public BaseCcAction(IProject srcProject) {
 		this.srcProject = srcProject;
 		this.destProject = ResourcesPlugin.getWorkspace().getRoot().getProject(
 				Constants.getProp_projectName(srcProject)

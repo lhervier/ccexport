@@ -19,6 +19,28 @@ import fr.asi.xsp.ccexport.Constants;
 public class Utils {
 
 	/**
+	 * Passe le premier caractère en majuscule
+	 * @param s la chaîne
+	 * @return la chaîne avec le 1er caractère en majuscule
+	 */
+	public static String normalizeMaj(String s) {
+		if( s.length() <= 1 )
+			return s.toUpperCase();
+		return s.substring(0, 1).toUpperCase() + s.substring(1);
+	}
+	
+	/**
+	 * Passe le premier caractère en minuscule
+	 * @param s la chaîne
+	 * @return la chaîne avec le 1er caractère en minuscule
+	 */
+	public static String normalizeMin(String s) {
+		if( s.length() <= 1 )
+			return s.toUpperCase();
+		return s.substring(0, 1).toLowerCase() + s.substring(1);
+	}
+	
+	/**
 	 * Retourne un nom de fichier sans son extension
 	 * @param fileName
 	 * @return le nom du fichier sans son extension

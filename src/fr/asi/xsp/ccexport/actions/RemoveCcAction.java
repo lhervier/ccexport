@@ -16,9 +16,8 @@ public class RemoveCcAction extends BaseCcAction {
 	/**
 	 * Constructeur
 	 * @param srcProject
-	 * @throws CoreException en cas de pb
 	 */
-	public RemoveCcAction(IProject srcProject) throws CoreException {
+	public RemoveCcAction(IProject srcProject) {
 		super(srcProject);
 	}
 

@@ -42,56 +42,52 @@ public class SyncAction {
 	 * @throws CoreException
 	 */
 	public void execute(IProgressMonitor monitor) throws CoreException {
-		try {
-			// Une Map qu'on va remplir avec les noms des CC du NSF.
-			// Elle nous permettra ensuite de détecter ceux qu'il faut supprimer dans la destination
-			final Set<String> ccs = new HashSet<String>();
-			
-			// Exporte les Custom Control qui existent
-			final BaseCcAction exportAction = new ExportCcAction(this.project);
-			IFolder ccFolder = this.project.getFolder(Constants.CC_FOLDER_PATH);
-			ccFolder.accept(new IResourceVisitor() {
-				@Override
-				public boolean visit(IResource resource) throws CoreException {
-					if( resource.getType() != IResource.FILE )
-						return true;
-					IFile file = (IFile) resource;
-					
-					if( !"xsp".equals(file.getFileExtension()) )
-						return true;
-					
-					String cc = Utils.getFileNameWithoutExtension(file.getName());
-					ccs.add(cc);
-					exportAction.execute(cc, new NullProgressMonitor());
-					
+		// Une Map qu'on va remplir avec les noms des CC du NSF.
+		// Elle nous permettra ensuite de détecter ceux qu'il faut supprimer dans la destination
+		final Set<String> ccs = new HashSet<String>();
+		
+		// Exporte les Custom Control qui existent
+		final BaseCcAction exportAction = new ExportCcAction(this.project);
+		IFolder ccFolder = this.project.getFolder(Constants.CC_FOLDER_PATH);
+		ccFolder.accept(new IResourceVisitor() {
+			@Override
+			public boolean visit(IResource resource) throws CoreException {
+				if( resource.getType() != IResource.FILE )
 					return true;
-				}
-			});
-			
-			// Supprime ceux qui n'existent plus
-			final BaseCcAction removeAction = new RemoveCcAction(this.project);
-			IPath xspConfigPath = new Path(Constants.getProp_sourceFolder(this.project))
-					.append(Constants.getProp_xspConfigPackage(this.project).replace('.', '/'));
-			IFolder xspConfigFolder = removeAction.getDestProject().getFolder(xspConfigPath);
-			xspConfigFolder.accept(new IResourceVisitor() {
-				@Override
-				public boolean visit(IResource resource) throws CoreException {
-					if( resource.getType() != IResource.FILE )
-						return true;
-					IFile file = (IFile) resource;
-					
-					if( !"xsp-config".equals(file.getFileExtension()) )
-						return true;
-					
-					String cc = Utils.getFileNameWithoutExtension(file.getName());
-					if( !ccs.contains(cc) )
-						removeAction.execute(cc, new NullProgressMonitor());
-					
+				IFile file = (IFile) resource;
+				
+				if( !"xsp".equals(file.getFileExtension()) )
 					return true;
-				}
-			});
-		} catch(CoreException e) {
-			throw new RuntimeException(e);
-		}
+				
+				String cc = Utils.getFileNameWithoutExtension(file.getName());
+				ccs.add(cc);
+				exportAction.execute(cc, new NullProgressMonitor());
+				
+				return true;
+			}
+		});
+		
+		// Supprime ceux qui n'existent plus
+		final BaseCcAction removeAction = new RemoveCcAction(this.project);
+		IPath xspConfigPath = new Path(Constants.getProp_sourceFolder(this.project))
+				.append(Constants.getProp_xspConfigPackage(this.project).replace('.', '/'));
+		IFolder xspConfigFolder = removeAction.getDestProject().getFolder(xspConfigPath);
+		xspConfigFolder.accept(new IResourceVisitor() {
+			@Override
+			public boolean visit(IResource resource) throws CoreException {
+				if( resource.getType() != IResource.FILE )
+					return true;
+				IFile file = (IFile) resource;
+				
+				if( !"xsp-config".equals(file.getFileExtension()) )
+					return true;
+				
+				String cc = Utils.getFileNameWithoutExtension(file.getName());
+				if( !ccs.contains(cc) )
+					removeAction.execute(cc, new NullProgressMonitor());
+				
+				return true;
+			}
+		});
 	}
 }

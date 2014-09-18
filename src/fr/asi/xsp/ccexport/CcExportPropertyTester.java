@@ -2,7 +2,6 @@ package fr.asi.xsp.ccexport;
 
 import org.eclipse.core.expressions.PropertyTester;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
@@ -61,19 +60,11 @@ public class CcExportPropertyTester extends PropertyTester {
 			boolean ret = DominoResourcesPlugin.isDominoDesignerProject(prj);
 			return ret;
 		} else if( PROP_ISSETUP.equals(property) ) {
-			try {
-				boolean ret = null != Constants.getProp_projectName(prj);
-				return ret;
-			} catch (CoreException e) {
-				return false;
-			}
+			boolean ret = null != Constants.getProp_projectName(prj);
+			return ret;
 		} else if( PROP_ISUNSETUP.equals(property) ) {
-			try {
-				boolean ret = null == Constants.getProp_projectName(prj);
-				return ret;
-			} catch (CoreException e) {
-				return false;
-			}
+			boolean ret = null == Constants.getProp_projectName(prj);
+			return ret;
 		} else {
 			return false;
 		}

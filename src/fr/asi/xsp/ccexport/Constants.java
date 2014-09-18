@@ -58,49 +58,64 @@ public class Constants {
 	 * Retourne le nom du projet dans lequel exporter
 	 * @param prj le projet
 	 * @return le nom du projet dans lequel exporter
-	 * @throws CoreException en cas de problème
 	 */
-	public static String getProp_projectName(IProject project) throws CoreException {
-		return project.getPersistentProperty(Constants.PROP_PROJECT_NAME);
+	public static String getProp_projectName(IProject project) {
+		try {
+			return project.getPersistentProperty(Constants.PROP_PROJECT_NAME);
+		} catch (CoreException e) {
+			throw new RuntimeException(e);
+		}
 	}
 	
 	/**
 	 * Retourne le nom du rep source dans lequel exporter
 	 * @param prj le projet
 	 * @return le nom du rep source
-	 * @throws CoreException en cas de problème
 	 */
-	public static String getProp_sourceFolder(IProject project) throws CoreException {
-		return project.getPersistentProperty(Constants.PROP_SOURCE_FOLDER);
+	public static String getProp_sourceFolder(IProject project) {
+		try {
+			return project.getPersistentProperty(Constants.PROP_SOURCE_FOLDER);
+		} catch (CoreException e) {
+			throw new RuntimeException(e);
+		}
 	}
 	
 	/**
 	 * Retourne le nom du package dans lequel exporter les fichiers java
 	 * @param prj le projet
 	 * @return le nom du package
-	 * @throws CoreException en cas de problème
 	 */
-	public static String getProp_classesPackage(IProject project) throws CoreException {
-		return project.getPersistentProperty(Constants.PROP_CLASSES_PACKAGE);
+	public static String getProp_classesPackage(IProject project) {
+		try {
+			return project.getPersistentProperty(Constants.PROP_CLASSES_PACKAGE);
+		} catch (CoreException e) {
+			throw new RuntimeException(e);
+		}
 	}
 	
 	/**
 	 * Retourne le nom du package dans lequel exporter les xsp-config
 	 * @param prj le projet
 	 * @return le nom du projet dans lequel exporter
-	 * @throws CoreException en cas de problème
 	 */
-	public static String getProp_xspConfigPackage(IProject project) throws CoreException {
-		return project.getPersistentProperty(Constants.PROP_XSPCONFIG_PACKAGE);
+	public static String getProp_xspConfigPackage(IProject project) {
+		try {
+			return project.getPersistentProperty(Constants.PROP_XSPCONFIG_PACKAGE);
+		} catch (CoreException e) {
+			throw new RuntimeException(e);
+		}
 	}
 	
 	/**
 	 * Retourne le nom du fichier dans lequel exporter les noms des xsp-config
 	 * @param prj le projet
 	 * @return le nom du fichier dans lequel exporter
-	 * @throws CoreException en cas de problème
 	 */
-	public static String getProp_xspConfigFile(IProject project) throws CoreException {
-		return project.getPersistentProperty(Constants.PROP_XSPCONFIG_FILE);
+	public static String getProp_xspConfigFile(IProject project) {
+		try {
+			return project.getPersistentProperty(Constants.PROP_XSPCONFIG_FILE);
+		} catch (CoreException e) {
+			throw new RuntimeException(e);
+		}
 	}
 }

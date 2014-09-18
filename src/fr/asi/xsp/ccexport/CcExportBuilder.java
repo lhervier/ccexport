@@ -86,10 +86,10 @@ public class CcExportBuilder extends IncrementalProjectBuilder {
 				if (currResource.getType() != IResource.FILE)
 					return true;
 				
-				// Est ce qu'on exporte ? Et est ce qu'on supprime ?
+				// Est ce qu'on exporte ? Ou est ce qu'on supprime ?
 				boolean exporting = kind == IResourceDelta.ADDED || kind == IResourceDelta.CHANGED;
 				
-				// Récupère la ressource a builder
+				// Récupère la ressource à builder
 				IFile file = (IFile) currResource;
 				IPath location = file.getProjectRelativePath();
 				
@@ -102,35 +102,29 @@ public class CcExportBuilder extends IncrementalProjectBuilder {
 				if( !"xsp-config".equals(ext) && !"java".equals(ext) )
 					return true;
 				
-				// Le nom du Custom Control qu'on exporte : On peut le déduire à partir du fichier (que ce soit un .java, .xsp-config ou .xsp)
+				// Le nom du Custom Control qu'on exporte : On peut le déduire à partir du fichier, mais c'est plus compliqué si on a que le .java
 				String cc = Utils.getFileNameWithoutExtension(location.lastSegment());
 				if( "java".equals(location.getFileExtension()) ) {
 					// Sanity check
 					String first = cc.substring(0, 1);
 					if( !first.equals(first.toUpperCase()) )
-						throw new RuntimeException("La classe: " + location + " vient d'être modifiée. Or, son nom ne commence pas par une Majuscule !!");
+						throw new RuntimeException("Le nom de la classe " + location + " ne commence pas par une Majuscule. Elle ne peut pas correspondre à un Custom Control.");
 					
 					// Habituellement, les noms de cc commencent par une minuscule. Alors on tente en premier...
-					cc = cc.substring(0, 1).toLowerCase() + cc.substring(1);
+					cc = Utils.normalizeMin(cc);
 					
-					// Cas où on exporte => On regarde si on trouve le .xsp dans le projet source
+					// Cas où on exporte => On regarde si on trouve le .xsp-config dans le projet source
 					if( exporting ) {
 						if( !Utils.ccExists(CcExportBuilder.this.getProject(), cc) ) {
-							cc = cc.substring(0, 1).toUpperCase() + cc.substring(1);	// Sinon, on tente avec une majuscule
+							cc = Utils.normalizeMaj(cc);									// Sinon, on tente avec une majuscule
 							if( !Utils.ccExists(CcExportBuilder.this.getProject(), cc) )
-								return true;											// On doit être face au .java d'une XPage
+								return true;												// On doit être face au .java d'une XPage
 						}
 					
 					// Cas où on supprime => On regarde si on trouve le .xsp-config dans le projet dest (qu'on n'a pas encore pu supprimer à ce niveau)
 					} else {
-						String src;
-						String xspConfigPkg;
-						try {
-							src = prj.getPersistentProperty(Constants.PROP_SOURCE_FOLDER);
-							xspConfigPkg = Constants.getProp_xspConfigPackage(prj);
-						} catch(CoreException e) {
-							throw new RuntimeException(e);
-						}
+						String src = Constants.getProp_sourceFolder(prj);
+						String xspConfigPkg = Constants.getProp_xspConfigPackage(prj);
 						IPath xspConfigPath = new Path(src).append(xspConfigPkg.replace('.', '/')).append(cc + ".xsp-config");
 						IFile xspConfigFile = removeAction.getDestProject().getFile(xspConfigPath);
 						if( !xspConfigFile.exists() )
