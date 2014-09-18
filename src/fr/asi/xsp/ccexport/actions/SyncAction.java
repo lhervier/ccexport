@@ -43,10 +43,6 @@ public class SyncAction {
 	 */
 	public void execute(IProgressMonitor monitor) throws CoreException {
 		try {
-			// Initialise le projet de destination
-			if( !Utils.initialize(this.project, new NullProgressMonitor()))
-				return;
-			
 			// Une Map qu'on va remplir avec les noms des CC du NSF.
 			// Elle nous permettra ensuite de détecter ceux qu'il faut supprimer dans la destination
 			final Set<String> ccs = new HashSet<String>();

@@ -17,10 +17,11 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 import com.ibm.designer.domino.ide.resources.DominoResourcesPlugin;
-import com.ibm.designer.domino.ide.resources.util.NsfUtil;
 
 import fr.asi.xsp.ccexport.Constants;
 import fr.asi.xsp.ccexport.actions.SyncAction;
+import fr.asi.xsp.ccexport.util.IProjectUtils;
+import fr.asi.xsp.ccexport.util.Utils;
 
 /**
  * Handler pour associer le NSF à un projet de library
@@ -58,7 +59,7 @@ public class SetupHandler extends AbstractHandler {
 			 * @see org.eclipse.ui.actions.WorkspaceModifyOperation#execute(org.eclipse.core.runtime.IProgressMonitor)
 			 */
 			@Override
-			protected void execute(IProgressMonitor arg0) throws CoreException, InvocationTargetException, InterruptedException {
+			protected void execute(IProgressMonitor monitor) throws CoreException, InvocationTargetException, InterruptedException {
 				// Défini les propriétés
 				project.setPersistentProperty(Constants.PROP_PROJECT_NAME, "fr.asi.xsp.test.library");
 				project.setPersistentProperty(Constants.PROP_SOURCE_FOLDER, "src");
@@ -67,7 +68,11 @@ public class SetupHandler extends AbstractHandler {
 				project.setPersistentProperty(Constants.PROP_XSPCONFIG_FILE, "xsp-config.list");
 				
 				// Ajoute le builder au projet
-				NsfUtil.addBuilderToProject(project, "fr.asi.xsp.ccexport.builder");
+				IProjectUtils.addBuilderToProject(project, "fr.asi.xsp.ccexport.builder", new NullProgressMonitor());
+				
+				// Initialise le projet de destination
+				if( !Utils.initialize(project, new NullProgressMonitor()) )
+					return;
 				
 				// Force une synchro
 				SyncAction action = new SyncAction(project);

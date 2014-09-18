@@ -19,7 +19,7 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import com.ibm.designer.domino.ide.resources.DominoResourcesPlugin;
 
 import fr.asi.xsp.ccexport.Constants;
-import fr.asi.xsp.ccexport.util.Utils;
+import fr.asi.xsp.ccexport.util.IProjectUtils;
 
 /**
  * Handler pour désassocier le NSF à un projet de library
@@ -66,7 +66,7 @@ public class UnsetupHandler extends AbstractHandler {
 				project.setPersistentProperty(Constants.PROP_XSPCONFIG_FILE, null);
 				
 				// Ajoute le builder au projet
-				Utils.removeBuilderFromProject(project, "fr.asi.xsp.ccexport.builder");
+				IProjectUtils.removeBuilderFromProject(project, "fr.asi.xsp.ccexport.builder");
 				
 				// Rafraîchit le projet
 				project.refreshLocal(IProject.DEPTH_INFINITE, new NullProgressMonitor());
