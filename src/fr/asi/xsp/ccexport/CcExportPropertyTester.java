@@ -33,40 +33,31 @@ public class CcExportPropertyTester extends PropertyTester {
 	 */
 	@Override
 	public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
-		if (property == null) {
+		if (property == null)
 			return false;
-		}
-		if( !(receiver instanceof IStructuredSelection) ) {
+		if( !(receiver instanceof IStructuredSelection) )
 			return false;
-		}
 		
 		IStructuredSelection selection = (IStructuredSelection) receiver;
-		if( selection.size() != 1 ) {
+		if( selection.size() != 1 )
 			return false;
-		}
 		
 		Object obj = selection.getFirstElement();
-		if ( !(obj instanceof IAdaptable)) {
+		if ( !(obj instanceof IAdaptable))
 			return false;
-		}
 		IAdaptable adaptable = (IAdaptable) obj;
 		
 		IProject prj = (IProject) adaptable.getAdapter(IProject.class);
-		if( prj == null || !prj.isOpen() ) {
+		if( prj == null || !prj.isOpen() )
 			return false;
-		}
 		
-		if( PROP_ISDOMINOPROJECT.equals(property) ) {
-			boolean ret = DominoResourcesPlugin.isDominoDesignerProject(prj);
-			return ret;
-		} else if( PROP_ISSETUP.equals(property) ) {
-			boolean ret = null != Constants.getProp_projectName(prj);
-			return ret;
-		} else if( PROP_ISUNSETUP.equals(property) ) {
-			boolean ret = null == Constants.getProp_projectName(prj);
-			return ret;
-		} else {
+		if( PROP_ISDOMINOPROJECT.equals(property) )
+			return DominoResourcesPlugin.isDominoDesignerProject(prj);
+		else if( PROP_ISSETUP.equals(property) )
+			return null != Constants.getProp_projectName(prj);
+		else if( PROP_ISUNSETUP.equals(property) )
+			return null == Constants.getProp_projectName(prj);
+		else
 			return false;
-		}
 	}
 }
