@@ -5,7 +5,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 
-import fr.asi.xsp.ccexport.Constants;
+import fr.asi.xsp.ccexport.util.PropUtils;
 
 public abstract class BaseCcAction {
 
@@ -37,7 +37,7 @@ public abstract class BaseCcAction {
 	 */
 	public BaseCcAction(IProject srcProject) {
 		this.srcProject = srcProject;
-		this.destProject = Constants.getProp_destProject(srcProject);
+		this.destProject = PropUtils.getProp_destProject(srcProject);
 	}
 	
 	/**

@@ -7,6 +7,8 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 
 import com.ibm.designer.domino.ide.resources.DominoResourcesPlugin;
 
+import fr.asi.xsp.ccexport.util.PropUtils;
+
 /**
  * Testeur de propriétés pour activer/masquer les menus
  * @author Lionel HERVIER
@@ -54,9 +56,9 @@ public class CcExportPropertyTester extends PropertyTester {
 		if( PROP_ISDOMINOPROJECT.equals(property) )
 			return DominoResourcesPlugin.isDominoDesignerProject(prj);
 		else if( PROP_ISSETUP.equals(property) )
-			return null != Constants.getProp_destProjectName(prj);
+			return null != PropUtils.getProp_destProjectName(prj);
 		else if( PROP_ISUNSETUP.equals(property) )
-			return null == Constants.getProp_destProjectName(prj);
+			return null == PropUtils.getProp_destProjectName(prj);
 		else
 			return false;
 	}

@@ -20,6 +20,7 @@ import fr.asi.xsp.ccexport.actions.BaseCcAction;
 import fr.asi.xsp.ccexport.actions.ExportCcAction;
 import fr.asi.xsp.ccexport.actions.RemoveCcAction;
 import fr.asi.xsp.ccexport.actions.SyncAction;
+import fr.asi.xsp.ccexport.util.PropUtils;
 import fr.asi.xsp.ccexport.util.Utils;
 
 /**
@@ -122,8 +123,8 @@ public class CcExportBuilder extends IncrementalProjectBuilder {
 					
 					// Cas où on supprime => On regarde si on trouve le .xsp-config dans le projet dest (qu'on n'a pas encore pu supprimer à ce niveau)
 					} else {
-						IPath xspConfigPath = Constants.getProp_sourceFolder(prj)
-								.append(Constants.getProp_xspConfigPath(prj))
+						IPath xspConfigPath = PropUtils.getProp_sourceFolder(prj)
+								.append(PropUtils.getProp_xspConfigPath(prj))
 								.append(cc + ".xsp-config");
 						IFile xspConfigFile = removeAction.getDestProject().getFile(xspConfigPath);
 						if( !xspConfigFile.exists() )

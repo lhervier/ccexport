@@ -7,7 +7,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
-import fr.asi.xsp.ccexport.Constants;
+import fr.asi.xsp.ccexport.util.PropUtils;
 
 
 public class RemoveCcAction extends BaseCcAction {
@@ -28,8 +28,8 @@ public class RemoveCcAction extends BaseCcAction {
 	 */
 	public void removeXspConfig(String xspConfig, IProgressMonitor monitor) throws CoreException {
 		// Le chemin vers le .xsp-config dans le projet de destination
-		IPath xspConfigDest = Constants.getProp_sourceFolder(this.getSrcProject())
-				.append(Constants.getProp_xspConfigPath(this.getSrcProject()))
+		IPath xspConfigDest = PropUtils.getProp_sourceFolder(this.getSrcProject())
+				.append(PropUtils.getProp_xspConfigPath(this.getSrcProject()))
 				.append(xspConfig);
 		IFile xspConfigFile = this.getDestProject().getFile(xspConfigDest);
 		
@@ -48,8 +48,8 @@ public class RemoveCcAction extends BaseCcAction {
 	 */
 	public void removeJava(String classFile, IProgressMonitor monitor) throws CoreException {
 		// Le chemin vers le fichier .java
-		IPath javaPath = Constants.getProp_sourceFolder(this.getSrcProject())
-				.append(Constants.getProp_classesPath(this.getSrcProject()))
+		IPath javaPath = PropUtils.getProp_sourceFolder(this.getSrcProject())
+				.append(PropUtils.getProp_classesPath(this.getSrcProject()))
 				.append(classFile);
 		IFile java = this.getDestProject().getFile(javaPath);
 		if( java.exists() )

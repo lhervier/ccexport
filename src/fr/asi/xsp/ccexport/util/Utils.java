@@ -83,7 +83,7 @@ public class Utils {
 	 * @return true si c'est ok. False sinon.
 	 */
 	public static boolean initializeLink(IProject nsfProject, IProgressMonitor monitor) throws CoreException {
-		IProject project = Constants.getProp_destProject(nsfProject);
+		IProject project = PropUtils.getProp_destProject(nsfProject);
 		
 		// Vérifie que le projet existe et est de nature java
 		if( !project.exists() )
@@ -99,16 +99,16 @@ public class Utils {
 		IJavaProject javaProject = JavaCore.create(project);
 		IPackageFragment javaPkg = IJavaProjectUtils.createPackage(
 				javaProject, 
-				Constants.getProp_sourceFolder(nsfProject), 
-				Constants.getProp_classesPackage(nsfProject), 
+				PropUtils.getProp_sourceFolder(nsfProject), 
+				PropUtils.getProp_classesPackage(nsfProject), 
 				new NullProgressMonitor()
 		);
 		if( javaPkg == null )
 			return false;
 		IPackageFragment xspConfigPkg = IJavaProjectUtils.createPackage(
 				javaProject, 
-				Constants.getProp_sourceFolder(nsfProject), 
-				Constants.getProp_xspConfigPackage(nsfProject), 
+				PropUtils.getProp_sourceFolder(nsfProject), 
+				PropUtils.getProp_xspConfigPackage(nsfProject), 
 				new NullProgressMonitor()
 		);
 		if( xspConfigPkg == null )
