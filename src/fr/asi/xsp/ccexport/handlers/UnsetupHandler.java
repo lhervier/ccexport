@@ -1,22 +1,13 @@
 package fr.asi.xsp.ccexport.handlers;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.List;
 
-import org.eclipse.core.commands.AbstractHandler;
-import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectNature;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
-
-import com.ibm.designer.domino.ide.resources.DominoResourcesPlugin;
 
 import fr.asi.xsp.ccexport.Constants;
 import fr.asi.xsp.ccexport.util.IProjectUtils;
@@ -25,32 +16,13 @@ import fr.asi.xsp.ccexport.util.IProjectUtils;
  * Handler pour désassocier le NSF à un projet de library
  * @author Lionel HERVIER
  */
-public class UnsetupHandler extends AbstractHandler {
+public class UnsetupHandler extends AbstractExportCcHandler {
 
 	/**
-	 * @see org.eclipse.core.commands.AbstractHandler#execute(org.eclipse.core.commands.ExecutionEvent)
+	 * @see fr.asi.xsp.ccexport.handlers.AbstractExportCcHandler#execute(org.eclipse.core.resources.IProject)
 	 */
 	@Override
-	public Object execute(ExecutionEvent event) throws ExecutionException {
-		ISelection se = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService().getSelection();
-		if (!(se instanceof StructuredSelection))
-			return null;
-		
-		StructuredSelection sse = (StructuredSelection) se;
-		@SuppressWarnings("unchecked")
-		List selList = sse.toList();
-		IProject prj = null;
-		for (Object o : selList) {
-			if ((o instanceof IProjectNature)) {
-				IProjectNature nature = (IProjectNature) o;
-				prj = nature.getProject();
-				break;
-			}
-		}
-		if (!DominoResourcesPlugin.isDominoDesignerProject(prj))
-			return null;
-		
-		final IProject project = prj;
+	public void execute(final IProject project) {
 		WorkspaceModifyOperation operation = new WorkspaceModifyOperation() {
 
 			/**
@@ -79,7 +51,6 @@ public class UnsetupHandler extends AbstractHandler {
 		} catch (InterruptedException e) {
 			throw new RuntimeException(e);
 		}
-		return null;
 	}
 
 }
