@@ -83,7 +83,7 @@ public class Utils {
 	 * @return true si c'est ok. False sinon.
 	 */
 	public static boolean initializeLink(IProject nsfProject, IProgressMonitor monitor) throws CoreException {
-		IProject project = IProjectUtils.getProjectFromName(Constants.getProp_projectName(nsfProject));
+		IProject project = Constants.getProp_destProject(nsfProject);
 		
 		// Vérifie que le projet existe et est de nature java
 		if( !project.exists() )

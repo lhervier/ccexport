@@ -1,7 +1,6 @@
 package fr.asi.xsp.ccexport.actions;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
@@ -38,9 +37,7 @@ public abstract class BaseCcAction {
 	 */
 	public BaseCcAction(IProject srcProject) {
 		this.srcProject = srcProject;
-		this.destProject = ResourcesPlugin.getWorkspace().getRoot().getProject(
-				Constants.getProp_projectName(srcProject)
-		);
+		this.destProject = Constants.getProp_destProject(srcProject);
 	}
 	
 	/**

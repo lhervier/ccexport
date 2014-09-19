@@ -1,6 +1,7 @@
 package fr.asi.xsp.ccexport;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -30,7 +31,7 @@ public class Constants {
 	/**
 	 * Nom de la propriété qui contient le nom du projet dans lequel exporter
 	 */
-	public static final QualifiedName PROP_PROJECT_NAME = new QualifiedName("fr.asi.xsp.ccexport", "ProjectName");
+	public static final QualifiedName PROP_DEST_PROJECT_NAME = new QualifiedName("fr.asi.xsp.ccexport", "ProjectName");
 	
 	/**
 	 * Nom de la propriété qui contient le nom du répertoire source dans lequel exporter
@@ -59,12 +60,25 @@ public class Constants {
 	 * @param prj le projet
 	 * @return le nom du projet dans lequel exporter
 	 */
-	public static String getProp_projectName(IProject project) {
+	public static String getProp_destProjectName(IProject project) {
 		try {
-			return project.getPersistentProperty(Constants.PROP_PROJECT_NAME);
+			return project.getPersistentProperty(Constants.PROP_DEST_PROJECT_NAME);
 		} catch (CoreException e) {
 			throw new RuntimeException(e);
 		}
+	}
+	
+	/**
+	 * Retourne le projet de destination
+	 * @param prj le projet source
+	 * @return le projet de destination
+	 */
+	public static IProject getProp_destProject(IProject project) {
+		String name = Constants.getProp_destProjectName(project);
+		return ResourcesPlugin
+				.getWorkspace()
+				.getRoot()
+				.getProject(name);
 	}
 	
 	/**

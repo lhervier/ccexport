@@ -54,9 +54,9 @@ public class CcExportPropertyTester extends PropertyTester {
 		if( PROP_ISDOMINOPROJECT.equals(property) )
 			return DominoResourcesPlugin.isDominoDesignerProject(prj);
 		else if( PROP_ISSETUP.equals(property) )
-			return null != Constants.getProp_projectName(prj);
+			return null != Constants.getProp_destProjectName(prj);
 		else if( PROP_ISUNSETUP.equals(property) )
-			return null == Constants.getProp_projectName(prj);
+			return null == Constants.getProp_destProjectName(prj);
 		else
 			return false;
 	}

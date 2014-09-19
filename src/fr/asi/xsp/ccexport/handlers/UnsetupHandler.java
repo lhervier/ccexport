@@ -59,7 +59,7 @@ public class UnsetupHandler extends AbstractHandler {
 			@Override
 			protected void execute(IProgressMonitor arg0) throws CoreException, InvocationTargetException, InterruptedException {
 				// Supprime les propriétés
-				project.setPersistentProperty(Constants.PROP_PROJECT_NAME, null);
+				project.setPersistentProperty(Constants.PROP_DEST_PROJECT_NAME, null);
 				project.setPersistentProperty(Constants.PROP_SOURCE_FOLDER, null);
 				project.setPersistentProperty(Constants.PROP_CLASSES_PACKAGE, null);
 				project.setPersistentProperty(Constants.PROP_XSPCONFIG_PACKAGE, null);

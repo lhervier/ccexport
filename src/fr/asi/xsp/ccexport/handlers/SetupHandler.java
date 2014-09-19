@@ -61,7 +61,7 @@ public class SetupHandler extends AbstractHandler {
 			@Override
 			protected void execute(IProgressMonitor monitor) throws CoreException, InvocationTargetException, InterruptedException {
 				// Défini les propriétés
-				project.setPersistentProperty(Constants.PROP_PROJECT_NAME, "fr.asi.xsp.test.library");
+				project.setPersistentProperty(Constants.PROP_DEST_PROJECT_NAME, "fr.asi.xsp.test.library");
 				project.setPersistentProperty(Constants.PROP_SOURCE_FOLDER, "src");
 				project.setPersistentProperty(Constants.PROP_CLASSES_PACKAGE, "fr.asi.xsp.test.composants.xsp");
 				project.setPersistentProperty(Constants.PROP_XSPCONFIG_PACKAGE, "fr.asi.xsp.test.composants.config");
