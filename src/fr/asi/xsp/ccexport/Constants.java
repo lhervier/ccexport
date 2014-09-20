@@ -19,9 +19,14 @@ public class Constants {
 	public final static IPath CC_FOLDER_PATH = new Path("CustomControls");
 	
 	/**
-	 * Le chemin vers les custom controls
+	 * Le chemin vers le répertoire source "Local" du NSF
 	 */
 	public final static IPath JAVA_FOLDER_PATH = new Path("Local");
+	
+	/**
+	 * Package dans lequel son générés les fichiers java des custom controls
+	 */
+	public final static IPath JAVA_PACKAGE = new Path("xsp");
 	
 	// ==========================================================================================
 	

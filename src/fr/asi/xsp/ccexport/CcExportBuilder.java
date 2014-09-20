@@ -1,8 +1,6 @@
 package fr.asi.xsp.ccexport;
 
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -16,11 +14,14 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
-import fr.asi.xsp.ccexport.actions.BaseCcAction;
-import fr.asi.xsp.ccexport.actions.ExportCcAction;
-import fr.asi.xsp.ccexport.actions.RemoveCcAction;
+import fr.asi.xsp.ccexport.actions.BaseResourceAction;
+import fr.asi.xsp.ccexport.actions.ExportJavaAction;
+import fr.asi.xsp.ccexport.actions.ExportXspConfigAction;
+import fr.asi.xsp.ccexport.actions.GenerateXspConfigListAction;
+import fr.asi.xsp.ccexport.actions.RemoveJavaAction;
+import fr.asi.xsp.ccexport.actions.RemoveXspConfigAction;
 import fr.asi.xsp.ccexport.actions.SyncAction;
-import fr.asi.xsp.ccexport.util.PropUtils;
+import fr.asi.xsp.ccexport.util.BooleanHolder;
 import fr.asi.xsp.ccexport.util.Utils;
 
 /**
@@ -58,17 +59,12 @@ public class CcExportBuilder extends IncrementalProjectBuilder {
 			@SuppressWarnings("unchecked")
 			Map args, 
 			final IProgressMonitor monitor) throws CoreException {
-		// Initialise l'objet
+		// Initialise le lien entre les deux projets (au cas où)
 		if( !Utils.initializeLink(this.getProject(), new NullProgressMonitor()) )
 			return null;
 		
-		// Les deux actions
-		final IProject prj = this.getProject();
-		final BaseCcAction exportAction = new ExportCcAction(prj);
-		final BaseCcAction removeAction = new RemoveCcAction(prj);
-		
-		// Une Set qui contient les noms des CC déjà traités dans le build
-		final Set<String> processedCc = new HashSet<String>();
+		// Pour détecter s'il est nécessaire de mettre à jour le xsp-config.list
+		final BooleanHolder updateXspConfigList = new BooleanHolder(false);
 		
 		// Parcours le delta
 		IResourceDelta delta = this.getDelta(this.getProject());
@@ -102,50 +98,35 @@ public class CcExportBuilder extends IncrementalProjectBuilder {
 				if( !"xsp-config".equals(ext) && !"java".equals(ext) )
 					return true;
 				
-				// Le nom du Custom Control qu'on exporte : On peut le déduire à partir du fichier, mais c'est plus compliqué si on a que le .java
-				String cc = Utils.getFileNameWithoutExtension(location.lastSegment());
-				if( "java".equals(location.getFileExtension()) ) {
-					// Sanity check
-					String first = cc.substring(0, 1);
-					if( !first.equals(first.toUpperCase()) )
-						throw new RuntimeException("Le nom de la classe " + location + " ne commence pas par une Majuscule. Elle ne peut pas correspondre à un Custom Control.");
-					
-					// Habituellement, les noms de cc commencent par une minuscule. Alors on tente en premier...
-					cc = Utils.normalizeMin(cc);
-					
-					// Cas où on exporte => On regarde si on trouve le .xsp-config dans le projet source
-					if( exporting ) {
-						if( !Utils.ccExists(CcExportBuilder.this.getProject(), cc) ) {
-							cc = Utils.normalizeMaj(cc);									// Sinon, on tente avec une majuscule
-							if( !Utils.ccExists(CcExportBuilder.this.getProject(), cc) )
-								return true;												// On doit être face au .java d'une XPage
-						}
-					
-					// Cas où on supprime => On regarde si on trouve le .xsp-config dans le projet dest (qu'on n'a pas encore pu supprimer à ce niveau)
-					} else {
-						IPath xspConfigPath = PropUtils.getProp_sourceFolder(prj)
-								.append(PropUtils.getProp_xspConfigPath(prj))
-								.append(cc + ".xsp-config");
-						IFile xspConfigFile = removeAction.getDestProject().getFile(xspConfigPath);
-						if( !xspConfigFile.exists() )
-							cc = cc.substring(0, 1).toUpperCase() + cc.substring(1);		// Si on supprime une XPage, on ne trouvera ni sa classe, ni son xsp-config dans le projet de dest.
-					}
-				}
-				
-				// On l'a peut être déjà traité pendant ce build
-				if( processedCc.contains(cc) )
-					return true;
-				processedCc.add(cc);
+				// Détecte si on créé ou supprime un xsp-config
+				// (pour pouvoir mettre à jour le xsp-config.list)
+				if( "xsp-config".equals(file.getFileExtension()) )
+					if( kind == IResourceDelta.ADDED || kind == IResourceDelta.REMOVED )
+						updateXspConfigList.value = true;
 				
 				// Exécute l'action
+				BaseResourceAction action;
 				if( exporting )
-					exportAction.execute(cc, new NullProgressMonitor());
+					if( "xsp-config".equals(file.getFileExtension()) )
+						action = new ExportXspConfigAction(CcExportBuilder.this.getProject());
+					else
+						action = new ExportJavaAction(CcExportBuilder.this.getProject());
 				else
-					removeAction.execute(cc, new NullProgressMonitor());
+					if( "xsp-config".equals(file.getFileExtension()) )
+						action = new RemoveXspConfigAction(CcExportBuilder.this.getProject());
+					else
+						action = new RemoveJavaAction(CcExportBuilder.this.getProject());
+				action.execute(file, new NullProgressMonitor());
 				
 				return true;
 			}
 		});
+		
+		// Met à jour le fichier xsp-config.list si c'est nécessaire
+		if( updateXspConfigList.value ) {
+			GenerateXspConfigListAction action = new GenerateXspConfigListAction(this.getProject());
+			action.execute(new NullProgressMonitor());
+		}
 		
 		// Sauver le workspace déclenche la re-compile des classes qu'on a ajoutées/modifiée/supprimées 
 		ResourcesPlugin.getWorkspace().save(false, new NullProgressMonitor());

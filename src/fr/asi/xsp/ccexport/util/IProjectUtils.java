@@ -3,13 +3,16 @@ package fr.asi.xsp.ccexport.util;
 import java.util.ArrayList;
 
 import org.eclipse.core.resources.ICommand;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
 
 /**
  * Méthodes utiles pour gérer les projets (au sens large)
@@ -101,5 +104,26 @@ public class IProjectUtils {
 		ICommand[] newCommandArray = (ICommand[]) newCommands.toArray(new ICommand[0]);
 		desc.setBuildSpec(newCommandArray);
 		project.setDescription(desc, new NullProgressMonitor());
+	}
+	
+	/**
+	 * Créé un dossier
+	 * @param project le projet
+	 * @param folderPath le chemin vers le dossier
+	 * @param monitor le moniteur
+	 * @throws CoreException en cas de pb
+	 */
+	public static void createFolder(IProject project, IPath folderPath, IProgressMonitor monitor) throws CoreException {
+		String[] segments = folderPath.segments();
+		IPath curr = null;
+		for( int i=0; i<segments.length; i++ ) {
+			if( i == 0 )
+				curr = new Path(segments[0]);
+			else
+				curr = curr.append(segments[i]);
+			IFolder folder = project.getFolder(curr);
+			if( !folder.exists() )
+				folder.create(true, true, new NullProgressMonitor());
+		}
 	}
 }

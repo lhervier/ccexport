@@ -114,6 +114,11 @@ public class Utils {
 		if( xspConfigPkg == null )
 			return false;
 		
+		// Créé le dossier qui va contenir le fichier xsp-config.list
+		IPath xspConfigListPath = PropUtils.getProp_xspConfigListPath(nsfProject);
+		IPath folderPath = xspConfigListPath.removeLastSegments(1);
+		IProjectUtils.createFolder(project, folderPath, new NullProgressMonitor());
+		
 		return true;
 	}
 }

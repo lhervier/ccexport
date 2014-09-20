@@ -11,7 +11,6 @@ import fr.asi.xsp.ccexport.actions.SyncAction;
  * @author Lionel HERVIER
  */
 public class SyncHandler extends AbstractExportCcHandler {
-
 	
 	/**
 	 * @see fr.asi.xsp.ccexport.handlers.AbstractExportCcHandler#execute(org.eclipse.core.resources.IProject)

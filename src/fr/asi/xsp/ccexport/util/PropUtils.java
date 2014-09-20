@@ -110,11 +110,20 @@ public class PropUtils {
 	 * @param prj le projet
 	 * @return le nom du fichier dans lequel exporter
 	 */
-	public static String getProp_xspConfigFile(IProject project) {
+	public static String getProp_xspConfigListFile(IProject project) {
 		try {
 			return project.getPersistentProperty(Constants.PROP_XSPCONFIG_FILE);
 		} catch (CoreException e) {
 			throw new RuntimeException(e);
 		}
+	}
+	
+	/**
+	 * Retourne le chemin vers le fichier où on va exporter les noms des xsp-config
+	 * @param prj le projet
+	 * @return le chemin vers le fichier xsp-config.list
+	 */
+	public static IPath getProp_xspConfigListPath(IProject project) {
+		return new Path(PropUtils.getProp_xspConfigListFile(project));
 	}
 }
