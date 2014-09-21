@@ -10,7 +10,7 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 
 import fr.asi.xsp.ccexport.Constants;
 import fr.asi.xsp.ccexport.util.BooleanHolder;
@@ -46,10 +46,12 @@ public class GenerateXspConfigListAction {
 	/**
 	 * Exécute l'action
 	 * @throws CoreException en cas de pb
-	 * @param monitor le moniteur
+	 * @param monitor the progress monitor to use for reporting progress to the user. It is the caller's responsibility
+	 * 		to call done() on the given monitor. Accepts null, indicating that no progress should be
+	 * 		reported and that the operation cannot be cancelled.
 	 */
 	public void execute(IProgressMonitor monitor) throws CoreException {
-		System.out.println("Regénère le fichier qui contient la liste des xsp-config");
+		SubMonitor progress = SubMonitor.convert(monitor, 100);
 		
 		// Le dossier qui contient les xsp-config
 		IFolder ccFolder = this.srcProject.getFolder(Constants.CC_FOLDER_PATH);
@@ -59,6 +61,7 @@ public class GenerateXspConfigListAction {
 		final BooleanHolder initialized = new BooleanHolder(false);
 		
 		// Parcours le dossier
+		final SubMonitor subProgress = SubMonitor.convert(progress.newChild(30));
 		ccFolder.accept(new ExtensionVisitor("xsp-config") {
 			/**
 			 * @see org.eclipse.core.resources.IResourceVisitor#visit(org.eclipse.core.resources.IResource)
@@ -70,13 +73,22 @@ public class GenerateXspConfigListAction {
 				else
 					initialized.value = true;
 				list.append("/" + PropUtils.getProp_xspConfigPath(GenerateXspConfigListAction.this.srcProject).append(file.getName()));
+				subProgress.setTaskName("Extracting path of " + file.getName());
+				subProgress.worked(1);
+				subProgress.setWorkRemaining(10000);
 			}
 		});
+		progress.setWorkRemaining(70);
 		
 		// Le fichier dans lequel écrire. Comme Utils.initialize a été appelé, on est sûr que le dossier existe. 
 		IFile file = this.destProject.getFile(PropUtils.getProp_xspConfigListFile(this.srcProject));
 		if( !file.exists() )
-			file.create(new ByteArrayInputStream(new byte[0]), true, new NullProgressMonitor());
+			file.create(
+					new ByteArrayInputStream(new byte[0]), 
+					true, 
+					progress.newChild(10)
+			);
+		progress.setWorkRemaining(60);
 		
 		InputStream in;
 		try {
@@ -84,6 +96,11 @@ public class GenerateXspConfigListAction {
 		} catch (UnsupportedEncodingException e) {
 			throw new RuntimeException(e);
 		}
-		file.setContents(in, true, false, new NullProgressMonitor());
+		file.setContents(
+				in, 
+				true, 
+				false, 
+				progress.newChild(60)
+		);
 	}
 }

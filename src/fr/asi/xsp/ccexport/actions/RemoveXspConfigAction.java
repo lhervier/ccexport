@@ -5,7 +5,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 
 import fr.asi.xsp.ccexport.util.PropUtils;
 
@@ -31,19 +30,20 @@ public class RemoveXspConfigAction extends BaseResourceAction {
 	@Override
 	public void execute(IFile file, IProgressMonitor monitor) {
 		String xspConfig = file.getName();
-		System.out.println("Supprime " + xspConfig);
 		try {
 			// Le chemin vers le .xsp-config dans le projet de destination
-			IPath xspConfigDest = PropUtils.getProp_sourceFolder(this.srcProject)
+			IPath xspConfigDest = PropUtils
+					.getProp_sourceFolder(this.srcProject)
 					.append(PropUtils.getProp_xspConfigPath(this.srcProject))
 					.append(xspConfig);
 			IFile xspConfigFile = this.destProject.getFile(xspConfigDest);
 			
 			// Supprime fichier
 			if( xspConfigFile.exists() )
-				xspConfigFile.delete(true, new NullProgressMonitor());
-			
-			// TODO: Adapte le xsp-config.list
+				xspConfigFile.delete(
+						true, 
+						monitor
+				);
 		} catch(CoreException e) {
 			throw new RuntimeException(e);
 		}

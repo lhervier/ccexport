@@ -49,7 +49,11 @@ public class IJavaProjectUtils {
 	 * @return le package
 	 * @throws CoreException en cas de problème
 	 */
-	public static IPackageFragment createPackage(IJavaProject javaProject, IPath srcFolderPath, String pkg, IProgressMonitor monitor) throws CoreException {
+	public static IPackageFragment createPackage(
+			IJavaProject javaProject, 
+			IPath srcFolderPath, 
+			String pkg, 
+			IProgressMonitor monitor) throws CoreException {
 		// Récupère le dossier qui doit contenir les sources
 		IProject project = javaProject.getProject();
 		IFolder root = project.getFolder(srcFolderPath);

@@ -13,6 +13,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.SubMonitor;
 
 /**
  * Méthodes utiles pour gérer les projets (au sens large)
@@ -76,7 +77,7 @@ public class IProjectUtils {
 		System.arraycopy(initBuildSpec, 0, newBuildSpec, 1, initBuildSpec.length);
 		newBuildSpec[0] = command;
 		projectDesc.setBuildSpec(newBuildSpec);
-		project.setDescription(projectDesc, new NullProgressMonitor());
+		project.setDescription(projectDesc, monitor);
 	}
 	
 	/**
@@ -110,20 +111,25 @@ public class IProjectUtils {
 	 * Créé un dossier
 	 * @param project le projet
 	 * @param folderPath le chemin vers le dossier
-	 * @param monitor le moniteur
+	 * @param monitor the progress monitor to use for reporting progress to the user. It is the caller's responsibility
+	 * 		to call done() on the given monitor. Accepts null, indicating that no progress should be
+	 * 		reported and that the operation cannot be cancelled.
 	 * @throws CoreException en cas de pb
 	 */
 	public static void createFolder(IProject project, IPath folderPath, IProgressMonitor monitor) throws CoreException {
+		SubMonitor progress = SubMonitor.convert(monitor);
+		
 		String[] segments = folderPath.segments();
 		IPath curr = null;
 		for( int i=0; i<segments.length; i++ ) {
+			progress.setWorkRemaining(10000);
 			if( i == 0 )
 				curr = new Path(segments[0]);
 			else
 				curr = curr.append(segments[i]);
 			IFolder folder = project.getFolder(curr);
 			if( !folder.exists() )
-				folder.create(true, true, new NullProgressMonitor());
+				folder.create(true, true, progress.newChild(1));
 		}
 	}
 }

@@ -11,7 +11,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 
 import fr.asi.xsp.ccexport.Constants;
 import fr.asi.xsp.ccexport.util.PropUtils;
@@ -32,19 +32,17 @@ public class ExportXspConfigAction extends BaseResourceAction {
 	}
 	
 	/**
-	 * Exporte un Custom control
-	 * @param xspConfig le fichier .xsp-config à exporter
-	 * @param monitor le moniteur
+	 * @see fr.asi.xsp.ccexport.actions.BaseResourceAction#execute(org.eclipse.core.resources.IFile, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
 	public void execute(IFile file, IProgressMonitor monitor) {
-		String xspConfig = file.getName();
-		System.out.println("Exporte " + xspConfig);
+		SubMonitor progress = SubMonitor.convert(monitor, 100);
 		
 		InputStream in = null;
 		Reader reader = null;
 		try {
 			// Le xsp-config source
+			String xspConfig = file.getName();
 			IPath srcXspConfigPath = Constants.CC_FOLDER_PATH.append(xspConfig);
 			IFile srcXspConfig = this.srcProject.getFile(srcXspConfigPath);
 			
@@ -56,13 +54,14 @@ public class ExportXspConfigAction extends BaseResourceAction {
 			
 			// Supprime fichier s'il existe dans la destination
 			if( destXspConfig.exists() )
-				destXspConfig.delete(true, new NullProgressMonitor());
+				destXspConfig.delete(true, progress.newChild(10));
+			progress.setWorkRemaining(90);
 			
 			// Copie le xsp-config source dans la destination
 			srcXspConfig.copy(
 					destXspConfig.getFullPath(), 
 					true, 
-					new NullProgressMonitor()
+					progress.newChild(40)
 			);
 			
 			// Adapte le xsp-config de destination
@@ -82,7 +81,12 @@ public class ExportXspConfigAction extends BaseResourceAction {
 					"<composite-file>/" + PropUtils.getProp_classesPath(this.srcProject) + "/$1</composite-file>"
 			);
 			InputStream updatedIn = new ByteArrayInputStream(s.getBytes(destXspConfig.getCharset()));
-			destXspConfig.setContents(updatedIn, true, false, new NullProgressMonitor());
+			destXspConfig.setContents(
+					updatedIn, 
+					true, 
+					false, 
+					progress.newChild(50)
+			);
 			
 			// TODO: Adapte le fichier .xsp-config pour y inclure le contenu du .xsp en design definition
 			

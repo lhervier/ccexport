@@ -9,7 +9,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 
 import fr.asi.xsp.ccexport.Constants;
 import fr.asi.xsp.ccexport.util.ExtensionVisitor;
@@ -43,23 +43,31 @@ public class SyncAction {
 	
 	/**
 	 * Exécute la synchro
-	 * @param monitor le moniteur
+	 * @param monitor the progress monitor to use for reporting progress to the user. It is the caller's responsibility
+	 * 		to call done() on the given monitor. Accepts null, indicating that no progress should be
+	 * 		reported and that the operation cannot be cancelled.
 	 * @throws CoreException
 	 */
 	public void execute(IProgressMonitor monitor) throws CoreException {
-		System.out.println("Lancement d'une synchronisation totale");
+		SubMonitor progress = SubMonitor.convert(monitor, 100);
 		
 		// Lance une initialisation
-		Utils.initializeLink(this.project, new NullProgressMonitor());
+		Utils.initializeLink(
+				this.project, 
+				progress.newChild(25)
+		);
 		
 		// Une Map qu'on va remplir avec les noms des CC du NSF.
 		// Elle nous permettra ensuite de détecter ceux qu'il faut supprimer dans la destination
 		final Set<String> ccs = new HashSet<String>();
 		
 		IFolder ccFolder = this.project.getFolder(Constants.CC_FOLDER_PATH);
+		final SubMonitor subProgress1 = SubMonitor.convert(progress.newChild(25));
 		ccFolder.accept(new ExtensionVisitor("xsp-config") {
 			@Override
 			public void visit(IFile file) throws CoreException {
+				subProgress1.setWorkRemaining(10000);
+				
 				// Le nom du custom control
 				String cc = Utils.getFileNameWithoutExtension(file.getName());
 				ccs.add(cc);
@@ -67,10 +75,10 @@ public class SyncAction {
 				// Exporte le xsp-config
 				new ExportXspConfigAction(SyncAction.this.project).execute(
 						file, 
-						new NullProgressMonitor()
+						subProgress1.newChild(1)
 				);
 				
-				// Exporte le fichie rJava
+				// Exporte le fichier Java
 				IFile javaFile = SyncAction.this.project.getFile(
 						Constants.JAVA_FOLDER_PATH
 								.append(Constants.JAVA_PACKAGE)
@@ -78,19 +86,23 @@ public class SyncAction {
 				);
 				new ExportJavaAction(SyncAction.this.project).execute(
 						javaFile, 
-						new NullProgressMonitor()
+						subProgress1.newChild(1)
 				);
 			}
 		});
+		progress.setWorkRemaining(50);
 		
 		// Supprime ceux qui n'existent plus
 		IPath xspConfigPath = PropUtils
 				.getProp_sourceFolder(this.project)
 				.append(PropUtils.getProp_xspConfigPath(this.project));
 		IFolder xspConfigFolder = this.destProject.getFolder(xspConfigPath);
+		final SubMonitor subProgress2 = SubMonitor.convert(progress.newChild(25));
 		xspConfigFolder.accept(new ExtensionVisitor("xsp-config") {
 			@Override
 			public void visit(IFile file) throws CoreException {
+				subProgress2.setWorkRemaining(10000);
+				
 				String cc = Utils.getFileNameWithoutExtension(file.getName());
 				if( ccs.contains(cc) )
 					return;
@@ -98,7 +110,7 @@ public class SyncAction {
 				// Supprime le xsp-config
 				new RemoveXspConfigAction(SyncAction.this.project).execute(
 						file, 
-						new NullProgressMonitor()
+						subProgress2.newChild(1)
 				);
 				
 				// Supprime le fichier java
@@ -109,13 +121,14 @@ public class SyncAction {
 				);
 				new RemoveJavaAction(SyncAction.this.project).execute(
 						javaFile, 
-						new NullProgressMonitor()
+						subProgress2.newChild(1)
 				);
 			}
 		});
+		progress.setWorkRemaining(25);
 		
 		// Met à jour le xsp-config.list
 		GenerateXspConfigListAction generateAction = new GenerateXspConfigListAction(this.project);
-		generateAction.execute(new NullProgressMonitor());
+		generateAction.execute(progress.newChild(25));
 	}
 }

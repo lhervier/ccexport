@@ -5,7 +5,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 
 import fr.asi.xsp.ccexport.util.PropUtils;
 
@@ -24,14 +23,11 @@ public class RemoveJavaAction extends BaseResourceAction {
 	}
 
 	/**
-	 * Supprime un fichier java
-	 * @param classFile le nom du fichier java à supprimer
-	 * @param monitor le moniteur
+	 * @see fr.asi.xsp.ccexport.actions.BaseResourceAction#execute(org.eclipse.core.resources.IFile, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
 	public void execute(IFile file, IProgressMonitor monitor) {
 		String classFile = file.getName();
-		System.out.println("Supprime " + classFile);
 		try {
 			// Le chemin vers le fichier .java
 			IPath javaPath = PropUtils
@@ -40,7 +36,7 @@ public class RemoveJavaAction extends BaseResourceAction {
 					.append(classFile);
 			IFile java = this.destProject.getFile(javaPath);
 			if( java.exists() )
-				java.delete(true, new NullProgressMonitor());
+				java.delete(true, monitor);
 		} catch(CoreException e) {
 			throw new RuntimeException(e);
 		}

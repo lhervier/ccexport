@@ -12,7 +12,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
@@ -39,22 +39,20 @@ public class ExportJavaAction extends BaseResourceAction {
 	}
 	
 	/**
-	 * Exporte une classe Java
-	 * @param classeFile le nom de la classe Java
-	 * @param monitor le moniteur
+	 * @see fr.asi.xsp.ccexport.actions.BaseResourceAction#execute(org.eclipse.core.resources.IFile, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
 	public void execute(IFile file, IProgressMonitor monitor) {
+		SubMonitor progress = SubMonitor.convert(monitor, 100);
+		
 		InputStream in = null;
 		Reader reader = null;
 		try {
-			String classFile = file.getName();
-			System.out.println("Exporte " + classFile);
-			
 			IJavaProject src = JavaCore.create(this.srcProject);
 			IJavaProject dest = JavaCore.create(this.destProject);
 			
 			// Le .java source (sous la forme d'un vrai fichier .java, pas d'un IFile)
+			String classFile = file.getName();
 			IPath javaSrcPath = Constants.JAVA_PACKAGE.append(classFile);
 			IJavaElement javaSrc = src.findElement(javaSrcPath);
 			
@@ -72,7 +70,7 @@ public class ExportJavaAction extends BaseResourceAction {
 					null, 
 					null, 
 					true, 
-					new NullProgressMonitor()
+					progress.newChild(50)
 			);
 			
 			// Le .java de destination
@@ -93,7 +91,12 @@ public class ExportJavaAction extends BaseResourceAction {
 			s = s.replaceAll("\"/(.*).xsp\"", "\"/" + PropUtils.getProp_classesPackage(this.srcProject).replace('.', '/') + "/$1\"");
 			
 			InputStream updatedIn = new ByteArrayInputStream(s.getBytes(javaDest.getCharset()));
-			javaDest.setContents(updatedIn, true, false, new NullProgressMonitor());
+			javaDest.setContents(
+					updatedIn, 
+					true, 
+					false, 
+					progress.newChild(50)
+			);
 			
 		} catch (CoreException e) {
 			throw new RuntimeException(e);
