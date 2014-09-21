@@ -3,7 +3,6 @@ package fr.asi.xsp.ccexport.util;
 import java.io.Closeable;
 import java.io.IOException;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -12,8 +11,6 @@ import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.JavaCore;
-
-import fr.asi.xsp.ccexport.Constants;
 
 public class Utils {
 
@@ -63,18 +60,6 @@ public class Utils {
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
-	}
-	
-	/**
-	 * Vérifie si un custom control donné existe
-	 * @param project le projet (domino)
-	 * @param cc le nom du custom control
-	 * @return true s'il existe. False sinon.
-	 */
-	public static boolean ccExists(IProject project, String cc) {
-		IPath ccPath = Constants.CC_FOLDER_PATH.append(cc + ".xsp-config");
-		IFile ccFile = project.getFile(ccPath);
-		return ccFile.exists();
 	}
 	
 	/**

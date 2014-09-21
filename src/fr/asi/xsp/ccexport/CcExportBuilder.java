@@ -97,7 +97,7 @@ public class CcExportBuilder extends IncrementalProjectBuilder {
 			final SubMonitor subProgress = SubMonitor.convert(progress.newChild(50));
 			delta.accept(new IResourceDeltaVisitor() {
 				public boolean visit(IResourceDelta delta) {
-					subProgress.setWorkRemaining(10000);
+					subProgress.setWorkRemaining(2);
 					
 					// On n'accepte que les ajout/modif/suppression
 					int kind = delta.getKind();
@@ -124,6 +124,20 @@ public class CcExportBuilder extends IncrementalProjectBuilder {
 					String ext = location.getFileExtension();
 					if( !"xsp-config".equals(ext) && !"java".equals(ext) )
 						return true;
+					
+					// On ne s'intéresse qu'aux fichiers .java qui correspondent à un Custom Control
+					// Il faut filtrer les XPages. Pour cela, on regarde si on trouve le fichier .xsp
+					if( "java".equals(ext) ) {
+						String cc = Utils.getFileNameWithoutExtension(file.getName());
+						cc = Utils.normalizeMin(cc);		// On essaie d'abord en minuscule
+						IFile xsp = CcExportBuilder.this.getProject().getFile(Constants.CC_FOLDER_PATH.append(cc + ".xsp"));
+						if( !xsp.exists() ) {
+							cc = Utils.normalizeMaj(cc);
+							xsp = CcExportBuilder.this.getProject().getFile(Constants.CC_FOLDER_PATH.append(cc + ".xsp"));
+							if( !xsp.exists() )
+								return true;
+						}
+					}
 					
 					// Détecte si on créé ou supprime un xsp-config
 					// (pour pouvoir mettre à jour le xsp-config.list)
