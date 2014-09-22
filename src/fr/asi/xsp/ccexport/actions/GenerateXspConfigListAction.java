@@ -81,7 +81,7 @@ public class GenerateXspConfigListAction {
 		progress.setWorkRemaining(70);
 		
 		// Le fichier dans lequel écrire. Comme Utils.initialize a été appelé, on est sûr que le dossier existe. 
-		IFile file = this.destProject.getFile(PropUtils.getProp_xspConfigListFile(this.srcProject));
+		IFile file = this.destProject.getFile(PropUtils.getProp_xspConfigList(this.srcProject));
 		if( !file.exists() )
 			file.create(
 					new ByteArrayInputStream(new byte[0]), 

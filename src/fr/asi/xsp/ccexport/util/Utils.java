@@ -94,15 +94,15 @@ public class Utils {
 			IJavaProject javaProject = JavaCore.create(project);
 			IPackageFragment javaPkg = IJavaProjectUtils.createPackage(
 					javaProject, 
-					PropUtils.getProp_sourceFolder(nsfProject), 
-					PropUtils.getProp_classesPackage(nsfProject), 
+					PropUtils.getProp_sourceFolderPath(nsfProject), 
+					PropUtils.getProp_javaPackage(nsfProject), 
 					progress.newChild(25)
 			);
 			if( javaPkg == null )
 				return false;
 			IPackageFragment xspConfigPkg = IJavaProjectUtils.createPackage(
 					javaProject, 
-					PropUtils.getProp_sourceFolder(nsfProject), 
+					PropUtils.getProp_sourceFolderPath(nsfProject), 
 					PropUtils.getProp_xspConfigPackage(nsfProject), 
 					progress.newChild(25)
 			);
@@ -138,5 +138,16 @@ public class Utils {
 				return true;
 		}
 		return false;
+	}
+	
+	/**
+	 * Pour savoir si une chaîne est vide
+	 * @param s la chaîne
+	 * @return true si la chaîne est vide, ou null
+	 */
+	public static boolean isEmpty(String s) {
+		if( s == null )
+			return true;
+		return s.length() == 0;
 	}
 }

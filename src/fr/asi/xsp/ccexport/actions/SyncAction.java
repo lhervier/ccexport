@@ -94,7 +94,7 @@ public class SyncAction {
 		
 		// Supprime ceux qui n'existent plus
 		IPath xspConfigPath = PropUtils
-				.getProp_sourceFolder(this.project)
+				.getProp_sourceFolderPath(this.project)
 				.append(PropUtils.getProp_xspConfigPath(this.project));
 		IFolder xspConfigFolder = this.destProject.getFolder(xspConfigPath);
 		final SubMonitor subProgress2 = SubMonitor.convert(progress.newChild(25));
@@ -115,8 +115,8 @@ public class SyncAction {
 				
 				// Supprime le fichier java
 				IFile javaFile = SyncAction.this.destProject.getFile(
-						PropUtils.getProp_sourceFolder(SyncAction.this.project)
-								.append(PropUtils.getProp_classesPath(SyncAction.this.project))
+						PropUtils.getProp_sourceFolderPath(SyncAction.this.project)
+								.append(PropUtils.getProp_javaPath(SyncAction.this.project))
 								.append(cc + ".java")
 				);
 				new RemoveJavaAction(SyncAction.this.project).execute(

@@ -45,12 +45,21 @@ public class PropUtils {
 	 * @param prj le projet
 	 * @return le nom du rep source
 	 */
-	public static IPath getProp_sourceFolder(IProject project) {
+	public static String getProp_sourceFolder(IProject project) {
 		try {
-			return new Path(project.getPersistentProperty(Constants.PROP_SOURCE_FOLDER));
+			return project.getPersistentProperty(Constants.PROP_SOURCE_FOLDER);
 		} catch (CoreException e) {
 			throw new RuntimeException(e);
 		}
+	}
+	
+	/**
+	 * Retourne le chemin vers le rep source dans lequel exporter
+	 * @param prj le projet
+	 * @return le nom du rep source
+	 */
+	public static IPath getProp_sourceFolderPath(IProject project) {
+		return new Path(PropUtils.getProp_sourceFolder(project));
 	}
 	
 	/**
@@ -58,7 +67,7 @@ public class PropUtils {
 	 * @param prj le projet
 	 * @return le nom du package
 	 */
-	public static String getProp_classesPackage(IProject project) {
+	public static String getProp_javaPackage(IProject project) {
 		try {
 			return project.getPersistentProperty(Constants.PROP_CLASSES_PACKAGE);
 		} catch (CoreException e) {
@@ -71,7 +80,7 @@ public class PropUtils {
 	 * @param prj le projet
 	 * @return le chemin vers le package
 	 */
-	public static IPath getProp_classesPath(IProject project) {
+	public static IPath getProp_javaPath(IProject project) {
 		try {
 			return new Path(project.getPersistentProperty(Constants.PROP_CLASSES_PACKAGE).replace('.', '/'));
 		} catch (CoreException e) {
@@ -110,7 +119,7 @@ public class PropUtils {
 	 * @param prj le projet
 	 * @return le nom du fichier dans lequel exporter
 	 */
-	public static String getProp_xspConfigListFile(IProject project) {
+	public static String getProp_xspConfigList(IProject project) {
 		try {
 			return project.getPersistentProperty(Constants.PROP_XSPCONFIG_FILE);
 		} catch (CoreException e) {
@@ -124,6 +133,6 @@ public class PropUtils {
 	 * @return le chemin vers le fichier xsp-config.list
 	 */
 	public static IPath getProp_xspConfigListPath(IProject project) {
-		return new Path(PropUtils.getProp_xspConfigListFile(project));
+		return new Path(PropUtils.getProp_xspConfigList(project));
 	}
 }

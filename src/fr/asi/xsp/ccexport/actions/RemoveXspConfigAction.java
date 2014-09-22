@@ -33,7 +33,7 @@ public class RemoveXspConfigAction extends BaseResourceAction {
 		try {
 			// Le chemin vers le .xsp-config dans le projet de destination
 			IPath xspConfigDest = PropUtils
-					.getProp_sourceFolder(this.srcProject)
+					.getProp_sourceFolderPath(this.srcProject)
 					.append(PropUtils.getProp_xspConfigPath(this.srcProject))
 					.append(xspConfig);
 			IFile xspConfigFile = this.destProject.getFile(xspConfigDest);

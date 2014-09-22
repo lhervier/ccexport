@@ -57,10 +57,10 @@ public class ExportJavaAction extends BaseResourceAction {
 			IJavaElement javaSrc = src.findElement(javaSrcPath);
 			
 			// Le package de destination (sous la forme d'un vrai package, pas d'un IFolder)
-			IPath sourcesFolderPath = PropUtils.getProp_sourceFolder(this.srcProject);
+			IPath sourcesFolderPath = PropUtils.getProp_sourceFolderPath(this.srcProject);
 			IFolder sourcesFolder = this.destProject.getFolder(sourcesFolderPath);
 			IPackageFragmentRoot packageRoot = dest.getPackageFragmentRoot(sourcesFolder);
-			IPackageFragment destPackage = packageRoot.getPackageFragment(PropUtils.getProp_classesPackage(this.srcProject));
+			IPackageFragment destPackage = packageRoot.getPackageFragment(PropUtils.getProp_javaPackage(this.srcProject));
 			
 			// Copie la classe
 			// Passer par un IJavaElement permet d'adapter le package déclaré dans la classe
@@ -88,7 +88,7 @@ public class ExportJavaAction extends BaseResourceAction {
 				read = reader.read(buffer);
 			}
 			String s = sb.toString();
-			s = s.replaceAll("\"/(.*).xsp\"", "\"/" + PropUtils.getProp_classesPackage(this.srcProject).replace('.', '/') + "/$1\"");
+			s = s.replaceAll("\"/(.*).xsp\"", "\"/" + PropUtils.getProp_javaPackage(this.srcProject).replace('.', '/') + "/$1\"");
 			
 			InputStream updatedIn = new ByteArrayInputStream(s.getBytes(javaDest.getCharset()));
 			javaDest.setContents(

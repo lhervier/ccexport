@@ -31,8 +31,8 @@ public class RemoveJavaAction extends BaseResourceAction {
 		try {
 			// Le chemin vers le fichier .java
 			IPath javaPath = PropUtils
-					.getProp_sourceFolder(this.srcProject)
-					.append(PropUtils.getProp_classesPath(this.srcProject))
+					.getProp_sourceFolderPath(this.srcProject)
+					.append(PropUtils.getProp_javaPath(this.srcProject))
 					.append(classFile);
 			IFile java = this.destProject.getFile(javaPath);
 			if( java.exists() )

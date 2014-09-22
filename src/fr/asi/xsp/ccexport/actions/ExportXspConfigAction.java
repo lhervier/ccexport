@@ -47,7 +47,7 @@ public class ExportXspConfigAction extends BaseResourceAction {
 			IFile srcXspConfig = this.srcProject.getFile(srcXspConfigPath);
 			
 			// Le xsp-config de destination
-			IPath destXspConfigPath = PropUtils.getProp_sourceFolder(this.srcProject)
+			IPath destXspConfigPath = PropUtils.getProp_sourceFolderPath(this.srcProject)
 					.append(PropUtils.getProp_xspConfigPath(this.srcProject))
 					.append(xspConfig);
 			IFile destXspConfig = this.destProject.getFile(destXspConfigPath);
@@ -78,7 +78,7 @@ public class ExportXspConfigAction extends BaseResourceAction {
 			
 			s = s.replaceAll(
 					"<composite-file>/(.*).xsp</composite-file>", 
-					"<composite-file>/" + PropUtils.getProp_classesPath(this.srcProject) + "/$1</composite-file>"
+					"<composite-file>/" + PropUtils.getProp_javaPath(this.srcProject) + "/$1</composite-file>"
 			);
 			InputStream updatedIn = new ByteArrayInputStream(s.getBytes(destXspConfig.getCharset()));
 			destXspConfig.setContents(
