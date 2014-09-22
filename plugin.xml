@@ -141,4 +141,20 @@
           </menu>
        </menuContribution>
     </extension>
+    
+    <!--
+       Un décorateur pour afficher visuellement le lien entre les projets
+    -->
+    <extension point="org.eclipse.ui.decorators">
+      <decorator
+            adaptable="true"
+            class="fr.asi.xsp.ccexport.CcExportDecorator"
+            id="fr.asi.xsp.ccexport.CcExportDecorator"
+            label="Cc Export Decorator"
+            state="true">
+         <enablement>
+            <objectClass name="org.eclipse.core.resources.IProject"/>
+         </enablement>
+      </decorator>
+   </extension>
 </plugin>

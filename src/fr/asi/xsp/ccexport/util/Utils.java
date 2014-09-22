@@ -3,7 +3,9 @@ package fr.asi.xsp.ccexport.util;
 import java.io.Closeable;
 import java.io.IOException;
 
+import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -11,6 +13,8 @@ import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.JavaCore;
+
+import fr.asi.xsp.ccexport.Constants;
 
 public class Utils {
 
@@ -118,5 +122,21 @@ public class Utils {
 		} finally {
 			progress.setWorkRemaining(0);
 		}
+	}
+	
+	/**
+	 * Permet de savoir si le projet utilise notre builder
+	 * @param project le projet
+	 * @return true si notre builder est utilisé. False sinon.
+	 * @throws CoreException en cas de problème
+	 */
+	public static boolean isUsingExportCc(IProject project) throws CoreException {
+		IProjectDescription projectDesc = project.getDescription();
+		ICommand[] initBuildSpec = projectDesc.getBuildSpec();
+		for( int j = 0; j < initBuildSpec.length; j++ ) {
+			if (Constants.BUILDER_ID.equals(initBuildSpec[j].getBuilderName()))
+				return true;
+		}
+		return false;
 	}
 }
