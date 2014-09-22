@@ -1,6 +1,5 @@
 package fr.asi.xsp.ccexport;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
@@ -13,9 +12,10 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.eclipse.core.runtime.jobs.Job;
 
 import fr.asi.xsp.ccexport.actions.BaseResourceAction;
 import fr.asi.xsp.ccexport.actions.ExportJavaAction;
@@ -41,34 +41,28 @@ public class CcExportBuilder extends IncrementalProjectBuilder {
 	@Override
 	protected void startupOnInitialize() {
 		final IProject project = this.getProject();
-		WorkspaceModifyOperation operation = new WorkspaceModifyOperation() {
-
-			/**
-			 * @see org.eclipse.ui.actions.WorkspaceModifyOperation#execute(org.eclipse.core.runtime.IProgressMonitor)
-			 */
+		Job job = new Job("Exporting Custom Controls") {
 			@Override
-			protected void execute(IProgressMonitor monitor) throws CoreException, InvocationTargetException, InterruptedException {
+			protected IStatus run(IProgressMonitor monitor) {
 				SubMonitor progress = SubMonitor.convert(monitor, 100);
 				try {
 					// Initialise l'objet
 					if( !Utils.initializeLink(project, progress.newChild(20)) )
-						return;
+						return Status.OK_STATUS;
 					
 					// Lance une synchro
 					SyncAction action = new SyncAction(project);
 					action.execute(progress.newChild(80));
+					
+					return Status.OK_STATUS;
+				} catch(CoreException e) {
+					throw new RuntimeException(e);
 				} finally {
 					if( monitor != null ) monitor.done();
 				}
 			}
 		};
-		try {
-			PlatformUI.getWorkbench().getProgressService().run(true, false, operation);
-		} catch (InvocationTargetException e) {
-			throw new RuntimeException(e);
-		} catch (InterruptedException e) {
-			throw new RuntimeException(e);
-		}
+		job.schedule();
 	}
 
 	/**
