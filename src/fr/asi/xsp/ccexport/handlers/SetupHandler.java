@@ -8,8 +8,10 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectNature;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -21,6 +23,7 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 import com.ibm.designer.domino.ide.resources.DominoResourcesPlugin;
 
+import fr.asi.xsp.ccexport.CcExportDecorator;
 import fr.asi.xsp.ccexport.Constants;
 import fr.asi.xsp.ccexport.actions.SyncAction;
 import fr.asi.xsp.ccexport.util.IProjectUtils;
@@ -109,12 +112,6 @@ public class SetupHandler extends AbstractHandler {
 					// Force une synchro
 					SyncAction action = new SyncAction(project);
 					action.execute(progress.newChild(25));
-					
-					// Rafraîchit le projet
-					project.refreshLocal(
-							IProject.DEPTH_INFINITE, 
-							progress.newChild(25)
-					);
 				} catch(CoreException e) {
 					throw new RuntimeException(e);
 				} finally {
@@ -124,7 +121,19 @@ public class SetupHandler extends AbstractHandler {
 		};
 		try {
 			PlatformUI.getWorkbench().getProgressService().run(true, false, operation);
+			
+			// Rafraîchit le projet
+			project.refreshLocal(
+					IProject.DEPTH_ZERO, 
+					new NullProgressMonitor()
+			);
+			
+			// Rafraîchit le décorator
+			CcExportDecorator.getDecorator().refresh(new IResource[] {project});
+			
 		} catch (InvocationTargetException e) {
+			throw new RuntimeException(e);
+		} catch (CoreException e) {
 			throw new RuntimeException(e);
 		} catch (InterruptedException e) {
 			throw new RuntimeException(e);

@@ -11,6 +11,11 @@ public class Constants {
 	 */
 	public final static String BUILDER_ID = "fr.asi.xsp.ccexport.builder";
 	
+	/**
+	 * L'id de notre décorateur
+	 */
+	public final static String DECORATOR_ID = "fr.asi.xsp.ccexport.CcExportDecorator";
+	
 	// ==========================================================
 	
 	/**

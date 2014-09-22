@@ -1,9 +1,11 @@
 package fr.asi.xsp.ccexport.handlers;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
+import fr.asi.xsp.ccexport.CcExportDecorator;
 import fr.asi.xsp.ccexport.Constants;
 import fr.asi.xsp.ccexport.util.IProjectUtils;
 
@@ -30,5 +32,8 @@ public class UnsetupHandler extends AbstractExportCcHandler {
 		
 		// Rafraîchit le projet
 		project.refreshLocal(IProject.DEPTH_INFINITE, monitor);
+		
+		// Rafraîchit le décorateur
+		CcExportDecorator.getDecorator().refresh(new IResource[] {project});
 	}
 }
