@@ -37,12 +37,12 @@
              name="Forcer la Synchro"/>
    </extension>
    
-   <!--
-       Un handler pour ajouter le builder sur un projet
-       Il n'est actif que sur les projets de type Domino
-   -->
    <extension point="org.eclipse.ui.handlers">
-       <handler
+       <!--
+	      Un handler pour ajouter le builder sur un projet
+	      Il n'est actif que sur les projets de type Domino
+	   -->
+	   <handler
              class="fr.asi.xsp.ccexport.handlers.SetupHandler"
              commandId="fr.asi.xsp.ccexport.command.setup">
           <activeWhen>
@@ -51,6 +51,11 @@
              </with>
           </activeWhen>
        </handler>
+       
+       <!--
+          Un handler pour enlever le builder sur un projet.
+          Il n'est actif que sur les projets de type Domino
+       -->
        <handler
              class="fr.asi.xsp.ccexport.handlers.UnsetupHandler"
              commandId="fr.asi.xsp.ccexport.command.unsetup">
@@ -60,6 +65,11 @@
              </with>
           </activeWhen>
        </handler>
+       
+       <!--
+          Une handler pour forcer l'export des custom controls dans la Library.
+          Il n'est actif que sur les projets de type Domino. 
+       -->
        <handler
              class="fr.asi.xsp.ccexport.handlers.SyncHandler"
              commandId="fr.asi.xsp.ccexport.command.sync">
@@ -72,12 +82,41 @@
     </extension>
 	
 	<!--
-	    Notre entrée dans le menu contextuel du package explorer
+	   Les entrées de menu
     -->
     <extension point="org.eclipse.ui.menus">
+       <!-- Dans le package explorer -->
        <menuContribution locationURI="popup:org.eclipse.jdt.ui.PackageExplorer?after=additions">
           <menu
-                id="fr.asi.xsp.ccexport"
+                id="fr.asi.xsp.ccexport1"
+                label="Cc Export">
+             <command
+                   commandId="fr.asi.xsp.ccexport.command.setup"
+                   label="Configure Synchro"
+                   mode="FORCE_TEXT"
+                   style="push"/>
+             <command
+                   commandId="fr.asi.xsp.ccexport.command.unsetup"
+                   label="Deconfigure synchro"
+                   mode="FORCE_TEXT"
+                   style="push"/>
+             <command
+                   commandId="fr.asi.xsp.ccexport.command.sync"
+                   label="Forcer la Synchro"
+                   mode="FORCE_TEXT"
+                   style="push"/>
+             <visibleWhen>
+                <with variable="selection">
+                   <test property="fr.asi.xsp.ccexport.isDominoProject"/>
+                </with>
+             </visibleWhen>
+          </menu>
+       </menuContribution>
+       
+       <!-- Dans le menu contextuel de la vue Applications -->
+       <menuContribution locationURI="popup:com.ibm.designer.domino.navigator?after=additions">
+          <menu
+                id="fr.asi.xsp.ccexport2"
                 label="Cc Export">
              <command
                    commandId="fr.asi.xsp.ccexport.command.setup"
