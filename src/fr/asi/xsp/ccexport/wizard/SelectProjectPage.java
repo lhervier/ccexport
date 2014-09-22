@@ -4,6 +4,7 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
@@ -64,16 +65,22 @@ public class SelectProjectPage extends WizardPage {
 	 */
 	@Override
 	public void createControl(Composite parent) {
-		this.container = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		
+		GridData layoutData = new GridData();
+		layoutData.horizontalAlignment = SWT.FILL;
+		layoutData.verticalAlignment = SWT.FILL;
+		layoutData.grabExcessHorizontalSpace = true;
+		layoutData.grabExcessVerticalSpace = false;
+		
+		this.container = new Composite(parent, SWT.NONE);
 		this.container.setLayout(layout);
 		
-		layout.numColumns = 2;
-		Label label1 = new Label(this.container, SWT.NONE);
-		label1.setText("Destination project : ");
-		
+		new Label(this.container, SWT.NONE).setText("Destination project : ");
 		this.text = new Text(this.container, SWT.BORDER | SWT.SINGLE);
 		this.text.setText(this.getWizard().getDestProjectName());
+		this.text.setLayoutData(layoutData);
 		this.text.addKeyListener(new KeyListener() {
 			@Override
 			public void keyPressed(KeyEvent event) {}

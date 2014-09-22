@@ -4,6 +4,7 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
@@ -68,17 +69,22 @@ public class OtherOptionsPage extends WizardPage {
 	 */
 	@Override
 	public void createControl(Composite parent) {
-		this.container = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
-		this.container.setLayout(layout);
-		
 		layout.numColumns = 2;
 		
-		Label label1 = new Label(this.container, SWT.NONE);
-		label1.setText("Source folder : ");
+		GridData layoutData = new GridData();
+		layoutData.horizontalAlignment = SWT.FILL;
+		layoutData.verticalAlignment = SWT.FILL;
+		layoutData.grabExcessHorizontalSpace = true;
+		layoutData.grabExcessVerticalSpace = false;
 		
+		this.container = new Composite(parent, SWT.NONE);
+		this.container.setLayout(layout);
+		
+		new Label(this.container, SWT.NONE).setText("Source folder : ");
 		this.sourceText = new Text(this.container, SWT.BORDER | SWT.SINGLE);
 		this.sourceText.setText(this.getWizard().getSourceFolder());
+		this.sourceText.setLayoutData(layoutData);
 		this.sourceText.addKeyListener(new KeyListener() {
 			@Override
 			public void keyPressed(KeyEvent event) {}
@@ -90,11 +96,10 @@ public class OtherOptionsPage extends WizardPage {
 			}
 		});
 		
-		Label label2 = new Label(this.container, SWT.NONE);
-		label2.setText("Package for java files : ");
-		
+		new Label(this.container, SWT.NONE).setText("Package for java files : ");
 		this.javaText = new Text(this.container, SWT.BORDER | SWT.SINGLE);
 		this.javaText.setText(this.getWizard().getJavaExportPackage());
+		this.javaText.setLayoutData(layoutData);
 		this.javaText.addKeyListener(new KeyListener() {
 			@Override
 			public void keyPressed(KeyEvent event) {}
@@ -106,11 +111,10 @@ public class OtherOptionsPage extends WizardPage {
 			}
 		});
 		
-		Label label3 = new Label(this.container, SWT.NONE);
-		label3.setText("Package for xsp-config files : ");
-		
+		new Label(this.container, SWT.NONE).setText("Package for xsp-config files : ");
 		this.xspConfigText = new Text(this.container, SWT.BORDER | SWT.SINGLE);
 		this.xspConfigText.setText(this.getWizard().getXspConfigExportPackage());
+		this.xspConfigText.setLayoutData(layoutData);
 		this.xspConfigText.addKeyListener(new KeyListener() {
 			@Override
 			public void keyPressed(KeyEvent event) {}
@@ -122,11 +126,10 @@ public class OtherOptionsPage extends WizardPage {
 			}
 		});
 		
-		Label label4 = new Label(this.container, SWT.NONE);
-		label4.setText("File to export the xsp-config classpath references into : ");
-		
+		new Label(this.container, SWT.NONE).setText("File to export the xsp-config classpath references into : ");
 		this.xspConfigListText = new Text(this.container, SWT.BORDER | SWT.SINGLE);
 		this.xspConfigListText.setText(this.getWizard().getXspConfigList());
+		this.xspConfigListText.setLayoutData(layoutData);
 		this.xspConfigListText.addKeyListener(new KeyListener() {
 			@Override
 			public void keyPressed(KeyEvent event) {}
