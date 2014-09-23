@@ -1,5 +1,8 @@
 package fr.asi.xsp.ccexport.wizard;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.wizard.Wizard;
 
@@ -34,6 +37,11 @@ public class SetupWizard extends Wizard {
 	 * Le chemin vers le projet où exporter
 	 */
 	private String destProjectName = "";
+	
+	/**
+	 * La liste des répertoires source
+	 */
+	private List<String> sourceFolders = new ArrayList<String>();
 	
 	/**
 	 * Le chemin vers le répertoire source où exporter
@@ -176,5 +184,19 @@ public class SetupWizard extends Wizard {
 	 */
 	public void setXspConfigList(String xspConfigList) {
 		this.xspConfigList = xspConfigList;
+	}
+
+	/**
+	 * @return the sourceFolders
+	 */
+	public List<String> getSourceFolders() {
+		return sourceFolders;
+	}
+
+	/**
+	 * @param sourceFolders the sourceFolders to set
+	 */
+	public void setSourceFolders(List<String> sourceFolders) {
+		this.sourceFolders = sourceFolders;
 	}
 }

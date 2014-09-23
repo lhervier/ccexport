@@ -1,7 +1,13 @@
 package fr.asi.xsp.ccexport.wizard;
 
+import java.util.List;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -15,6 +21,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
+import fr.asi.xsp.ccexport.util.IJavaProjectUtils;
 import fr.asi.xsp.ccexport.util.Utils;
 
 /**
@@ -78,12 +85,30 @@ public class SelectProjectPage extends WizardPage {
 		this.tree.setLabelProvider(WorkbenchLabelProvider.getDecoratingWorkbenchLabelProvider());
 		this.tree.setComparator(new ViewerComparator());
 		this.tree.setInput(ResourcesPlugin.getWorkspace());
+		
+		final SetupWizard wizard = this.getWizard();
 		this.tree.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				IStructuredSelection selection = (IStructuredSelection) event.getSelection();
 				IProject p = (IProject) selection.getFirstElement();
-				SelectProjectPage.this.getWizard().setDestProjectName(p == null ? "" : p.getName());
-				SelectProjectPage.this.getWizard().getContainer().updateButtons();
+				if( p == null ) {
+					wizard.setDestProjectName("");
+					wizard.getSourceFolders().clear();
+				} else {
+					wizard.setDestProjectName(p.getName());
+					try {
+						IJavaProject javaProject = JavaCore.create(p);
+						List<IPath> sourceFolders = IJavaProjectUtils.getSourceFolders(javaProject);
+						wizard.getSourceFolders().clear();
+						for( IPath path : sourceFolders ) {
+							wizard.getSourceFolders().add(path.removeFirstSegments(1).toString());
+						}
+					} catch(CoreException e) {
+						throw new RuntimeException(e);
+					}
+				}
+				wizard.setDestProjectName(p == null ? "" : p.getName());
+				wizard.getContainer().updateButtons();
 			}
 		});
 		

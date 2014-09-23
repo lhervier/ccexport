@@ -1,14 +1,21 @@
 package fr.asi.xsp.ccexport.wizard;
 
+import java.util.List;
+
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+
+import fr.asi.xsp.ccexport.util.Utils;
 
 /**
  * Page de wizard pour sélectionner les autres options
@@ -22,9 +29,9 @@ public class OtherOptionsPage extends WizardPage {
 	private Composite container;
 	
 	/**
-	 * La zone de texte pour saisir le nom du répertoire source
+	 * La combo pour choisir le nom du répertoire source
 	 */
-	private Text sourceText;
+	private Combo sourceCombo;
 	
 	/**
 	 * La zone de texte pour saisir le nom du package pour les fichiers java
@@ -65,10 +72,37 @@ public class OtherOptionsPage extends WizardPage {
 	}
 	
 	/**
+	 * @see org.eclipse.jface.dialogs.DialogPage#setVisible(boolean)
+	 */
+	@Override
+	public void setVisible(boolean visible) {
+		super.setVisible(visible);
+		
+		// Quand on affiche la page, on doit mettre à jour la liste des valeurs pour la combo
+		if( visible ) {
+			List<String> lstNewItems = this.getWizard().getSourceFolders();
+			String[] newItems = new String[lstNewItems.size() + 1];
+			newItems[0] = "";
+			int i=0;
+			for( String item : lstNewItems)
+				newItems[i + 1] = item;
+			
+			String[] prevItems = this.sourceCombo.getItems();
+			
+			if( !Utils.equals(prevItems, newItems) ) {
+				this.sourceCombo.setItems(newItems);
+				this.sourceCombo.setText(newItems[0]);		// On a au moins la valeur vide dedans
+			}
+		}
+	}
+
+	/**
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
 	public void createControl(Composite parent) {
+		final SetupWizard wizard = this.getWizard();
+		
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		
@@ -82,17 +116,13 @@ public class OtherOptionsPage extends WizardPage {
 		this.container.setLayout(layout);
 		
 		new Label(this.container, SWT.NONE).setText("Source folder : ");
-		this.sourceText = new Text(this.container, SWT.BORDER | SWT.SINGLE);
-		this.sourceText.setText(this.getWizard().getSourceFolder());
-		this.sourceText.setLayoutData(layoutData);
-		this.sourceText.addKeyListener(new KeyListener() {
+		this.sourceCombo = new Combo(this.container, SWT.BORDER | SWT.SINGLE);
+		this.sourceCombo.setLayoutData(layoutData);
+		this.sourceCombo.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void keyPressed(KeyEvent event) {}
-			@Override
-			public void keyReleased(KeyEvent event) {
-				String text = OtherOptionsPage.this.sourceText.getText();
-				OtherOptionsPage.this.getWizard().setSourceFolder(text);
-				OtherOptionsPage.this.getWizard().getContainer().updateButtons();
+			public void widgetSelected(SelectionEvent e) {
+				wizard.setSourceFolder(OtherOptionsPage.this.sourceCombo.getText());
+				wizard.getContainer().updateButtons();
 			}
 		});
 		
@@ -106,8 +136,8 @@ public class OtherOptionsPage extends WizardPage {
 			@Override
 			public void keyReleased(KeyEvent event) {
 				String text = OtherOptionsPage.this.javaText.getText();
-				OtherOptionsPage.this.getWizard().setJavaExportPackage(text);
-				OtherOptionsPage.this.getWizard().getContainer().updateButtons();
+				wizard.setJavaExportPackage(text);
+				wizard.getContainer().updateButtons();
 			}
 		});
 		
@@ -121,8 +151,8 @@ public class OtherOptionsPage extends WizardPage {
 			@Override
 			public void keyReleased(KeyEvent event) {
 				String text = OtherOptionsPage.this.xspConfigText.getText();
-				OtherOptionsPage.this.getWizard().setXspConfigExportPackage(text);
-				OtherOptionsPage.this.getWizard().getContainer().updateButtons();
+				wizard.setXspConfigExportPackage(text);
+				wizard.getContainer().updateButtons();
 			}
 		});
 		
@@ -136,8 +166,8 @@ public class OtherOptionsPage extends WizardPage {
 			@Override
 			public void keyReleased(KeyEvent event) {
 				String text = OtherOptionsPage.this.xspConfigListText.getText();
-				OtherOptionsPage.this.getWizard().setXspConfigList(text);
-				OtherOptionsPage.this.getWizard().getContainer().updateButtons();
+				wizard.setXspConfigList(text);
+				wizard.getContainer().updateButtons();
 			}
 		});
 		

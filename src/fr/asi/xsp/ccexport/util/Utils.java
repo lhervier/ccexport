@@ -150,4 +150,23 @@ public class Utils {
 			return true;
 		return s.length() == 0;
 	}
+	
+	/**
+	 * Pour savoir si deux tableaux sont égaux
+	 * @param t1 le 1er tableau
+	 * @param t2 le second tableau
+	 * @return true si leur contenu est identique
+	 */
+	public static boolean equals(Object[] t1, Object[] t2) {
+		if( t1 == null && t2 == null )
+			return true;
+		if( t1 == null || t2 == null )
+			return false;
+		if( t1.length != t2.length )
+			return false;
+		for( int i=0; i<t1.length; i++ )
+			if( !t1[i].equals(t2[i]) )
+				return false;
+		return true;
+	}
 }
