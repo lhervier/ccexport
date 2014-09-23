@@ -46,17 +46,17 @@ public class SetupWizard extends Wizard {
 	/**
 	 * Le chemin vers le répertoire source où exporter
 	 */
-	private String sourceFolder = "src";
+	private String sourceFolder = "";
 	
 	/**
 	 * Le package dans lequel exporter les fichiers java
 	 */
-	private String javaExportPackage = "org.openntf.xsp.mylibrary.components";
+	private String javaExportPackage = "org.openntf.xsp.ccexport.components";
 	
 	/**
 	 * Le package dans lequel exporter les fichiers xsp-config
 	 */
-	private String xspConfigExportPackage = "org.openntf.xsp.mylibrary.config";
+	private String xspConfigExportPackage = "org.openntf.xsp.ccexport.config";
 	
 	/**
 	 * Le nom du fichier dans lequel exporter la liste des fichiers xsp-config
