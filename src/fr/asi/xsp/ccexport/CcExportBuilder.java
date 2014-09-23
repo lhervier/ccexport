@@ -25,6 +25,7 @@ import fr.asi.xsp.ccexport.actions.RemoveJavaAction;
 import fr.asi.xsp.ccexport.actions.RemoveXspConfigAction;
 import fr.asi.xsp.ccexport.actions.SyncAction;
 import fr.asi.xsp.ccexport.util.BooleanHolder;
+import fr.asi.xsp.ccexport.util.PropUtils;
 import fr.asi.xsp.ccexport.util.Utils;
 
 /**
@@ -117,6 +118,10 @@ public class CcExportBuilder extends IncrementalProjectBuilder {
 					// On ne s'intéresse qu'aux fichiers java et xsp-config
 					String ext = location.getFileExtension();
 					if( !"xsp-config".equals(ext) && !"java".equals(ext) )
+						return true;
+					
+					// On ne s'intéresse qu'aux cc qui commencent par le bon préfixe
+					if( !file.getName().toUpperCase().startsWith(PropUtils.getProp_ccPrefix(CcExportBuilder.this.getProject()).toUpperCase()) )
 						return true;
 					
 					// On ne s'intéresse qu'aux fichiers .java qui correspondent à un Custom Control

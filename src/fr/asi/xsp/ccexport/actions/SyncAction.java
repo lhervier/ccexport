@@ -68,6 +68,10 @@ public class SyncAction {
 			public void visit(IFile file) throws CoreException {
 				subProgress1.setWorkRemaining(10000);
 				
+				// On n'exporte que ceux qui commencent par le prefixe
+				if( !file.getName().startsWith(PropUtils.getProp_ccPrefix(SyncAction.this.project)) )
+					return;
+				
 				// Le nom du custom control
 				String cc = Utils.getFileNameWithoutExtension(file.getName());
 				ccs.add(cc);

@@ -135,4 +135,18 @@ public class PropUtils {
 	public static IPath getProp_xspConfigListPath(IProject project) {
 		return new Path(PropUtils.getProp_xspConfigList(project));
 	}
+	
+	/**
+	 * Retourne le préfixe des cc à exporter
+	 * @param prj le projet
+	 * @return le prefixe des cc à exporter
+	 */
+	public static String getProp_ccPrefix(IProject project) {
+		try {
+			return project.getPersistentProperty(Constants.PROP_CCPREFIX);
+		} catch (CoreException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
 }

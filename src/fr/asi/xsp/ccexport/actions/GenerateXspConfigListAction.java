@@ -68,6 +68,8 @@ public class GenerateXspConfigListAction {
 			 */
 			@Override
 			public void visit(IFile file) throws CoreException {
+				if( !file.getName().startsWith(PropUtils.getProp_ccPrefix(GenerateXspConfigListAction.this.srcProject)) )
+					return;
 				if( initialized.value )
 					list.append("\n");
 				else

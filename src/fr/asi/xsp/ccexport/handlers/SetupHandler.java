@@ -97,6 +97,10 @@ public class SetupHandler extends AbstractHandler {
 							Constants.PROP_XSPCONFIG_FILE, 
 							wizard.getXspConfigList()
 					);
+					project.setPersistentProperty(
+							Constants.PROP_CCPREFIX, 
+							wizard.getCcPrefix()
+					);
 					
 					// Ajoute le builder au projet
 					IProjectUtils.addBuilderToProject(

@@ -26,6 +26,7 @@ public class UnsetupHandler extends AbstractExportCcHandler {
 		project.setPersistentProperty(Constants.PROP_CLASSES_PACKAGE, null);
 		project.setPersistentProperty(Constants.PROP_XSPCONFIG_PACKAGE, null);
 		project.setPersistentProperty(Constants.PROP_XSPCONFIG_FILE, null);
+		project.setPersistentProperty(Constants.PROP_CCPREFIX, null);
 		
 		// Ajoute le builder au projet
 		IProjectUtils.removeBuilderFromProject(project, Constants.BUILDER_ID);

@@ -49,6 +49,11 @@ public class OtherOptionsPage extends WizardPage {
 	private Text xspConfigListText;
 	
 	/**
+	 * La zone de text qui contient le préfixe pour les cc à exporter
+	 */
+	private Text ccPrefixText;
+	
+	/**
 	 * Constructeur
 	 */
 	public OtherOptionsPage() {
@@ -167,6 +172,21 @@ public class OtherOptionsPage extends WizardPage {
 			public void keyReleased(KeyEvent event) {
 				String text = OtherOptionsPage.this.xspConfigListText.getText();
 				wizard.setXspConfigList(text);
+				wizard.getContainer().updateButtons();
+			}
+		});
+		
+		new Label(this.container, SWT.NONE).setText("Only custom controls with this prefix will be exported : ");
+		this.ccPrefixText = new Text(this.container, SWT.BORDER | SWT.SINGLE);
+		this.ccPrefixText.setText(this.getWizard().getCcPrefix());
+		this.ccPrefixText.setLayoutData(layoutData);
+		this.ccPrefixText.addKeyListener(new KeyListener() {
+			@Override
+			public void keyPressed(KeyEvent event) {}
+			@Override
+			public void keyReleased(KeyEvent event) {
+				String text = OtherOptionsPage.this.ccPrefixText.getText();
+				wizard.setCcPrefix(text);
 				wizard.getContainer().updateButtons();
 			}
 		});

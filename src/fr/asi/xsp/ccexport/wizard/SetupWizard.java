@@ -64,6 +64,11 @@ public class SetupWizard extends Wizard {
 	private String xspConfigList = "xsp-config.list";
 	
 	/**
+	 * Le préfixe des custom control à exporter
+	 */
+	private String ccPrefix = "";
+	
+	/**
 	 * Constructeur
 	 * @param project le projet source
 	 */
@@ -198,5 +203,19 @@ public class SetupWizard extends Wizard {
 	 */
 	public void setSourceFolders(List<String> sourceFolders) {
 		this.sourceFolders = sourceFolders;
+	}
+
+	/**
+	 * @return the ccPrefix
+	 */
+	public String getCcPrefix() {
+		return ccPrefix;
+	}
+
+	/**
+	 * @param ccPrefix the ccPrefix to set
+	 */
+	public void setCcPrefix(String ccPrefix) {
+		this.ccPrefix = ccPrefix;
 	}
 }
