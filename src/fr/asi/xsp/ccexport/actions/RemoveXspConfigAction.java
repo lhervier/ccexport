@@ -29,6 +29,8 @@ public class RemoveXspConfigAction extends BaseResourceAction {
 	 */
 	@Override
 	public void execute(IFile file, IProgressMonitor monitor) {
+		System.out.println("Removing xsp-config: " + file.getFullPath());
+		
 		String xspConfig = file.getName();
 		try {
 			// Le chemin vers le .xsp-config dans le projet de destination

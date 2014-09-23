@@ -27,6 +27,8 @@ public class RemoveJavaAction extends BaseResourceAction {
 	 */
 	@Override
 	public void execute(IFile file, IProgressMonitor monitor) {
+		System.out.println("Removing Java: " + file.getFullPath());
+		
 		String classFile = file.getName();
 		try {
 			// Le chemin vers le fichier .java

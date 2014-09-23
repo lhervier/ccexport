@@ -36,6 +36,7 @@ public class ExportXspConfigAction extends BaseResourceAction {
 	 */
 	@Override
 	public void execute(IFile file, IProgressMonitor monitor) {
+		System.out.println("Exporting xsp-config: " + file.getFullPath());
 		SubMonitor progress = SubMonitor.convert(monitor, 100);
 		
 		InputStream in = null;
