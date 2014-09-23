@@ -52,9 +52,13 @@ public class SetupHandler extends AbstractHandler {
 		List selList = sse.toList();
 		IProject prj = null;
 		for (Object o : selList) {
-			if ((o instanceof IProjectNature)) {
+			if( o instanceof IProjectNature ) {
 				IProjectNature nature = (IProjectNature) o;
 				prj = nature.getProject();
+				break;
+			}
+			if( o instanceof IProject ) {
+				prj = (IProject) o;
 				break;
 			}
 		}
@@ -62,6 +66,8 @@ public class SetupHandler extends AbstractHandler {
 		// On ne fonctionne que sur un projet de type Domino
 		if (!DominoResourcesPlugin.isDominoDesignerProject(prj))
 			return null;
+		
+		System.out.println("Setting up Cc Export");
 		
 		// Exécute le wizard
 		final SetupWizard wizard = new SetupWizard(prj);

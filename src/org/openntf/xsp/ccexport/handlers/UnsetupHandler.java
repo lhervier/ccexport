@@ -20,6 +20,8 @@ public class UnsetupHandler extends AbstractExportCcHandler {
 	 */
 	@Override
 	public void execute(final IProject project, IProgressMonitor monitor) throws CoreException, InterruptedException {
+		System.out.println("Unsetting Cc Export");
+		
 		// Supprime les propriétés
 		project.setPersistentProperty(Constants.PROP_DEST_PROJECT_NAME, null);
 		project.setPersistentProperty(Constants.PROP_SOURCE_FOLDER, null);

@@ -17,6 +17,7 @@ public class SyncHandler extends AbstractExportCcHandler {
 	 */
 	@Override
 	public void execute(final IProject project, IProgressMonitor monitor) {
+		System.out.println("Launching full Cc Export");
 		try {
 			SyncAction action = new SyncAction(project);
 			action.execute(monitor);

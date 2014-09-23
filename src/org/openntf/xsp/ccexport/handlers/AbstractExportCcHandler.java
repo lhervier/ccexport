@@ -34,10 +34,14 @@ public abstract class AbstractExportCcHandler extends AbstractHandler {
 		@SuppressWarnings("unchecked")
 		List selList = sse.toList();
 		IProject prj = null;
-		for (Object o : selList) {
-			if ((o instanceof IProjectNature)) {
+		for( Object o : selList ) {
+			if( o instanceof IProjectNature ) {
 				IProjectNature nature = (IProjectNature) o;
 				prj = nature.getProject();
+				break;
+			}
+			if( o instanceof IProject ) {
+				prj = (IProject) o;
 				break;
 			}
 		}
