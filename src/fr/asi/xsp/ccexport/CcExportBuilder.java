@@ -126,7 +126,9 @@ public class CcExportBuilder extends IncrementalProjectBuilder {
 					
 					// On ne s'intéresse qu'aux fichiers .java qui correspondent à un Custom Control
 					// Il faut filtrer les XPages. Pour cela, on regarde si on trouve le fichier .xsp
-					if( "java".equals(ext) ) {
+					// Mais le xsp est supprimé AVANT le fichier java...
+					// En cas de suppression, on essaie donc de supprimer la classe, quoi qu'il se passe
+					if( exporting && "java".equals(ext) ) {
 						String cc = Utils.getFileNameWithoutExtension(file.getName());
 						cc = Utils.normalizeMin(cc);		// On essaie d'abord en minuscule
 						IFile xsp = CcExportBuilder.this.getProject().getFile(Constants.CC_FOLDER_PATH.append(cc + ".xsp"));
