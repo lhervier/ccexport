@@ -1,0 +1,4 @@
+- Utiliser une console pour logger
+- Exporter les .xsp dans le design definition des xsp-config
+- Mettre les commentaires et les noms de variable en anglais
+- Finir le wizard en lui mettant un titre et une image
