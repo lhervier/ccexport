@@ -92,7 +92,7 @@ public class OtherOptionsPage extends WizardPage {
 			public void keyReleased(KeyEvent event) {
 				String text = OtherOptionsPage.this.sourceText.getText();
 				OtherOptionsPage.this.getWizard().setSourceFolder(text);
-				OtherOptionsPage.this.setPageComplete(true);
+				OtherOptionsPage.this.getWizard().getContainer().updateButtons();
 			}
 		});
 		
@@ -107,7 +107,7 @@ public class OtherOptionsPage extends WizardPage {
 			public void keyReleased(KeyEvent event) {
 				String text = OtherOptionsPage.this.javaText.getText();
 				OtherOptionsPage.this.getWizard().setJavaExportPackage(text);
-				OtherOptionsPage.this.setPageComplete(true);
+				OtherOptionsPage.this.getWizard().getContainer().updateButtons();
 			}
 		});
 		
@@ -122,7 +122,7 @@ public class OtherOptionsPage extends WizardPage {
 			public void keyReleased(KeyEvent event) {
 				String text = OtherOptionsPage.this.xspConfigText.getText();
 				OtherOptionsPage.this.getWizard().setXspConfigExportPackage(text);
-				OtherOptionsPage.this.setPageComplete(true);
+				OtherOptionsPage.this.getWizard().getContainer().updateButtons();
 			}
 		});
 		
@@ -137,12 +137,11 @@ public class OtherOptionsPage extends WizardPage {
 			public void keyReleased(KeyEvent event) {
 				String text = OtherOptionsPage.this.xspConfigListText.getText();
 				OtherOptionsPage.this.getWizard().setXspConfigList(text);
-				OtherOptionsPage.this.setPageComplete(true);
+				OtherOptionsPage.this.getWizard().getContainer().updateButtons();
 			}
 		});
 		
 		this.setControl(this.container);
-		this.setPageComplete(false);
 	}
 
 	/**

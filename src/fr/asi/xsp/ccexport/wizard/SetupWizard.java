@@ -3,7 +3,6 @@ package fr.asi.xsp.ccexport.wizard;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.wizard.Wizard;
 
-import fr.asi.xsp.ccexport.util.PropUtils;
 import fr.asi.xsp.ccexport.util.Utils;
 
 /**
@@ -62,26 +61,6 @@ public class SetupWizard extends Wizard {
 	 */
 	public SetupWizard(IProject project) {
 		this.project = project;
-		
-		String destProjectName = PropUtils.getProp_destProjectName(project);
-		if( destProjectName != null )
-			this.destProjectName = destProjectName;
-		
-		String sourceFolder = PropUtils.getProp_sourceFolder(project);
-		if( sourceFolder != null )
-			this.sourceFolder = sourceFolder;
-		
-		String javaPackage = PropUtils.getProp_javaPackage(project);
-		if( javaPackage != null )
-			this.javaExportPackage = javaPackage;
-		
-		String xspConfigPackage = PropUtils.getProp_xspConfigPackage(project);
-		if( xspConfigPackage != null )
-			this.xspConfigExportPackage = xspConfigPackage;
-		
-		String xspConfigList = PropUtils.getProp_xspConfigList(project);
-		if( xspConfigList != null )
-			this.xspConfigList = xspConfigList;
 	}
 	
 	/**
@@ -98,6 +77,8 @@ public class SetupWizard extends Wizard {
 	 */
 	@Override
 	public boolean canFinish() {
+		if( Utils.isEmpty(this.destProjectName) )
+			return false;
 		if( Utils.isEmpty(this.sourceFolder) )
 			return false;
 		if( Utils.isEmpty(this.javaExportPackage) )

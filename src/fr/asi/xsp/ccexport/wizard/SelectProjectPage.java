@@ -1,14 +1,19 @@
 package fr.asi.xsp.ccexport.wizard;
 
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 import fr.asi.xsp.ccexport.util.Utils;
 
@@ -24,9 +29,10 @@ public class SelectProjectPage extends WizardPage {
 	private Composite container;
 	
 	/**
-	 * La zone de texte pour saisir le nom du projet de destination
+	 * Le TreeView pour afficher les projets
+	 * sur lesquels se brancher
 	 */
-	private Text text;
+	private TreeViewer tree;
 	
 	/**
 	 * Constructeur
@@ -45,14 +51,6 @@ public class SelectProjectPage extends WizardPage {
 	}
 	
 	/**
-	 * @see org.eclipse.jface.wizard.WizardPage#isPageComplete()
-	 */
-	@Override
-	public boolean isPageComplete() {
-		return false;
-	}
-	
-	/**
 	 * @see org.eclipse.jface.wizard.WizardPage#canFlipToNextPage()
 	 */
 	@Override
@@ -66,34 +64,30 @@ public class SelectProjectPage extends WizardPage {
 	@Override
 	public void createControl(Composite parent) {
 		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		
-		GridData layoutData = new GridData();
-		layoutData.horizontalAlignment = SWT.FILL;
-		layoutData.verticalAlignment = SWT.FILL;
-		layoutData.grabExcessHorizontalSpace = true;
-		layoutData.grabExcessVerticalSpace = false;
+		layout.numColumns = 1;
 		
 		this.container = new Composite(parent, SWT.NONE);
 		this.container.setLayout(layout);
+		this.container.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		
 		new Label(this.container, SWT.NONE).setText("Destination project : ");
-		this.text = new Text(this.container, SWT.BORDER | SWT.SINGLE);
-		this.text.setText(this.getWizard().getDestProjectName());
-		this.text.setLayoutData(layoutData);
-		this.text.addKeyListener(new KeyListener() {
-			@Override
-			public void keyPressed(KeyEvent event) {}
-			@Override
-			public void keyReleased(KeyEvent event) {
-				String text = SelectProjectPage.this.text.getText();
-				SelectProjectPage.this.getWizard().setDestProjectName(text);
-				SelectProjectPage.this.setPageComplete(true);
+		
+		this.tree = new TreeViewer(this.container);
+		this.tree.getTree().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		this.tree.setContentProvider(new LocalJavaProjectProvider());
+		this.tree.setLabelProvider(WorkbenchLabelProvider.getDecoratingWorkbenchLabelProvider());
+		this.tree.setComparator(new ViewerComparator());
+		this.tree.setInput(ResourcesPlugin.getWorkspace());
+		this.tree.addSelectionChangedListener(new ISelectionChangedListener() {
+			public void selectionChanged(SelectionChangedEvent event) {
+				IStructuredSelection selection = (IStructuredSelection) event.getSelection();
+				IProject p = (IProject) selection.getFirstElement();
+				SelectProjectPage.this.getWizard().setDestProjectName(p == null ? "" : p.getName());
+				SelectProjectPage.this.getWizard().getContainer().updateButtons();
 			}
 		});
 		
 		this.setControl(this.container);
-		this.setPageComplete(false);
 	}
 
 	/**

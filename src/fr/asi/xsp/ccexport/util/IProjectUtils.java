@@ -38,8 +38,13 @@ public class IProjectUtils {
 	 * @return true si le projet est de cette nature
 	 * @throws CoreException 
 	 */
-	public static boolean hasNature(IProject project, String natureId) throws CoreException {
-		String[] natures = project.getDescription().getNatureIds();
+	public static boolean hasNature(IProject project, String natureId) {
+		String[] natures;
+		try {
+			natures = project.getDescription().getNatureIds();
+		} catch (CoreException e) {
+			throw new RuntimeException(e);
+		}
 		for( String nature : natures ) {
 			if( natureId.equals(nature) )
 				return true;
