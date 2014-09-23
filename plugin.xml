@@ -4,9 +4,9 @@
    <!--
        Notre Builder
    -->
-   <extension id="fr.asi.xsp.ccexport.builder" point="org.eclipse.core.resources.builders">
+   <extension id="org.openntf.xsp.ccexport.builder" point="org.eclipse.core.resources.builders">
       <builder>
-         <run class="fr.asi.xsp.ccexport.CcExportBuilder"/>
+         <run class="org.openntf.xsp.ccexport.CcExportBuilder"/>
       </builder>
    </extension>
    
@@ -15,9 +15,9 @@
    -->
    <extension point="org.eclipse.core.expressions.propertyTesters">
        <propertyTester
-             class="fr.asi.xsp.ccexport.CcExportPropertyTester"
-             id="fr.asi.xsp.ccexport.CcExportPropertyTester"
-             namespace="fr.asi.xsp.ccexport"
+             class="org.openntf.xsp.ccexport.CcExportPropertyTester"
+             id="org.openntf.xsp.ccexport.CcExportPropertyTester"
+             namespace="org.openntf.xsp.ccexport"
              properties="isDominoProject,isSetup,isUnSetup"
              type="org.eclipse.jface.viewers.ISelection"/>
    </extension>
@@ -27,13 +27,13 @@
    -->
    <extension point="org.eclipse.ui.commands">
        <command
-             id="fr.asi.xsp.ccexport.command.setup"
+             id="org.openntf.xsp.ccexport.command.setup"
              name="Configure Synchro"/>
        <command
-             id="fr.asi.xsp.ccexport.command.unsetup"
+             id="org.openntf.xsp.ccexport.command.unsetup"
              name="Deconfigure Synchro"/>
        <command
-             id="fr.asi.xsp.ccexport.command.sync"
+             id="org.openntf.xsp.ccexport.command.sync"
              name="Forcer la Synchro"/>
    </extension>
    
@@ -43,11 +43,11 @@
 	      Il n'est actif que sur les projets de type Domino
 	   -->
 	   <handler
-             class="fr.asi.xsp.ccexport.handlers.SetupHandler"
-             commandId="fr.asi.xsp.ccexport.command.setup">
+             class="org.openntf.xsp.ccexport.handlers.SetupHandler"
+             commandId="org.openntf.xsp.ccexport.command.setup">
           <activeWhen>
              <with variable="selection">
-                <test property="fr.asi.xsp.ccexport.isUnSetup"/>
+                <test property="org.openntf.xsp.ccexport.isUnSetup"/>
              </with>
           </activeWhen>
        </handler>
@@ -57,11 +57,11 @@
           Il n'est actif que sur les projets de type Domino
        -->
        <handler
-             class="fr.asi.xsp.ccexport.handlers.UnsetupHandler"
-             commandId="fr.asi.xsp.ccexport.command.unsetup">
+             class="org.openntf.xsp.ccexport.handlers.UnsetupHandler"
+             commandId="org.openntf.xsp.ccexport.command.unsetup">
           <activeWhen>
              <with variable="selection">
-                <test property="fr.asi.xsp.ccexport.isSetup"/>
+                <test property="org.openntf.xsp.ccexport.isSetup"/>
              </with>
           </activeWhen>
        </handler>
@@ -71,11 +71,11 @@
           Il n'est actif que sur les projets de type Domino. 
        -->
        <handler
-             class="fr.asi.xsp.ccexport.handlers.SyncHandler"
-             commandId="fr.asi.xsp.ccexport.command.sync">
+             class="org.openntf.xsp.ccexport.handlers.SyncHandler"
+             commandId="org.openntf.xsp.ccexport.command.sync">
           <activeWhen>
              <with variable="selection">
-                <test property="fr.asi.xsp.ccexport.isSetup"/>
+                <test property="org.openntf.xsp.ccexport.isSetup"/>
              </with>
           </activeWhen>
        </handler>
@@ -88,26 +88,26 @@
        <!-- Dans le package explorer -->
        <menuContribution locationURI="popup:org.eclipse.jdt.ui.PackageExplorer?after=additions">
           <menu
-                id="fr.asi.xsp.ccexport1"
+                id="org.openntf.xsp.ccexport1"
                 label="Cc Export">
              <command
-                   commandId="fr.asi.xsp.ccexport.command.setup"
+                   commandId="org.openntf.xsp.ccexport.command.setup"
                    label="Configure Synchro"
                    mode="FORCE_TEXT"
                    style="push"/>
              <command
-                   commandId="fr.asi.xsp.ccexport.command.unsetup"
+                   commandId="org.openntf.xsp.ccexport.command.unsetup"
                    label="Deconfigure synchro"
                    mode="FORCE_TEXT"
                    style="push"/>
              <command
-                   commandId="fr.asi.xsp.ccexport.command.sync"
+                   commandId="org.openntf.xsp.ccexport.command.sync"
                    label="Forcer la Synchro"
                    mode="FORCE_TEXT"
                    style="push"/>
              <visibleWhen>
                 <with variable="selection">
-                   <test property="fr.asi.xsp.ccexport.isDominoProject"/>
+                   <test property="org.openntf.xsp.ccexport.isDominoProject"/>
                 </with>
              </visibleWhen>
           </menu>
@@ -116,26 +116,26 @@
        <!-- Dans le menu contextuel de la vue Applications -->
        <menuContribution locationURI="popup:com.ibm.designer.domino.navigator?after=additions">
           <menu
-                id="fr.asi.xsp.ccexport2"
+                id="org.openntf.xsp.ccexport2"
                 label="Cc Export">
              <command
-                   commandId="fr.asi.xsp.ccexport.command.setup"
+                   commandId="org.openntf.xsp.ccexport.command.setup"
                    label="Configure Synchro"
                    mode="FORCE_TEXT"
                    style="push"/>
              <command
-                   commandId="fr.asi.xsp.ccexport.command.unsetup"
+                   commandId="org.openntf.xsp.ccexport.command.unsetup"
                    label="Deconfigure synchro"
                    mode="FORCE_TEXT"
                    style="push"/>
              <command
-                   commandId="fr.asi.xsp.ccexport.command.sync"
+                   commandId="org.openntf.xsp.ccexport.command.sync"
                    label="Forcer la Synchro"
                    mode="FORCE_TEXT"
                    style="push"/>
              <visibleWhen>
                 <with variable="selection">
-                   <test property="fr.asi.xsp.ccexport.isDominoProject"/>
+                   <test property="org.openntf.xsp.ccexport.isDominoProject"/>
                 </with>
              </visibleWhen>
           </menu>
@@ -148,8 +148,8 @@
     <extension point="org.eclipse.ui.decorators">
       <decorator
             adaptable="true"
-            class="fr.asi.xsp.ccexport.CcExportDecorator"
-            id="fr.asi.xsp.ccexport.CcExportDecorator"
+            class="org.openntf.xsp.ccexport.CcExportDecorator"
+            id="org.openntf.xsp.ccexport.CcExportDecorator"
             label="Cc Export Decorator"
             state="true">
          <enablement>

@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Test Plug-in
-Bundle-SymbolicName: fr.asi.xsp.ccexport;singleton:=true
+Bundle-SymbolicName: org.openntf.xsp.ccexport;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: fr.asi.xsp.ccexport.Activator
+Bundle-Activator: org.openntf.xsp.ccexport.Activator
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.resources,
  org.eclipse.core.expressions;bundle-version="3.4.1",
