@@ -20,6 +20,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
+import org.openntf.xsp.ccexport.util.ConsoleUtils;
 import org.openntf.xsp.ccexport.util.IJavaProjectUtils;
 import org.openntf.xsp.ccexport.util.Utils;
 
@@ -104,6 +105,7 @@ public class SelectProjectPage extends WizardPage {
 							wizard.getSourceFolders().add(path.removeFirstSegments(1).toString());
 						}
 					} catch(CoreException e) {
+						ConsoleUtils.error(e);
 						throw new RuntimeException(e);
 					}
 				}

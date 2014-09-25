@@ -13,6 +13,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
 import org.openntf.xsp.ccexport.Constants;
+import org.openntf.xsp.ccexport.util.ConsoleUtils;
 import org.openntf.xsp.ccexport.util.PropUtils;
 import org.openntf.xsp.ccexport.util.Utils;
 
@@ -36,7 +37,7 @@ public class ExportXspConfigAction extends BaseResourceAction {
 	 */
 	@Override
 	public void execute(IFile file, IProgressMonitor monitor) {
-		System.out.println("Exporting xsp-config: " + file.getFullPath());
+		ConsoleUtils.info("Exporting xsp-config: " + file.getFullPath());
 		SubMonitor progress = SubMonitor.convert(monitor, 100);
 		
 		InputStream in = null;
@@ -92,8 +93,10 @@ public class ExportXspConfigAction extends BaseResourceAction {
 			// TODO: Adapte le fichier .xsp-config pour y inclure le contenu du .xsp en design definition
 			
 		} catch (CoreException e) {
+			ConsoleUtils.error(e);
 			throw new RuntimeException(e);
 		} catch (IOException e) {
+			ConsoleUtils.error(e);
 			throw new RuntimeException(e);
 		} finally {
 			Utils.closeQuietly(reader);

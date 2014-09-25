@@ -23,6 +23,7 @@ public class PropUtils {
 		try {
 			return project.getPersistentProperty(Constants.PROP_DEST_PROJECT_NAME);
 		} catch (CoreException e) {
+			ConsoleUtils.error(e);
 			throw new RuntimeException(e);
 		}
 	}
@@ -49,6 +50,7 @@ public class PropUtils {
 		try {
 			return project.getPersistentProperty(Constants.PROP_SOURCE_FOLDER);
 		} catch (CoreException e) {
+			ConsoleUtils.error(e);
 			throw new RuntimeException(e);
 		}
 	}
@@ -71,6 +73,7 @@ public class PropUtils {
 		try {
 			return project.getPersistentProperty(Constants.PROP_CLASSES_PACKAGE);
 		} catch (CoreException e) {
+			ConsoleUtils.error(e);
 			throw new RuntimeException(e);
 		}
 	}
@@ -84,6 +87,7 @@ public class PropUtils {
 		try {
 			return new Path(project.getPersistentProperty(Constants.PROP_CLASSES_PACKAGE).replace('.', '/'));
 		} catch (CoreException e) {
+			ConsoleUtils.error(e);
 			throw new RuntimeException(e);
 		}
 	}
@@ -97,6 +101,7 @@ public class PropUtils {
 		try {
 			return project.getPersistentProperty(Constants.PROP_XSPCONFIG_PACKAGE);
 		} catch (CoreException e) {
+			ConsoleUtils.error(e);
 			throw new RuntimeException(e);
 		}
 	}
@@ -110,6 +115,7 @@ public class PropUtils {
 		try {
 			return new Path(project.getPersistentProperty(Constants.PROP_XSPCONFIG_PACKAGE).replace('.', '/'));
 		} catch (CoreException e) {
+			ConsoleUtils.error(e);
 			throw new RuntimeException(e);
 		}
 	}
@@ -123,6 +129,7 @@ public class PropUtils {
 		try {
 			return project.getPersistentProperty(Constants.PROP_XSPCONFIG_FILE);
 		} catch (CoreException e) {
+			ConsoleUtils.error(e);
 			throw new RuntimeException(e);
 		}
 	}
@@ -145,6 +152,7 @@ public class PropUtils {
 		try {
 			return project.getPersistentProperty(Constants.PROP_CCPREFIX);
 		} catch (CoreException e) {
+			ConsoleUtils.error(e);
 			throw new RuntimeException(e);
 		}
 	}

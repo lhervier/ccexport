@@ -43,6 +43,7 @@ public class IProjectUtils {
 		try {
 			natures = project.getDescription().getNatureIds();
 		} catch (CoreException e) {
+			ConsoleUtils.error(e);
 			throw new RuntimeException(e);
 		}
 		for( String nature : natures ) {

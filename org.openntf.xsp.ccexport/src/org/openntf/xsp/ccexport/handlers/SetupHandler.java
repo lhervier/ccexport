@@ -23,6 +23,7 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.openntf.xsp.ccexport.CcExportDecorator;
 import org.openntf.xsp.ccexport.Constants;
 import org.openntf.xsp.ccexport.actions.SyncAction;
+import org.openntf.xsp.ccexport.util.ConsoleUtils;
 import org.openntf.xsp.ccexport.util.IProjectUtils;
 import org.openntf.xsp.ccexport.util.Utils;
 import org.openntf.xsp.ccexport.wizard.SetupWizard;
@@ -67,7 +68,7 @@ public class SetupHandler extends AbstractHandler {
 		if (!DominoResourcesPlugin.isDominoDesignerProject(prj))
 			return null;
 		
-		System.out.println("Setting up Cc Export");
+		ConsoleUtils.info("Setting up Cc Export");
 		
 		// Exécute le wizard
 		final SetupWizard wizard = new SetupWizard(prj);
@@ -123,6 +124,7 @@ public class SetupHandler extends AbstractHandler {
 					SyncAction action = new SyncAction(project);
 					action.execute(progress.newChild(25));
 				} catch(CoreException e) {
+					ConsoleUtils.error(e);
 					throw new RuntimeException(e);
 				} finally {
 					if( monitor != null ) monitor.done();
@@ -142,10 +144,13 @@ public class SetupHandler extends AbstractHandler {
 			CcExportDecorator.getDecorator().refresh(new IResource[] {project});
 			
 		} catch (InvocationTargetException e) {
+			ConsoleUtils.error(e);
 			throw new RuntimeException(e);
 		} catch (CoreException e) {
+			ConsoleUtils.error(e);
 			throw new RuntimeException(e);
 		} catch (InterruptedException e) {
+			ConsoleUtils.error(e);
 			throw new RuntimeException(e);
 		}
 		return null;

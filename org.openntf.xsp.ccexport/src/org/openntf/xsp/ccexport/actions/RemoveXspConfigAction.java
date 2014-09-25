@@ -5,6 +5,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.openntf.xsp.ccexport.util.ConsoleUtils;
 import org.openntf.xsp.ccexport.util.PropUtils;
 
 
@@ -29,7 +30,7 @@ public class RemoveXspConfigAction extends BaseResourceAction {
 	 */
 	@Override
 	public void execute(IFile file, IProgressMonitor monitor) {
-		System.out.println("Removing xsp-config: " + file.getFullPath());
+		ConsoleUtils.info("Removing xsp-config: " + file.getFullPath());
 		
 		String xspConfig = file.getName();
 		try {
@@ -47,6 +48,7 @@ public class RemoveXspConfigAction extends BaseResourceAction {
 						monitor
 				);
 		} catch(CoreException e) {
+			ConsoleUtils.error(e);
 			throw new RuntimeException(e);
 		}
 	}

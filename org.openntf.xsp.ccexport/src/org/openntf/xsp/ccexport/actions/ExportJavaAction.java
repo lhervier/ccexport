@@ -19,6 +19,7 @@ import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.openntf.xsp.ccexport.Constants;
+import org.openntf.xsp.ccexport.util.ConsoleUtils;
 import org.openntf.xsp.ccexport.util.PropUtils;
 import org.openntf.xsp.ccexport.util.Utils;
 
@@ -43,7 +44,7 @@ public class ExportJavaAction extends BaseResourceAction {
 	 */
 	@Override
 	public void execute(IFile file, IProgressMonitor monitor) {
-		System.out.println("Exporting java: " + file.getFullPath());
+		ConsoleUtils.info("Exporting java: " + file.getFullPath());
 		
 		SubMonitor progress = SubMonitor.convert(monitor, 100);
 		
@@ -101,8 +102,10 @@ public class ExportJavaAction extends BaseResourceAction {
 			);
 			
 		} catch (CoreException e) {
+			ConsoleUtils.error(e);
 			throw new RuntimeException(e);
 		} catch (IOException e) {
+			ConsoleUtils.error(e);
 			throw new RuntimeException(e);
 		} finally {
 			Utils.closeQuietly(reader);

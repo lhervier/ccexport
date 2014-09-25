@@ -6,6 +6,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.openntf.xsp.ccexport.CcExportDecorator;
 import org.openntf.xsp.ccexport.Constants;
+import org.openntf.xsp.ccexport.util.ConsoleUtils;
 import org.openntf.xsp.ccexport.util.IProjectUtils;
 
 
@@ -20,7 +21,7 @@ public class UnsetupHandler extends AbstractExportCcHandler {
 	 */
 	@Override
 	public void execute(final IProject project, IProgressMonitor monitor) throws CoreException, InterruptedException {
-		System.out.println("Unsetting Cc Export");
+		ConsoleUtils.info("Unsetting Cc Export");
 		
 		// Supprime les propriétés
 		project.setPersistentProperty(Constants.PROP_DEST_PROJECT_NAME, null);

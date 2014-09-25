@@ -62,6 +62,7 @@ public class Utils {
 		try {
 			o.close();
 		} catch (IOException e) {
+			ConsoleUtils.error(e);
 			throw new RuntimeException(e);
 		}
 	}

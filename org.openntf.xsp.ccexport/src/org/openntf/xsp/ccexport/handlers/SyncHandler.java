@@ -4,6 +4,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.openntf.xsp.ccexport.actions.SyncAction;
+import org.openntf.xsp.ccexport.util.ConsoleUtils;
 
 
 /**
@@ -17,11 +18,12 @@ public class SyncHandler extends AbstractExportCcHandler {
 	 */
 	@Override
 	public void execute(final IProject project, IProgressMonitor monitor) {
-		System.out.println("Launching full Cc Export");
+		ConsoleUtils.info("Launching full Cc Export");
 		try {
 			SyncAction action = new SyncAction(project);
 			action.execute(monitor);
 		} catch(CoreException e) {
+			ConsoleUtils.error(e);
 			throw new RuntimeException(e);
 		}
 	}

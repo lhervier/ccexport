@@ -10,6 +10,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IDecoratorManager;
 import org.eclipse.ui.PlatformUI;
+import org.openntf.xsp.ccexport.util.ConsoleUtils;
 import org.openntf.xsp.ccexport.util.Utils;
 
 
@@ -48,6 +49,7 @@ public class CcExportDecorator extends LabelProvider implements ILabelDecorator 
 			
 			return title + " [Exporting Cc into " + project.getPersistentProperty(Constants.PROP_DEST_PROJECT_NAME) + "]";
 		} catch(CoreException e) {
+			ConsoleUtils.error(e);
 			throw new RuntimeException(e);
 		}
 	}

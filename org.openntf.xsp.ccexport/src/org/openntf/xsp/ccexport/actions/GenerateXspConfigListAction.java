@@ -13,6 +13,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
 import org.openntf.xsp.ccexport.Constants;
 import org.openntf.xsp.ccexport.util.BooleanHolder;
+import org.openntf.xsp.ccexport.util.ConsoleUtils;
 import org.openntf.xsp.ccexport.util.ExtensionVisitor;
 import org.openntf.xsp.ccexport.util.PropUtils;
 
@@ -96,6 +97,7 @@ public class GenerateXspConfigListAction {
 		try {
 			in = new ByteArrayInputStream(list.toString().getBytes(file.getCharset()));
 		} catch (UnsupportedEncodingException e) {
+			ConsoleUtils.error(e);
 			throw new RuntimeException(e);
 		}
 		file.setContents(

@@ -24,6 +24,7 @@ import org.openntf.xsp.ccexport.actions.RemoveJavaAction;
 import org.openntf.xsp.ccexport.actions.RemoveXspConfigAction;
 import org.openntf.xsp.ccexport.actions.SyncAction;
 import org.openntf.xsp.ccexport.util.BooleanHolder;
+import org.openntf.xsp.ccexport.util.ConsoleUtils;
 import org.openntf.xsp.ccexport.util.PropUtils;
 import org.openntf.xsp.ccexport.util.Utils;
 
@@ -57,6 +58,7 @@ public class CcExportBuilder extends IncrementalProjectBuilder {
 					
 					return Status.OK_STATUS;
 				} catch(CoreException e) {
+					ConsoleUtils.error(e);
 					throw new RuntimeException(e);
 				} finally {
 					if( monitor != null ) monitor.done();

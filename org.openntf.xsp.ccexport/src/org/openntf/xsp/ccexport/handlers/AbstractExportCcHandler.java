@@ -14,6 +14,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.openntf.xsp.ccexport.util.ConsoleUtils;
 
 import com.ibm.designer.domino.ide.resources.DominoResourcesPlugin;
 
@@ -69,8 +70,10 @@ public abstract class AbstractExportCcHandler extends AbstractHandler {
 		try {
 			PlatformUI.getWorkbench().getProgressService().run(true, false, operation);
 		} catch (InvocationTargetException e) {
+			ConsoleUtils.error(e);
 			throw new RuntimeException(e);
 		} catch (InterruptedException e) {
+			ConsoleUtils.error(e);
 			throw new RuntimeException(e);
 		}
 		return null;

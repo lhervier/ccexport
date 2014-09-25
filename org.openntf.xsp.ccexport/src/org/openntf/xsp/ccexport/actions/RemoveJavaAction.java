@@ -5,6 +5,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.openntf.xsp.ccexport.util.ConsoleUtils;
 import org.openntf.xsp.ccexport.util.PropUtils;
 
 
@@ -27,7 +28,7 @@ public class RemoveJavaAction extends BaseResourceAction {
 	 */
 	@Override
 	public void execute(IFile file, IProgressMonitor monitor) {
-		System.out.println("Removing Java: " + file.getFullPath());
+		ConsoleUtils.info("Removing Java: " + file.getFullPath());
 		
 		String classFile = file.getName();
 		try {
@@ -40,6 +41,7 @@ public class RemoveJavaAction extends BaseResourceAction {
 			if( java.exists() )
 				java.delete(true, monitor);
 		} catch(CoreException e) {
+			ConsoleUtils.error(e);
 			throw new RuntimeException(e);
 		}
 	}
