@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/org.openntf.xsp.ccexport.feature_1.0.0.201409231243.jar" id="org.openntf.xsp.ccexport.feature" version="1.0.0.201409231243"/>
+   <feature url="features/org.openntf.xsp.ccexport.feature_1.0.0.qualifier.jar" id="org.openntf.xsp.ccexport.feature" version="1.0.0.qualifier"/>
 </site>
