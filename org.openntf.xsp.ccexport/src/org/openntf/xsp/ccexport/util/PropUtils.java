@@ -7,17 +7,16 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.openntf.xsp.ccexport.Constants;
 
-
 /**
- * Méthodes pratique pour accéder aux propriétés du projet source
+ * Userfull methods to access properties of the source project
  * @author Lionel HERVIER
  */
 public class PropUtils {
 
 	/**
-	 * Retourne le nom du projet dans lequel exporter
-	 * @param prj le projet
-	 * @return le nom du projet dans lequel exporter
+	 * Returns the name of the project we will export into
+	 * @param prj the source project 
+	 * @return the name of the destination project
 	 */
 	public static String getProp_destProjectName(IProject project) {
 		try {
@@ -29,9 +28,9 @@ public class PropUtils {
 	}
 	
 	/**
-	 * Retourne le projet de destination
-	 * @param prj le projet source
-	 * @return le projet de destination
+	 * Returns the project we will export into
+	 * @param prj the source project
+	 * @return the destination project
 	 */
 	public static IProject getProp_destProject(IProject project) {
 		String name = PropUtils.getProp_destProjectName(project);
@@ -42,9 +41,9 @@ public class PropUtils {
 	}
 	
 	/**
-	 * Retourne le nom du rep source dans lequel exporter
-	 * @param prj le projet
-	 * @return le nom du rep source
+	 * Returns the name of the source folder we will export into
+	 * @param prj the source project
+	 * @return the name of the source folder we will export into
 	 */
 	public static String getProp_sourceFolder(IProject project) {
 		try {
@@ -56,18 +55,18 @@ public class PropUtils {
 	}
 	
 	/**
-	 * Retourne le chemin vers le rep source dans lequel exporter
-	 * @param prj le projet
-	 * @return le nom du rep source
+	 * Returns the source folder we will export into
+	 * @param prj the source project
+	 * @return the source folder we will export into
 	 */
 	public static IPath getProp_sourceFolderPath(IProject project) {
 		return new Path(PropUtils.getProp_sourceFolder(project));
 	}
 	
 	/**
-	 * Retourne le nom du package dans lequel exporter les fichiers java
-	 * @param prj le projet
-	 * @return le nom du package
+	 * Returns the name of the package we will export .java files into
+	 * @param prj the project
+	 * @return the name of the package we will export .java files into
 	 */
 	public static String getProp_javaPackage(IProject project) {
 		try {
@@ -79,9 +78,9 @@ public class PropUtils {
 	}
 	
 	/**
-	 * Retourne le chemin vers le package dans lequel exporter les fichiers java
-	 * @param prj le projet
-	 * @return le chemin vers le package
+	 * Return the package we will export .java files into
+	 * @param prj the source project
+	 * @return the package we will export .java files into
 	 */
 	public static IPath getProp_javaPath(IProject project) {
 		try {
@@ -93,9 +92,9 @@ public class PropUtils {
 	}
 	
 	/**
-	 * Retourne le nom du package dans lequel exporter les xsp-config
-	 * @param prj le projet
-	 * @return le nom du projet dans lequel exporter
+	 * Returns the name of the package we will export .xsp-config files into
+	 * @param prj the source project
+	 * @return the name of the package we will export .xsp-config files into
 	 */
 	public static String getProp_xspConfigPackage(IProject project) {
 		try {
@@ -107,9 +106,9 @@ public class PropUtils {
 	}
 	
 	/**
-	 * Retourne le chemin du package dans lequel exporter les xsp-config
-	 * @param prj le projet
-	 * @return le nom du projet dans lequel exporter
+	 * Returns the package we will export .java files into
+	 * @param prj the source project
+	 * @return the package we will export .java files into
 	 */
 	public static IPath getProp_xspConfigPath(IProject project) {
 		try {
@@ -121,9 +120,9 @@ public class PropUtils {
 	}
 	
 	/**
-	 * Retourne le nom du fichier dans lequel exporter les noms des xsp-config
-	 * @param prj le projet
-	 * @return le nom du fichier dans lequel exporter
+	 * Returns the name of the file where we will export the classpath pathes to the .xsp-config files
+	 * @param prj the source project
+	 * @return the name of the file where we will export the classpath pathes to the .xsp-config files
 	 */
 	public static String getProp_xspConfigList(IProject project) {
 		try {
@@ -135,18 +134,18 @@ public class PropUtils {
 	}
 	
 	/**
-	 * Retourne le chemin vers le fichier où on va exporter les noms des xsp-config
-	 * @param prj le projet
-	 * @return le chemin vers le fichier xsp-config.list
+	 * Returns the file where we will export the classpath pathes to the .xsp-config files
+	 * @param prj the source project
+	 * @return the file where we will export the classpath pathes to the .xsp-config files
 	 */
 	public static IPath getProp_xspConfigListPath(IProject project) {
 		return new Path(PropUtils.getProp_xspConfigList(project));
 	}
 	
 	/**
-	 * Retourne le préfixe des cc à exporter
-	 * @param prj le projet
-	 * @return le prefixe des cc à exporter
+	 * Returns the prefix of the custom controls to export
+	 * @param prj the source project
+	 * @return the prefix of the custom controls to export
 	 */
 	public static String getProp_ccPrefix(IProject project) {
 		try {

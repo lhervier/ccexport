@@ -6,19 +6,19 @@ import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * Une visiteur qui ne donne que les fichiers ayant une certaines extension
+ * Visitor to walk through files with a given extension only
  * @author Lionel HERVIER
  */
 public abstract class ExtensionVisitor implements IResourceVisitor {
 
 	/**
-	 * L'extension
+	 * The files extension
 	 */
 	private String ext;
 	
 	/**
-	 * Constructeur
-	 * @param ext l'extension
+	 * Constructor
+	 * @param ext the extension
 	 */
 	public ExtensionVisitor(String ext) {
 		this.ext = ext;
@@ -40,9 +40,9 @@ public abstract class ExtensionVisitor implements IResourceVisitor {
 	}
 
 	/**
-	 * Viste un fichier qui a l'extension requise
-	 * @param file le fichier
-	 * @throws CoreException en cas de pb
+	 * Visit a file that have the right extension
+	 * @param file the file
+	 * @throws CoreException in cas of trouble
 	 */
 	public abstract void visit(IFile file) throws CoreException;
 }

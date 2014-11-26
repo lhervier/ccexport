@@ -15,13 +15,16 @@ import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.JavaCore;
 import org.openntf.xsp.ccexport.Constants;
 
-
+/**
+ * Usefull methods
+ * @author Lionel HERVIER
+ */
 public class Utils {
 
 	/**
-	 * Passe le premier caractère en majuscule
-	 * @param s la chaîne
-	 * @return la chaîne avec le 1er caractère en majuscule
+	 * Update the string so the first letter is uppercase
+	 * @param s the string
+	 * @return the string with first letter uppercase
 	 */
 	public static String normalizeMaj(String s) {
 		if( s.length() <= 1 )
@@ -30,9 +33,9 @@ public class Utils {
 	}
 	
 	/**
-	 * Passe le premier caractère en minuscule
-	 * @param s la chaîne
-	 * @return la chaîne avec le 1er caractère en minuscule
+	 * Update the string so the first letter is lowercase
+	 * @param s the string
+	 * @return the string with first letter lowercase
 	 */
 	public static String normalizeMin(String s) {
 		if( s.length() <= 1 )
@@ -41,9 +44,9 @@ public class Utils {
 	}
 	
 	/**
-	 * Retourne un nom de fichier sans son extension
-	 * @param fileName
-	 * @return le nom du fichier sans son extension
+	 * Remove the extension from a file name
+	 * @param fileName the file name (with extension)
+	 * @return the file name (without extension)
 	 */
 	public static String getFileNameWithoutExtension(String fileName) {
 		int pos = fileName.lastIndexOf('.');
@@ -53,8 +56,8 @@ public class Utils {
 	}
 	
 	/**
-	 * Pour fermer une stream
-	 * @param o l'objet à fermer
+	 * To close a stream, reader, writer, etc...
+	 * @param o the object to close
 	 */
 	public static void closeQuietly(Closeable o) {
 		if( o == null )
@@ -68,30 +71,30 @@ public class Utils {
 	}
 	
 	/**
-	 * Initialise la liaison entre les 2 projets
-	 * @param prj le projet source
+	 * Initialize the link between an NSF project and a plug-in project
+	 * @param prj the source project
 	 * @param monitor the progress monitor to use for reporting progress to the user. It is the caller's responsibility
 	 * 		to call done() on the given monitor. Accepts null, indicating that no progress should be
 	 * 		reported and that the operation cannot be cancelled.
-	 * @return true si c'est ok. False sinon.
+	 * @return true of ok. False otherwise.
 	 */
 	public static boolean initializeLink(IProject nsfProject, IProgressMonitor monitor) throws CoreException {
 		SubMonitor progress = SubMonitor.convert(monitor, 100);
 		try {
 			IProject project = PropUtils.getProp_destProject(nsfProject);
 			
-			// Vérifie que le projet existe et est de nature java
+			// Check that dest project exists and is of Java nature
 			if( !project.exists() )
 				return false;
 			if( !IProjectUtils.hasNature(project, JavaCore.NATURE_ID) )
 				return false;
 			
-			// Ouvre le projet si nécessaire
+			// Open dest project if needed 
 			if( !project.isOpen() )
 				project.open(progress.newChild(25));
 			progress.setWorkRemaining(75);
 			
-			// Créé les deux packages
+			// Create the packages
 			IJavaProject javaProject = JavaCore.create(project);
 			IPackageFragment javaPkg = IJavaProjectUtils.createPackage(
 					javaProject, 
@@ -110,7 +113,7 @@ public class Utils {
 			if( xspConfigPkg == null )
 				return false;
 			
-			// Créé le dossier qui va contenir le fichier xsp-config.list
+			// Create the folder that will contain the xsp-config.list file
 			IPath xspConfigListPath = PropUtils.getProp_xspConfigListPath(nsfProject);
 			IPath folderPath = xspConfigListPath.removeLastSegments(1);
 			IProjectUtils.createFolder(
@@ -126,10 +129,10 @@ public class Utils {
 	}
 	
 	/**
-	 * Permet de savoir si le projet utilise notre builder
-	 * @param project le projet
-	 * @return true si notre builder est utilisé. False sinon.
-	 * @throws CoreException en cas de problème
+	 * To ckeck if a given project is using our builder
+	 * @param project the source project (NSF)
+	 * @return true is our builder is running. False otherwise.
+	 * @throws CoreException in cas of trouble.
 	 */
 	public static boolean isUsingExportCc(IProject project) throws CoreException {
 		IProjectDescription projectDesc = project.getDescription();
@@ -142,9 +145,9 @@ public class Utils {
 	}
 	
 	/**
-	 * Pour savoir si une chaîne est vide
-	 * @param s la chaîne
-	 * @return true si la chaîne est vide, ou null
+	 * Check for an empty string
+	 * @param s the string
+	 * @return true if the string is empty. False otherwise.
 	 */
 	public static boolean isEmpty(String s) {
 		if( s == null )
@@ -153,10 +156,13 @@ public class Utils {
 	}
 	
 	/**
-	 * Pour savoir si deux tableaux sont égaux
-	 * @param t1 le 1er tableau
-	 * @param t2 le second tableau
-	 * @return true si leur contenu est identique
+	 * Check if two arrays are equals. Understand:
+	 * - If they have the same number of elements
+	 * - If each element is equals regarding the .equals methods.
+	 * This method accepts arrays with null elements.
+	 * @param t1 the first array
+	 * @param t2 the second array
+	 * @return true of they are equals. False otherwise.
 	 */
 	public static boolean equals(Object[] t1, Object[] t2) {
 		if( t1 == null && t2 == null )

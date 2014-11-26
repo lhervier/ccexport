@@ -7,70 +7,69 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.wizard.Wizard;
 import org.openntf.xsp.ccexport.util.Utils;
 
-
 /**
- * Wizard pour configurer l'export
+ * Wizard to setup cc export
  * @author Lionel HERVIER
  */
 public class SetupWizard extends Wizard {
 
 	/**
-	 * La page pour sélectionner le projet de destination
+	 * Page to select a destination project
 	 */
 	private SelectProjectPage selectProjectPage = new SelectProjectPage();
 	
 	/**
-	 * La page pour définir les autres options
+	 * Page for other options
 	 */
 	private OtherOptionsPage otherOptionsPage = new OtherOptionsPage();
 	
 	// ============================================================================
 	
 	/**
-	 * Le projet source
+	 * The source project
 	 */
 	private IProject project;
 	
 	// ============================================================================
 	
 	/**
-	 * Le chemin vers le projet où exporter
+	 * Path to the destination project
 	 */
 	private String destProjectName = "";
 	
 	/**
-	 * La liste des répertoires source
+	 * Destination project source folders
 	 */
 	private List<String> sourceFolders = new ArrayList<String>();
 	
 	/**
-	 * Le chemin vers le répertoire source où exporter
+	 * Path to the source folder we will export into
 	 */
 	private String sourceFolder = "";
 	
 	/**
-	 * Le package dans lequel exporter les fichiers java
+	 * Package name where we will export java files
 	 */
 	private String javaExportPackage = "org.openntf.xsp.ccexport.components";
 	
 	/**
-	 * Le package dans lequel exporter les fichiers xsp-config
+	 * Package name where we will export xsp-config files
 	 */
 	private String xspConfigExportPackage = "org.openntf.xsp.ccexport.config";
 	
 	/**
-	 * Le nom du fichier dans lequel exporter la liste des fichiers xsp-config
+	 * Name of the file we will export classpath path pf xsp-config files
 	 */
 	private String xspConfigList = "xsp-config.list";
 	
 	/**
-	 * Le préfixe des custom control à exporter
+	 * Prefix of the Custom control we will export
 	 */
 	private String ccPrefix = "";
 	
 	/**
-	 * Constructeur
-	 * @param project le projet source
+	 * Constructor
+	 * @param project the source project
 	 */
 	public SetupWizard(IProject project) {
 		this.project = project;

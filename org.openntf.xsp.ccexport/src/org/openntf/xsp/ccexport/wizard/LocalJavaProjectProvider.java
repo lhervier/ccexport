@@ -12,9 +12,8 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.openntf.xsp.ccexport.util.IProjectUtils;
 
-
 /**
- * Fourni les infos à l'arbre qui affiche la liste des projets
+ * Tree Content Provider to display the list of java projects
  * @author Lionel HERVIER
  */
 public class LocalJavaProjectProvider implements ITreeContentProvider {
@@ -24,22 +23,22 @@ public class LocalJavaProjectProvider implements ITreeContentProvider {
 	 */
 	@Override
 	public Object[] getChildren(Object element) {
-		// On ne s'intéresse qu'au workspace
+		// Only working with workspace elements
 		if ( !(element instanceof IWorkspace))
 			return new Object[0];
 		IWorkspace workspace = (IWorkspace) element;
 		
-		// Parcours les projets
+		// Walk through the projects
 		IProject[] allProjects = workspace.getRoot().getProjects();
 		List<IProject> projects = new ArrayList<IProject>();
 		for( int i = 0; i < allProjects.length; i++ ) {
 			IProject p = allProjects[i];
 			
-			// On ne retient que les prjets ouverts
+			// Only working with opened projects
 			if( !p.isOpen() )
 				continue;
 			
-			// On ne retient que les projets locaux
+			// Only working with local projects (To filter Domino Databases)
 			URI projectURI = p.getLocationURI();
 			if( !"file".equalsIgnoreCase(projectURI.getScheme()) )
 				continue;

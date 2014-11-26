@@ -17,16 +17,15 @@ import org.openntf.xsp.ccexport.util.ConsoleUtils;
 import org.openntf.xsp.ccexport.util.PropUtils;
 import org.openntf.xsp.ccexport.util.Utils;
 
-
 /**
- * Action pour exporter un fichier xsp-config.
+ * Action to export an .xsp-config file.
  * @author Lionel HERVIER
  */
 public class ExportXspConfigAction extends BaseResourceAction {
 
 	/**
-	 * Constructeur
-	 * @param srcProject le projet Java source (celui de la base NSF)
+	 * Constructor
+	 * @param srcProject The source project (NSF)
 	 */
 	public ExportXspConfigAction(IProject srcProject) {
 		super(srcProject);
@@ -43,30 +42,30 @@ public class ExportXspConfigAction extends BaseResourceAction {
 		InputStream in = null;
 		Reader reader = null;
 		try {
-			// Le xsp-config source
+			// The source .xsp-config file
 			String xspConfig = file.getName();
 			IPath srcXspConfigPath = Constants.CC_FOLDER_PATH.append(xspConfig);
 			IFile srcXspConfig = this.srcProject.getFile(srcXspConfigPath);
 			
-			// Le xsp-config de destination
+			// Le destination .xsp-config file
 			IPath destXspConfigPath = PropUtils.getProp_sourceFolderPath(this.srcProject)
 					.append(PropUtils.getProp_xspConfigPath(this.srcProject))
 					.append(xspConfig);
 			IFile destXspConfig = this.destProject.getFile(destXspConfigPath);
 			
-			// Supprime fichier s'il existe dans la destination
+			// Remove the file if it already exists into the destination project
 			if( destXspConfig.exists() )
 				destXspConfig.delete(true, progress.newChild(10));
 			progress.setWorkRemaining(90);
 			
-			// Copie le xsp-config source dans la destination
+			// Copy the source file into the destination
 			srcXspConfig.copy(
 					destXspConfig.getFullPath(), 
 					true, 
 					progress.newChild(40)
 			);
 			
-			// Adapte le xsp-config de destination
+			// Update the content of the file, so we are referencing the java class instead of the xsp file 
 			in = destXspConfig.getContents();
 			reader = new InputStreamReader(in, destXspConfig.getCharset());
 			char[] buffer = new char[4 * 1024];
@@ -90,7 +89,7 @@ public class ExportXspConfigAction extends BaseResourceAction {
 					progress.newChild(50)
 			);
 			
-			// TODO: Adapte le fichier .xsp-config pour y inclure le contenu du .xsp en design definition
+			// TODO: Update the .xsp-config file to include the content of the .xsp file as a design definition
 			
 		} catch (CoreException e) {
 			ConsoleUtils.error(e);

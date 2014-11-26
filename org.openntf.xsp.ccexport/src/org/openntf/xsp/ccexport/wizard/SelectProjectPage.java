@@ -24,27 +24,24 @@ import org.openntf.xsp.ccexport.util.ConsoleUtils;
 import org.openntf.xsp.ccexport.util.IJavaProjectUtils;
 import org.openntf.xsp.ccexport.util.Utils;
 
-
 /**
- * Page du wizard pour la sélection du projet cible
+ * Wizard page to select a destination project
  * @author Lionel HERVIER
  */
 public class SelectProjectPage extends WizardPage {
 
 	/**
-	 * Le control principal
+	 * Main container
 	 */
 	private Composite container;
 	
 	/**
-	 * Le TreeView pour afficher les projets
-	 * sur lesquels se brancher
+	 * TreeView to display projects
 	 */
 	private TreeViewer tree;
 	
 	/**
-	 * Constructeur
-	 * @param wizard le wizard parent
+	 * Constructor
 	 */
 	public SelectProjectPage() {
 		super("Select project to export into");

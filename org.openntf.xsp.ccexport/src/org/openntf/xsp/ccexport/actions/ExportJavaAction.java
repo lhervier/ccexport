@@ -23,17 +23,15 @@ import org.openntf.xsp.ccexport.util.ConsoleUtils;
 import org.openntf.xsp.ccexport.util.PropUtils;
 import org.openntf.xsp.ccexport.util.Utils;
 
-
 /**
- * Action pour exporter un custom control compilé (en fichier java).
- * FIXME: Il ne sait pas gérer la traduction telle que gérée par les XPages avec les fichiers .properties.
+ * Action to export the .java files generated from a custom control by the XPage compiler.
  * @author Lionel HERVIER
  */
 public class ExportJavaAction extends BaseResourceAction {
 
 	/**
-	 * Constructeur
-	 * @param srcProject le projet Java source (celui de la base NSF)
+	 * Constructor
+	 * @param srcProject The source project (NSF)
 	 */
 	public ExportJavaAction(IProject srcProject) {
 		super(srcProject);
@@ -54,19 +52,19 @@ public class ExportJavaAction extends BaseResourceAction {
 			IJavaProject src = JavaCore.create(this.srcProject);
 			IJavaProject dest = JavaCore.create(this.destProject);
 			
-			// Le .java source (sous la forme d'un vrai fichier .java, pas d'un IFile)
+			// The .java source (as a "real" java file, not as an IFile)
 			String classFile = file.getName();
 			IPath javaSrcPath = Constants.JAVA_PACKAGE.append(classFile);
 			IJavaElement javaSrc = src.findElement(javaSrcPath);
 			
-			// Le package de destination (sous la forme d'un vrai package, pas d'un IFolder)
+			// The destination package (as a "real" package, not as an IFolder)
 			IPath sourcesFolderPath = PropUtils.getProp_sourceFolderPath(this.srcProject);
 			IFolder sourcesFolder = this.destProject.getFolder(sourcesFolderPath);
 			IPackageFragmentRoot packageRoot = dest.getPackageFragmentRoot(sourcesFolder);
 			IPackageFragment destPackage = packageRoot.getPackageFragment(PropUtils.getProp_javaPackage(this.srcProject));
 			
-			// Copie la classe
-			// Passer par un IJavaElement permet d'adapter le package déclaré dans la classe
+			// Copy the Java class
+			// IJavaElement will update the package name for us (same as when copying/pasting a java class into another package).
 			src.getJavaModel().copy(
 					new IJavaElement[] {javaSrc}, 
 					new IJavaElement[] {destPackage}, 
@@ -76,11 +74,11 @@ public class ExportJavaAction extends BaseResourceAction {
 					progress.newChild(50)
 			);
 			
-			// Le .java de destination
+			// The destination .java file
 			IPath javaDestPath = destPackage.getResource().getProjectRelativePath().append(classFile);
 			IFile javaDest = this.destProject.getFile(javaDestPath);
 			
-			// Adapte son contenu
+			// Update the content to reference the java class instead of the xsp files
 			in = javaDest.getContents();
 			reader = new InputStreamReader(in, javaDest.getCharset());
 			char[] buffer = new char[4 * 1024];

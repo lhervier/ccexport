@@ -8,25 +8,24 @@ import org.openntf.xsp.ccexport.util.PropUtils;
 
 import com.ibm.designer.domino.ide.resources.DominoResourcesPlugin;
 
-
 /**
- * Testeur de propriétés pour activer/masquer les menus
+ * Property tester to activate/hide the menus
  * @author Lionel HERVIER
  */
 public class CcExportPropertyTester extends PropertyTester {
 
 	/**
-	 * Pour savoir si on est sur un projet Domino
+	 * Project is a Domino Project
 	 */
 	public final static String PROP_ISDOMINOPROJECT = "isDominoProject";
 	
 	/**
-	 * Pour savoir si la synchro est en place
+	 * Builder is running
 	 */
 	public final static String PROP_ISSETUP = "isSetup";
 	
 	/**
-	 * Pour savoir si la synchro n'est PAS en place
+	 * Builder is NOT running
 	 */
 	public final static String PROP_ISUNSETUP = "isUnSetup";
 	

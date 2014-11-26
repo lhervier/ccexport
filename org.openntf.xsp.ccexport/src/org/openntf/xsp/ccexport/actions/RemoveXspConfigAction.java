@@ -8,15 +8,14 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.openntf.xsp.ccexport.util.ConsoleUtils;
 import org.openntf.xsp.ccexport.util.PropUtils;
 
-
 /**
- * Supprime le fichier xsp-config correspondant à un custom control
+ * Action to remove a .xsp-config file.
  * @author Lionel HERVIER
  */
 public class RemoveXspConfigAction extends BaseResourceAction {
 
 	/**
-	 * Constructeur
+	 * Constructor
 	 * @param srcProject
 	 */
 	public RemoveXspConfigAction(IProject srcProject) {
@@ -24,9 +23,7 @@ public class RemoveXspConfigAction extends BaseResourceAction {
 	}
 
 	/**
-	 * Supprime un fichier .xsp-config
-	 * @param xspConfig le fichier .xsp-config à supprimer
-	 * @param monitor le moniteur
+	 * @see org.openntf.xsp.ccexport.actions.BaseResourceAction#execute(org.eclipse.core.resources.IFile, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
 	public void execute(IFile file, IProgressMonitor monitor) {
@@ -34,14 +31,14 @@ public class RemoveXspConfigAction extends BaseResourceAction {
 		
 		String xspConfig = file.getName();
 		try {
-			// Le chemin vers le .xsp-config dans le projet de destination
+			// The path to the .xsp-config file
 			IPath xspConfigDest = PropUtils
 					.getProp_sourceFolderPath(this.srcProject)
 					.append(PropUtils.getProp_xspConfigPath(this.srcProject))
 					.append(xspConfig);
 			IFile xspConfigFile = this.destProject.getFile(xspConfigDest);
 			
-			// Supprime fichier
+			// Remove the file
 			if( xspConfigFile.exists() )
 				xspConfigFile.delete(
 						true, 

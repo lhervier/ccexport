@@ -17,26 +17,25 @@ import org.openntf.xsp.ccexport.util.ConsoleUtils;
 import org.openntf.xsp.ccexport.util.ExtensionVisitor;
 import org.openntf.xsp.ccexport.util.PropUtils;
 
-
 /**
- * Action pour générer le fichier qui contient la liste 
- * des références aux xsp-config
+ * Action to generate the file that contains the classpath path to the .xsp-config files
+ * This file is used by the XPages Library implementation.
  * @author Lionel HERVIER
  */
 public class GenerateXspConfigListAction {
 
 	/**
-	 * Le projet source
+	 * The source project
 	 */
 	private IProject srcProject;
 	
 	/**
-	 * Le projet de destination
+	 * The destination project
 	 */
 	private IProject destProject;
 	
 	/**
-	 * Constructeur
+	 * Constructor
 	 * @param srcProject
 	 */
 	public GenerateXspConfigListAction(IProject project) {
@@ -45,8 +44,8 @@ public class GenerateXspConfigListAction {
 	}
 	
 	/**
-	 * Exécute l'action
-	 * @throws CoreException en cas de pb
+	 * Run the action
+	 * @throws CoreException in cas of trouble
 	 * @param monitor the progress monitor to use for reporting progress to the user. It is the caller's responsibility
 	 * 		to call done() on the given monitor. Accepts null, indicating that no progress should be
 	 * 		reported and that the operation cannot be cancelled.
@@ -54,14 +53,14 @@ public class GenerateXspConfigListAction {
 	public void execute(IProgressMonitor monitor) throws CoreException {
 		SubMonitor progress = SubMonitor.convert(monitor, 100);
 		
-		// Le dossier qui contient les xsp-config
+		// The folder that contains the .xsp-config files
 		IFolder ccFolder = this.srcProject.getFolder(Constants.CC_FOLDER_PATH);
 		
-		// La liste
+		// Prepare the list
 		final StringWriter list = new StringWriter();
 		final BooleanHolder initialized = new BooleanHolder(false);
 		
-		// Parcours le dossier
+		// Walk through the folder
 		final SubMonitor subProgress = SubMonitor.convert(progress.newChild(30));
 		ccFolder.accept(new ExtensionVisitor("xsp-config") {
 			/**
@@ -83,7 +82,7 @@ public class GenerateXspConfigListAction {
 		});
 		progress.setWorkRemaining(70);
 		
-		// Le fichier dans lequel écrire. Comme Utils.initialize a été appelé, on est sûr que le dossier existe. 
+		// The file to write into. As Utils.initialize have been called, we are certain that the folder exists. 
 		IFile file = this.destProject.getFile(PropUtils.getProp_xspConfigList(this.srcProject));
 		if( !file.exists() )
 			file.create(

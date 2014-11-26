@@ -9,9 +9,8 @@ import org.openntf.xsp.ccexport.Constants;
 import org.openntf.xsp.ccexport.util.ConsoleUtils;
 import org.openntf.xsp.ccexport.util.IProjectUtils;
 
-
 /**
- * Handler pour désassocier le NSF à un projet de library
+ * Handler to remove association between the nsf and the plug-in project
  * @author Lionel HERVIER
  */
 public class UnsetupHandler extends AbstractExportCcHandler {
@@ -23,7 +22,7 @@ public class UnsetupHandler extends AbstractExportCcHandler {
 	public void execute(final IProject project, IProgressMonitor monitor) throws CoreException, InterruptedException {
 		ConsoleUtils.info("Unsetting Cc Export");
 		
-		// Supprime les propriétés
+		// Remove properties
 		project.setPersistentProperty(Constants.PROP_DEST_PROJECT_NAME, null);
 		project.setPersistentProperty(Constants.PROP_SOURCE_FOLDER, null);
 		project.setPersistentProperty(Constants.PROP_CLASSES_PACKAGE, null);
@@ -31,13 +30,13 @@ public class UnsetupHandler extends AbstractExportCcHandler {
 		project.setPersistentProperty(Constants.PROP_XSPCONFIG_FILE, null);
 		project.setPersistentProperty(Constants.PROP_CCPREFIX, null);
 		
-		// Ajoute le builder au projet
+		// Remove the builder
 		IProjectUtils.removeBuilderFromProject(project, Constants.BUILDER_ID);
 		
-		// Rafraîchit le projet
+		// Refresh project
 		project.refreshLocal(IProject.DEPTH_INFINITE, monitor);
 		
-		// Rafraîchit le décorateur
+		// Refresh decorator
 		CcExportDecorator.getDecorator().refresh(new IResource[] {project});
 	}
 }

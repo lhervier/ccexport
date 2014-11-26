@@ -15,7 +15,7 @@ import org.openntf.xsp.ccexport.util.Utils;
 
 
 /**
- * Décorateur pour adapter le nom du projet source
+ * Decorator to adapt the name of the source project
  * @author Lionel HERVIER
  */
 public class CcExportDecorator extends LabelProvider implements ILabelDecorator {
@@ -34,16 +34,16 @@ public class CcExportDecorator extends LabelProvider implements ILabelDecorator 
 	@Override
 	public String decorateText(String title, Object element) {
 		try {
-			// On ne re-décore que le titre du projet
+			// Only re-decorating the project name
 			if( !(element instanceof IProject) )
 				return title;
 			IProject project = (IProject) element;
 			
-			// On ne re-décore que les projets ouverts
+			// Only re-decorating the opened projects
 			if( !project.isOpen() )
 				return title;
 			
-			// On ne re-décore que les projets qui sont liés à notre builder
+			// Only re-decorating projects linked to our builder
 			if( !Utils.isUsingExportCc(project) )
 				return title;
 			

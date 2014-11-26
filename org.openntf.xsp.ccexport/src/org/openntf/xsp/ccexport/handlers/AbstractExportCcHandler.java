@@ -25,12 +25,12 @@ public abstract class AbstractExportCcHandler extends AbstractHandler {
 	 */
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		// Il nous faut une sélection sur un fichier/dossier
+		// We need a selection on a file or a folder
 		ISelection se = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService().getSelection();
 		if (!(se instanceof StructuredSelection))
 			return null;
 		
-		// Récupère le projet
+		// Get a hand on the project
 		StructuredSelection sse = (StructuredSelection) se;
 		@SuppressWarnings("unchecked")
 		List selList = sse.toList();
@@ -47,11 +47,11 @@ public abstract class AbstractExportCcHandler extends AbstractHandler {
 			}
 		}
 		
-		// On ne fonctionne que sur un projet de type Domino
+		// Only working on Domino projects
 		if (!DominoResourcesPlugin.isDominoDesignerProject(prj))
 			return null;
 		
-		// Exécute le handler
+		// Run the handler
 		final IProject project = prj;
 		WorkspaceModifyOperation operation = new WorkspaceModifyOperation() {
 
@@ -80,8 +80,8 @@ public abstract class AbstractExportCcHandler extends AbstractHandler {
 	}
 	
 	/**
-	 * Exécute le handler
-	 * @param prj le projet courant
+	 * Run the handler
+	 * @param prj the current project
 	 * @param monitor the progress monitor to use for reporting progress to the user. It is the caller's responsibility
 	 * 		to call done() on the given monitor. Accepts null, indicating that no progress should be
 	 * 		reported and that the operation cannot be cancelled.

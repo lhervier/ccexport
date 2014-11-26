@@ -13,15 +13,14 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 
 /**
- * Méthodes utiles pour gérer les projets Java
+ * Usefull methods to managed java projects
  * @author Lionel HERVIER
  */
 public class IJavaProjectUtils {
 
 	/**
-	 * Retourne les répertoires source d'un
-	 * projet de type Java
-	 * @param javaProject le projet
+	 * Returns the source folders of a java project
+	 * @param javaProject the projet
 	 * @throws CoreException 
 	 */
 	public static List<IPath> getSourceFolders(IJavaProject javaProject) throws CoreException {
@@ -41,24 +40,24 @@ public class IJavaProjectUtils {
 	}
 	
 	/**
-	 * Vérifie qu'un package existe bien dans un projet Java, et le créé si nécessaire.
-	 * @param javaProject le projet (java) dans lequel le créer
-	 * @param srcFolder le répertoire source dans lequel créer les packages
-	 * @param pkg le nom du package à créer
-	 * @param monitor le moniteur
-	 * @return le package
-	 * @throws CoreException en cas de problème
+	 * Create a package into a java project. Only returns a package that already exists
+	 * @param javaProject the (java) projectintp which we will create the package
+	 * @param srcFolder the source folder to create the package into
+	 * @param pkg the name of the package to create
+	 * @param monitor a monitor
+	 * @return the package (or null is the source folder does not exists)
+	 * @throws CoreException in cas of problem
 	 */
 	public static IPackageFragment createPackage(
 			IJavaProject javaProject, 
 			IPath srcFolderPath, 
 			String pkg, 
 			IProgressMonitor monitor) throws CoreException {
-		// Récupère le dossier qui doit contenir les sources
+		// Get the source folder
 		IProject project = javaProject.getProject();
 		IFolder root = project.getFolder(srcFolderPath);
 		
-		// Vérifie que le dossier soit bien un dossier qui contient du code source
+		// Check that the source folder is declared as such
 		if( !IJavaProjectUtils.getSourceFolders(javaProject).contains(root.getFullPath()) )
 			return null;
 		

@@ -16,15 +16,15 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubMonitor;
 
 /**
- * Méthodes utiles pour gérer les projets (au sens large)
+ * Usefull methods to managed eclipse projects
  * @author Lionel HERVIER
  */
 public class IProjectUtils {
 
 	/**
-	 * Retourne un projet à partir de son nom
-	 * @param name le nom du projet
-	 * @return le projet
+	 * Get a project from its name
+	 * @param name the project name
+	 * @return the project as an eclipse project
 	 */
 	public static IProject getProjectFromName(String name) {
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
@@ -32,10 +32,10 @@ public class IProjectUtils {
 	}
 	
 	/**
-	 * Pour savoir si un projet est d'une nature donnée
-	 * @param project le projet
-	 * @param natureId l'ID de la nature
-	 * @return true si le projet est de cette nature
+	 * Check if the given project have the given nature
+	 * @param project the project
+	 * @param natureId the nature id
+	 * @return true if the project have the given nature
 	 * @throws CoreException 
 	 */
 	public static boolean hasNature(IProject project, String natureId) {
@@ -54,21 +54,21 @@ public class IProjectUtils {
 	}
 	
 	/**
-	 * Ajoute un builder à un projet
-	 * @param project le projet auquel ajouter le builder
-	 * @param builderId l'id du builder
-	 * @param monitor le moniteur
-	 * @throws CoreException en cas de problème
+	 * Add a builder to a project
+	 * @param project the project to add the builder to
+	 * @param builderId the builder id
+	 * @param monitor the monitor
+	 * @throws CoreException in cas of trouble
 	 */
 	public static void addBuilderToProject(
 			IProject project, 
 			String builderId,
 			IProgressMonitor monitor) throws CoreException {
-		// Vérifie que le projet existe
+		// Check the project exists
 		if( project == null || !project.exists() )
 			return;
 		
-		// Récupère les builders déjà associés, et vérifie que le nôtre n'est pas déjà dedans
+		// Get the already added builders, and check that our is not already in the list
 		IProjectDescription projectDesc = project.getDescription();
 		ICommand[] initBuildSpec = projectDesc.getBuildSpec();
 		for( int j = 0; j < initBuildSpec.length; j++ ) {
@@ -76,7 +76,7 @@ public class IProjectUtils {
 				return;
 		}
 		
-		// Ajoute notre builder
+		// Add our builder
 		ICommand command = projectDesc.newCommand();
 		command.setBuilderName(builderId);
 		ICommand[] newBuildSpec = new ICommand[initBuildSpec.length + 1];
@@ -87,10 +87,10 @@ public class IProjectUtils {
 	}
 	
 	/**
-	 * Enlève un builder d'un projet
-	 * @param project le projet
-	 * @param builderId l'id du builder
-	 * @throws CoreException en cas de pb
+	 * Remove a builder from a project
+	 * @param project the project
+	 * @param builderId the builder id
+	 * @throws CoreException in case of trouble
 	 */
 	public static void removeBuilderFromProject(IProject project, String builderId) throws CoreException {
 		if ((project == null) || (!project.exists()))
@@ -114,13 +114,13 @@ public class IProjectUtils {
 	}
 	
 	/**
-	 * Créé un dossier
-	 * @param project le projet
-	 * @param folderPath le chemin vers le dossier
+	 * Create a folder (including its parents if necessary)
+	 * @param project the project
+	 * @param folderPath Path of the folder to create
 	 * @param monitor the progress monitor to use for reporting progress to the user. It is the caller's responsibility
 	 * 		to call done() on the given monitor. Accepts null, indicating that no progress should be
 	 * 		reported and that the operation cannot be cancelled.
-	 * @throws CoreException en cas de pb
+	 * @throws CoreException in case of trouble
 	 */
 	public static void createFolder(IProject project, IPath folderPath, IProgressMonitor monitor) throws CoreException {
 		SubMonitor progress = SubMonitor.convert(monitor);

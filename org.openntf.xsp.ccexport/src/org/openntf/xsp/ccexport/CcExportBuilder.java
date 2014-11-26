@@ -28,11 +28,11 @@ import org.openntf.xsp.ccexport.util.ConsoleUtils;
 import org.openntf.xsp.ccexport.util.PropUtils;
 import org.openntf.xsp.ccexport.util.Utils;
 
-
 /**
- * Une Builder capable d'exporter un Custom Control dans un
- * projet de type Library
- * FIXME: En l'état, ne changer que les propriétés d'un CC l'exporte 2 fois.
+ * Builder to export a custom control into a plug-in projects 
+ * that hosts an XPage Library.
+ * TODO: If you are using internaitonalisation with XPages, .properties files 
+ * associated with custom controls are not exported... 
  * @author Lionel HERVIER
  */
 public class CcExportBuilder extends IncrementalProjectBuilder {
@@ -52,7 +52,7 @@ public class CcExportBuilder extends IncrementalProjectBuilder {
 					if( !Utils.initializeLink(project, progress.newChild(20)) )
 						return Status.OK_STATUS;
 					
-					// Lance une synchro
+					// Synchro launch
 					SyncAction action = new SyncAction(project);
 					action.execute(progress.newChild(80));
 					
@@ -80,14 +80,14 @@ public class CcExportBuilder extends IncrementalProjectBuilder {
 		SubMonitor progress = SubMonitor.convert(monitor, 100);
 		try {
 			
-			// Initialise le lien entre les deux projets (au cas où)
+			// Initialize the link between the two projects (if needed)
 			if( !Utils.initializeLink(this.getProject(), progress.newChild(10)) )
 				return null;
 			
-			// Pour détecter s'il est nécessaire de mettre à jour le xsp-config.list
+			// To detect if it's necessary to update the xsp-config.list file
 			final BooleanHolder updateXspConfigList = new BooleanHolder(false);
 			
-			// Parcours le delta
+			// Walk through the delta 
 			IResourceDelta delta = this.getDelta(this.getProject());
 			if( delta == null )
 				return null;
@@ -96,33 +96,34 @@ public class CcExportBuilder extends IncrementalProjectBuilder {
 				public boolean visit(IResourceDelta delta) {
 					subProgress.setWorkRemaining(2);
 					
-					// On n'accepte que les ajout/modif/suppression
+					// Only accepting additions/updates/deletions
 					int kind = delta.getKind();
 					if( kind != IResourceDelta.ADDED && kind != IResourceDelta.CHANGED && kind != IResourceDelta.REMOVED )
 						return true;
 					
-					// On n'accepte que les modifs sur des fichiers
+					// Only accepting updates on files
 					IResource currResource = delta.getResource();
 					if (currResource.getType() != IResource.FILE)
 						return true;
 					
-					// Est ce qu'on exporte ? Ou est ce qu'on supprime ?
+					// Are we exporting or removing ?
 					boolean exporting = kind == IResourceDelta.ADDED || kind == IResourceDelta.CHANGED;
 					
-					// Récupère la ressource à builder
+					// Get the resource to build
 					IFile file = (IFile) currResource;
 					IPath location = file.getProjectRelativePath();
 					
-					// On ne s'intéresse qu'aux ressources qui sont dans le rep "CustomControls", ou dans le package "xsp" du rep source "Local"
+					// Only working with resources that are stored into the "CustomControls" folder, 
+					// or inside the "xsp" package "xsp" of the "Local" source folder
 					if( !Constants.CC_FOLDER_PATH.isPrefixOf(location) && !Constants.JAVA_FOLDER_PATH.append("xsp").isPrefixOf(location) )
 						return true;
 					
-					// On ne s'intéresse qu'aux fichiers java et xsp-config
+					// Only working on .java and .xsp-config files
 					String ext = location.getFileExtension();
 					if( !"xsp-config".equals(ext) && !"java".equals(ext) )
 						return true;
 					
-					// On ne s'intéresse qu'aux cc qui commencent par le bon préfixe
+					// Only working on custom controls with the right prefix
 					if( !file.getName().toUpperCase().startsWith(PropUtils.getProp_ccPrefix(CcExportBuilder.this.getProject()).toUpperCase()) )
 						return true;
 					
@@ -130,25 +131,29 @@ public class CcExportBuilder extends IncrementalProjectBuilder {
 					// Il faut filtrer les XPages. Pour cela, on regarde si on trouve le fichier .xsp
 					// Mais le xsp est supprimé AVANT le fichier java...
 					// En cas de suppression, on essaie donc de supprimer la classe, quoi qu'il se passe
+					// Only working on .java files that corresponds to a custom control.
+					// We have to filter XPages. To do this, we are trying to find a the .xsp file.
+					// In cas of removal, the .xsp file is removed BEFORE the .java file...
+					// So, when removing an .xsp file, we try to remove the .java file anyway.
 					if( exporting && "java".equals(ext) ) {
 						String cc = Utils.getFileNameWithoutExtension(file.getName());
-						cc = Utils.normalizeMin(cc);		// On essaie d'abord en minuscule
+						cc = Utils.normalizeMin(cc);		// First try lowercase
 						IFile xsp = CcExportBuilder.this.getProject().getFile(Constants.CC_FOLDER_PATH.append(cc + ".xsp"));
 						if( !xsp.exists() ) {
-							cc = Utils.normalizeMaj(cc);
+							cc = Utils.normalizeMaj(cc);	// Second try with first letter uppercase
 							xsp = CcExportBuilder.this.getProject().getFile(Constants.CC_FOLDER_PATH.append(cc + ".xsp"));
 							if( !xsp.exists() )
 								return true;
 						}
 					}
 					
-					// Détecte si on créé ou supprime un xsp-config
-					// (pour pouvoir mettre à jour le xsp-config.list)
+					// Are we creating or removing a .xsp-config file ?
+					// If it is the case, we will have to update the xsp-config.list file.
 					if( "xsp-config".equals(file.getFileExtension()) )
 						if( kind == IResourceDelta.ADDED || kind == IResourceDelta.REMOVED )
 							updateXspConfigList.value = true;
 					
-					// Exécute l'action
+					// Run the action
 					BaseResourceAction action;
 					if( exporting )
 						if( "xsp-config".equals(file.getFileExtension()) )
@@ -167,14 +172,14 @@ public class CcExportBuilder extends IncrementalProjectBuilder {
 			});
 			progress.setWorkRemaining(40);
 			
-			// Met à jour le fichier xsp-config.list si c'est nécessaire
+			// Update the xsp-config.list file if needed
 			if( updateXspConfigList.value ) {
 				GenerateXspConfigListAction action = new GenerateXspConfigListAction(this.getProject());
 				action.execute(progress.newChild(30));
 			}
 			progress.setWorkRemaining(20);
 			
-			// Sauver le workspace déclenche la re-compile des classes qu'on a ajoutées/modifiée/supprimées 
+			// Save the workbench will trigger compilation of the classes we updated/added 
 			ResourcesPlugin.getWorkspace().save(false, progress.newChild(20));
 			return null;
 		} finally {

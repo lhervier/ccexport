@@ -6,9 +6,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.openntf.xsp.ccexport.actions.SyncAction;
 import org.openntf.xsp.ccexport.util.ConsoleUtils;
 
-
 /**
- * Handler chargé de tout synchroniser 
+ * Handler to synchronize everything 
  * @author Lionel HERVIER
  */
 public class SyncHandler extends AbstractExportCcHandler {

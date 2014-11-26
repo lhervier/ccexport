@@ -8,15 +8,14 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.openntf.xsp.ccexport.util.ConsoleUtils;
 import org.openntf.xsp.ccexport.util.PropUtils;
 
-
 /**
- * Supprime la version compilée d'un custom control
+ * Action to remove a .java file
  * @author Lionel HERVIER
  */
 public class RemoveJavaAction extends BaseResourceAction {
 
 	/**
-	 * Constructeur
+	 * Constructor
 	 * @param srcProject
 	 */
 	public RemoveJavaAction(IProject srcProject) {
@@ -32,7 +31,7 @@ public class RemoveJavaAction extends BaseResourceAction {
 		
 		String classFile = file.getName();
 		try {
-			// Le chemin vers le fichier .java
+			// The path to the .java file
 			IPath javaPath = PropUtils
 					.getProp_sourceFolderPath(this.srcProject)
 					.append(PropUtils.getProp_javaPath(this.srcProject))

@@ -16,45 +16,44 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.openntf.xsp.ccexport.util.Utils;
 
-
 /**
- * Page de wizard pour sélectionner les autres options
+ * Wizard page for "other options"
  * @author Lionel HERVIER
  */
 public class OtherOptionsPage extends WizardPage {
 
 	/**
-	 * Le control principal
+	 * Main container
 	 */
 	private Composite container;
 	
 	/**
-	 * La combo pour choisir le nom du répertoire source
+	 * Combobox to select the source folder
 	 */
 	private Combo sourceCombo;
 	
 	/**
-	 * La zone de texte pour saisir le nom du package pour les fichiers java
+	 * Edit box to enter the name of the package we will export the java files into.
 	 */
 	private Text javaText;
 	
 	/**
-	 * La zone de texte pour saisir le nom du package pour les fichiers xsp-config
+	 * Edit box to enter the name of the package we will export the xsp-config files into.
 	 */
 	private Text xspConfigText;
 	
 	/**
-	 * La zone de texte pour saisir le nom du fichier où exporter la liste des xsp-config
+	 * Edit box to enter the file we will export classpath path to the .xsp-config files
 	 */
 	private Text xspConfigListText;
 	
 	/**
-	 * La zone de text qui contient le préfixe pour les cc à exporter
+	 * Edit box to enter the prefix of custom controls to export
 	 */
 	private Text ccPrefixText;
 	
 	/**
-	 * Constructeur
+	 * Constructor
 	 */
 	public OtherOptionsPage() {
 		super("Other options");
@@ -83,7 +82,7 @@ public class OtherOptionsPage extends WizardPage {
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
 		
-		// Quand on affiche la page, on doit mettre à jour la liste des valeurs pour la combo
+		// When page becomes visible, we need to update the combo values.
 		if( visible ) {
 			List<String> lstNewItems = this.getWizard().getSourceFolders();
 			String[] newItems = new String[lstNewItems.size() + 1];
@@ -96,7 +95,7 @@ public class OtherOptionsPage extends WizardPage {
 			
 			if( !Utils.equals(prevItems, newItems) ) {
 				this.sourceCombo.setItems(newItems);
-				this.sourceCombo.setText(newItems[0]);		// On a au moins la valeur vide dedans
+				this.sourceCombo.setText(newItems[0]);		// At least one value inside
 			}
 		}
 	}

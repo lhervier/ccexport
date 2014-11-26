@@ -5,26 +5,25 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.openntf.xsp.ccexport.util.PropUtils;
 
-
 /**
- * Action pour exporter un custom control compilé (en fichier java).
+ * Action to export a resource
  * @author Lionel HERVIER
  */
 public abstract class BaseResourceAction {
 
 	/**
-	 * Le projet
+	 * The source project (the nsf project)
 	 */
 	protected IProject srcProject;
 	
 	/**
-	 * Le projet de destination
+	 * The destination project (plug-in project with the XPage Library inside)
 	 */
 	protected IProject destProject;
 	
 	/**
-	 * Constructeur
-	 * @param srcProject le projet Java source (celui de la base NSF)
+	 * Constructor
+	 * @param srcProject
 	 */
 	public BaseResourceAction(IProject srcProject) {
 		this.srcProject = srcProject;
@@ -32,8 +31,8 @@ public abstract class BaseResourceAction {
 	}
 	
 	/**
-	 * Exécute une action
-	 * @param file le fichier à exporter (relatif au projet source)
+	 * Run the action
+	 * @param file the file to export (related to source project)
 	 * @param monitor the progress monitor to use for reporting progress to the user. It is the caller's responsibility
 	 * 		to call done() on the given monitor. Accepts null, indicating that no progress should be
 	 * 		reported and that the operation cannot be cancelled.

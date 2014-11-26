@@ -1,26 +1,26 @@
 package org.openntf.xsp.ccexport.util;
 
 /**
- * Holder pour un boolean
+ * Simple holder for a boolean value
  * @author Lionel HERVIER
  */
 public class BooleanHolder {
 
 	/**
-	 * Constructeur vide
+	 * Empty constructor
 	 */
 	public BooleanHolder() {}
 	
 	/**
-	 * Constructeur à partir d'une valeur
-	 * @param value la valeur
+	 * Constructor from a given value
+	 * @param value the value
 	 */
 	public BooleanHolder(boolean value) {
 		this.value = value;
 	}
 	
 	/**
-	 * La valeur
+	 * The value
 	 */
 	public boolean value;
 }

@@ -30,9 +30,8 @@ import org.openntf.xsp.ccexport.wizard.SetupWizard;
 
 import com.ibm.designer.domino.ide.resources.DominoResourcesPlugin;
 
-
 /**
- * Handler pour associer le NSF à un projet de library
+ * Handler to associate an NSF to plug-in project
  * @author Lionel HERVIER
  */
 public class SetupHandler extends AbstractHandler {
@@ -42,12 +41,12 @@ public class SetupHandler extends AbstractHandler {
 	 */
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		// Il nous faut une sélection sur un fichier/dossier
+		// We need a selection on a file or a folder
 		ISelection se = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService().getSelection();
 		if (!(se instanceof StructuredSelection))
 			return null;
 		
-		// Récupère le projet
+		// Get a hand on the project
 		StructuredSelection sse = (StructuredSelection) se;
 		@SuppressWarnings("unchecked")
 		List selList = sse.toList();
@@ -64,26 +63,26 @@ public class SetupHandler extends AbstractHandler {
 			}
 		}
 		
-		// On ne fonctionne que sur un projet de type Domino
+		// Only working on Domino projects
 		if (!DominoResourcesPlugin.isDominoDesignerProject(prj))
 			return null;
 		
 		ConsoleUtils.info("Setting up Cc Export");
 		
-		// Exécute le wizard
+		// Run the wizard
 		final SetupWizard wizard = new SetupWizard(prj);
 		WizardDialog wizardDialog = new WizardDialog(Display.getCurrent().getActiveShell(), wizard);
 		if( wizardDialog.open() != Window.OK )
 			return null;
 		
-		// Associe le projet
+		// Associate the nsf with the project
 		final IProject project = prj;
 		WorkspaceModifyOperation operation = new WorkspaceModifyOperation() {
 			@Override
 			protected void execute(IProgressMonitor monitor) throws CoreException, InvocationTargetException, InterruptedException {
 				SubMonitor progress = SubMonitor.convert(monitor, 100);
 				try {
-					// Défini les propriétés
+					// Add properties
 					project.setPersistentProperty(
 							Constants.PROP_DEST_PROJECT_NAME, 
 							wizard.getDestProjectName()
@@ -109,18 +108,18 @@ public class SetupHandler extends AbstractHandler {
 							wizard.getCcPrefix()
 					);
 					
-					// Ajoute le builder au projet
+					// Add the builder
 					IProjectUtils.addBuilderToProject(
 							project, 
 							Constants.BUILDER_ID, 
 							progress.newChild(25)
 					);
 					
-					// Initialise le projet de destination
+					// Initialize the destination project
 					if( !Utils.initializeLink(project, progress.newChild(25) ) )
 						return;
 					
-					// Force une synchro
+					// Force synchronisation
 					SyncAction action = new SyncAction(project);
 					action.execute(progress.newChild(25));
 				} catch(CoreException e) {
@@ -134,13 +133,13 @@ public class SetupHandler extends AbstractHandler {
 		try {
 			PlatformUI.getWorkbench().getProgressService().run(true, false, operation);
 			
-			// Rafraîchit le projet
+			// Refresh project
 			project.refreshLocal(
 					IProject.DEPTH_ZERO, 
 					new NullProgressMonitor()
 			);
 			
-			// Rafraîchit le décorator
+			// Refresh decorator
 			CcExportDecorator.getDecorator().refresh(new IResource[] {project});
 			
 		} catch (InvocationTargetException e) {
