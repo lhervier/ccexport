@@ -1,7 +1,7 @@
 ccexport
 ========
 
-IBM Domino Designer plugin to export custom control into an XPage Library
+IBM Domino Designer plugin to automatically export custom controls into an XPage Library
 
 You can find document here: http://blogsocialcollaboration.asi.fr/2014/11/27/library-xpages-personnalisee-export-automatique-de-custom-control/
 
