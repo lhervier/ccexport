@@ -82,10 +82,11 @@ public class SyncAction {
 				);
 				
 				// Export the .java file
+				String javaFileName = cc.replaceAll("_", "_005f");	// "_" in custom control names are replaced with "-005f" in java class file names
 				IFile javaFile = SyncAction.this.project.getFile(
 						Constants.JAVA_FOLDER_PATH
 								.append(Constants.JAVA_PACKAGE)
-								.append(Utils.normalizeMaj(cc) + ".java")
+								.append(Utils.normalizeMaj(javaFileName) + ".java")
 				);
 				new ExportJavaAction(SyncAction.this.project).execute(
 						javaFile, 
@@ -117,10 +118,11 @@ public class SyncAction {
 				);
 				
 				// Remove the .java file
+				String javaFileName = cc.replaceAll("_", "_005f");
 				IFile javaFile = SyncAction.this.destProject.getFile(
 						PropUtils.getProp_sourceFolderPath(SyncAction.this.project)
 								.append(PropUtils.getProp_javaPath(SyncAction.this.project))
-								.append(cc + ".java")
+								.append(javaFileName + ".java")
 				);
 				new RemoveJavaAction(SyncAction.this.project).execute(
 						javaFile, 
