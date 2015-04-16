@@ -31,7 +31,7 @@ import org.openntf.xsp.ccexport.util.Utils;
 /**
  * Builder to export a custom control into a plug-in projects 
  * that hosts an XPage Library.
- * TODO: If you are using internaitonalisation with XPages, .properties files 
+ * TODO: If you are using internationalisation with XPages, .properties files 
  * associated with custom controls are not exported... 
  * @author Lionel HERVIER
  */
@@ -114,7 +114,7 @@ public class CcExportBuilder extends IncrementalProjectBuilder {
 					IPath location = file.getProjectRelativePath();
 					
 					// Only working with resources that are stored into the "CustomControls" folder, 
-					// or inside the "xsp" package "xsp" of the "Local" source folder
+					// or inside the "xsp" package of the "Local" source folder
 					if( !Constants.CC_FOLDER_PATH.isPrefixOf(location) && !Constants.JAVA_FOLDER_PATH.append("xsp").isPrefixOf(location) )
 						return true;
 					
