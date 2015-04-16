@@ -137,7 +137,8 @@ public class CcExportBuilder extends IncrementalProjectBuilder {
 					// So, when removing an .xsp file, we try to remove the .java file anyway.
 					if( exporting && "java".equals(ext) ) {
 						String fileName = Utils.getFileNameWithoutExtension(file.getName());
-						String cc = fileName.replaceAll("_005f", "_");		// "_" in custom controls names are replaces with "_005f"
+						fileName = fileName.replaceAll("_005f", "_");		// "_" in custom controls names are replaces with "_005f"
+						String cc = fileName;
 						cc = Utils.normalizeMin(fileName);		// First try lowercase
 						IFile xsp = CcExportBuilder.this.getProject().getFile(Constants.CC_FOLDER_PATH.append(cc + ".xsp"));
 						if( !xsp.exists() ) {
